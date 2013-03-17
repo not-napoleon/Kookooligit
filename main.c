@@ -1,9 +1,164 @@
 #include <stdlib.h>
+// For Messages
+#include <string.h>
+
 #include "SDL.h"
 #include "SDL_ttf.h"
+/*
+ * Screen list
+ */
+
+typedef struct SurfaceNode *SurfaceNodePtr;
+
+typedef struct SurfaceNode {
+  SDL_Surface *surface;
+  SurfaceNodePtr next;
+} SurfaceNode;
+
+SurfaceNodePtr make_surface_node(SDL_Surface *surface) {
+  SurfaceNodePtr node = malloc( sizeof(SurfaceNode) );
+  node->surface = surface;
+  node->next = NULL;
+  return node;
+}
+
+void free_surface_list(SurfaceNodePtr slist) {
+  while (slist != NULL) {
+    SurfaceNodePtr tmp = slist;
+    slist = slist->next;
+    SDL_FreeSurface(tmp->surface);
+    free(tmp);
+  }
+}
+
+
+/*
+ * Message logic here
+ */
+
+typedef struct Message{
+  char *text; // the raw text
+  SurfaceNodePtr rendered_words;
+} Message;
+
+typedef struct MessageNode *MessageNodePtr;
+
+typedef struct MessageNode {
+  // Linked list of messages
+  Message *data;
+  MessageNodePtr next;
+  MessageNodePtr prev;
+} MessageNode;
+
+typedef struct MessageList {
+  MessageNodePtr first; // Most recent message
+  MessageNodePtr last;  // Oldest message in queue
+  int length;
+} MessageList;
+
+void free_message_queue(MessageList *queue) {
+  while (queue->first != NULL) {
+    MessageNodePtr temp = queue->first;
+    queue->first = queue->first->next;
+    free(temp);
+  }
+  free(queue);
+}
+
+void free_message(Message *message) {
+  free_surface_list(message->rendered_words);
+  free(message);
+}
+
+MessageList *init_message_list() {
+  MessageList *mlist;
+  mlist = malloc( sizeof(MessageList) );
+  mlist->first = NULL;
+  mlist->last = NULL;
+  mlist->length = 0;
+  return mlist;
+}
+
+int add_message(MessageList *mlist, char *text, TTF_Font *font) {
+  Message *msg = malloc( sizeof(Message) );
+  msg->text = text;
+  msg->rendered_words = NULL;
+  // Build the message object
+  SDL_Color color = {255,255,255};
+  char *curr_word = strtok(text, " ");
+  SurfaceNodePtr curr_surface;
+  SurfaceNodePtr prev_surface = NULL;
+  do {
+    curr_surface = make_surface_node( TTF_RenderText_Solid(font, curr_word, color) );
+    if (curr_surface->surface == NULL) {
+      fprintf(stderr, "Unable to draw text <<%s>>: %s\n", curr_word, SDL_GetError());
+      return -1;
+    }
+    // Don't lose the start of the list
+    if (msg->rendered_words == NULL) {
+      msg->rendered_words = curr_surface;
+    }
+    if (prev_surface != NULL) {
+      prev_surface->next = curr_surface;
+    }
+    prev_surface = curr_surface;
+
+  } while ( (curr_word = strtok(NULL, " ")) != NULL);
+
+  // Build the message node
+  MessageNodePtr new_node = malloc( sizeof(MessageNode) );
+  new_node->data = msg;
+
+  // Attach the message node to the message list
+  new_node->next = mlist->first;
+  mlist->first->prev = new_node;
+  mlist->first = new_node;
+  mlist->length++;
+
+  // TODO: trim to max length
+
+}
+
+int DrawText( SDL_Surface *screen, TTF_Font *font, const char* text,
+    int x, int y, int w, int h) {
+  SDL_Color color = {255,255,255};
+  SDL_Surface *text_surface;
+
+  printf("attempting to render text <<%s>>\n", text);
+
+  text_surface = TTF_RenderText_Solid(font, text, color);
+  if (text_surface != NULL) {
+    if (SDL_BlitSurface(text_surface, NULL, screen, NULL) < 0) {
+      fprintf(stderr, "Blit failed with error: %s\n", SDL_GetError());
+      exit(1);
+    }
+    SDL_FreeSurface(text_surface);
+  } else {
+    fprintf(stderr, "Unable to draw text: %s\n", SDL_GetError());
+    exit(1);
+  }
+  SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
+  return 1;
+}
+
+/*
+ * Game logic here
+ */
+
 
 typedef struct GameConfiguration {
   char *font_path;
+  int point_size;
+  //Main window
+  int window_w;
+  int window_h;
+
+  //Message window
+  int message_x;
+  int message_y;
+  int message_w;
+  int message_h;
+
 } GameConfiguration;
 
 typedef struct GameState {
@@ -11,6 +166,7 @@ typedef struct GameState {
   GameConfiguration *config;
   SDL_Surface *screen;
   TTF_Font *font;
+  MessageList *messages;
 } GameState;
 
 GameState *allocate_game_state() {
@@ -19,6 +175,7 @@ GameState *allocate_game_state() {
   GameState *state;
   state = malloc(sizeof(GameState));
   state->config = malloc(sizeof(GameConfiguration));
+  state->messages = init_message_list();
   return state;
 }
 
@@ -26,6 +183,7 @@ void free_game_state(GameState *state) {
   /* Recursively free GameState struct
    */
   free(state->config);
+  free_message_queue(state->messages);
   free(state);
 }
 
@@ -33,6 +191,14 @@ int get_configuration(GameConfiguration *config) {
   /* Load game configuration data into the caller provided struct
    */
   config->font_path = "/Library/Fonts/Courier New.ttf";
+  config->point_size = 16;
+  config->window_w = 1024;
+  config->window_h = 768;
+
+  config->message_x = 0;
+  config->message_y = 640;
+  config->message_w = config->window_w;
+  config->message_h = config->window_h - config->message_y;
 
   return 0;
 }
@@ -44,24 +210,34 @@ void initilize(GameState *state) {
   }
   atexit(SDL_Quit);
 
-  // Get "best" video mode
-  //const SDL_VideoInfo* best_settings = SDL_GetVideoInfo();
-  state->screen = SDL_SetVideoMode(640, 480, 16, 0);
+  if (TTF_Init() < 0) {
+    fprintf(stderr, "Unable to init SDL_ttf: %s\n", SDL_GetError());
+    exit(1);
+  }
+  atexit(TTF_Quit);
+
+  state->screen = SDL_SetVideoMode(state->config->window_w, state->config->window_h, 16, 0);
   if (state->screen == NULL) {
     fprintf(stderr, "Unable to set SDL video mode: %s\n", SDL_GetError());
     exit(1);
   }
 
-  if (TTF_Init() < 0) {
-    fprintf(stderr, "Unable to init SDL_ttf: %s\n", SDL_GetError());
-    exit(1);
-  }
-  state->font = TTF_OpenFont(state->config->font_path, 16);
+  // Load font
+  state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
   if (state->font == NULL) {
     fprintf(stderr, "Unable to load font %s: %s\n", state->config->font_path,
         SDL_GetError());
     exit(1);
   }
+  // Check for fixed with
+  if (TTF_FontFaceIsFixedWidth(state->font) == 0) {
+    fprintf(stderr, "Font is not fixed width, chances are nothing will look right");
+  }
+  // Turn off kerning, since we want our characters to line up in a grid
+  if (TTF_GetFontKerning(state->font) != 0) {
+    TTF_SetFontKerning(state->font, 0);
+  }
+
   state->is_running = 1;
 }
 
@@ -90,33 +266,6 @@ void SDL_SurfaceInfo(char * name, SDL_Surface *thing)
   printf("Surface %s: w:%d h:%d bpp:%d\n", name, thing->w, thing->h, thing->format->BitsPerPixel);
 }
 
-int DrawText(GameState *state, const char* text)
-{
-  SDL_Color color = {255,255,255};
-  SDL_Surface *text_surface;
-
-  printf("attempting to render text <<%s>>\n", text);
-
-
-  SDL_SurfaceInfo("screen before", state->screen);
-  text_surface = TTF_RenderText_Solid(state->font, text, color);
-  SDL_SurfaceInfo("text_surface", text_surface);
-  if (text_surface != NULL) {
-    if (SDL_BlitSurface(text_surface, NULL, state->screen, NULL) < 0) {
-      fprintf(stderr, "Blit failed with error: %s\n", SDL_GetError());
-      exit(1);
-    }
-    SDL_FreeSurface(text_surface);
-  } else {
-    fprintf(stderr, "Unable to draw text: %s\n", SDL_GetError());
-    exit(1);
-  }
-  SDL_SurfaceInfo("screen after blit", state->screen);
-  SDL_UpdateRect(state->screen, 0, 0, state->screen->w, state->screen->h);
-  SDL_SurfaceInfo("screen after update", state->screen);
-  return 1;
-}
-
 int main(int argc, char *argv[]) {
 
   GameState *state = allocate_game_state();
@@ -125,7 +274,7 @@ int main(int argc, char *argv[]) {
 
   SDL_Event *event;
 
-  DrawText(state, "Hello World");
+  DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
   while (state->is_running) {
     while (SDL_PollEvent(event)) {
       handle_events(state, event);
