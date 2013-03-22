@@ -53,6 +53,7 @@ typedef struct GameState {
   SDL_Surface *screen;
   TTF_Font *font;
   MessageList *messages;
+  int need_to_redraw;
 } GameState;
 
 GameState *allocate_game_state() {
@@ -125,6 +126,7 @@ void initilize(GameState *state) {
   }
 
   state->is_running = 1;
+  state->need_to_redraw = 0;
 }
 
 void cleanup(GameState *state) {
@@ -137,11 +139,11 @@ void handle_events(GameState *state, SDL_Event *event) {
     case SDL_KEYDOWN:
       sprintf(key_msg, "The %s key was pressed!\n",
         SDL_GetKeyName(event->key.keysym.sym));
-      add_message(state->messages, key_msg, state->font);
       if (event->key.keysym.sym == 'q') {
         printf("Got quit signal from pressing q\n");
         state->is_running = 0;
       }
+      state->need_to_redraw = 1;
       break;
     case SDL_QUIT:
       printf("Got quit signal by magic\n");
@@ -163,6 +165,10 @@ int main(int argc, char *argv[]) {
   SDL_Event *event;
 
   DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
+  add_message(state->messages, "First message", state->font);
+  add_message(state->messages, "Second message", state->font);
+  add_message(state->messages, "Third message", state->font);
+  render_messages(128, 128, 512, 512, state->screen, state->messages);
   while (state->is_running) {
     while (SDL_PollEvent(event)) {
       handle_events(state, event);

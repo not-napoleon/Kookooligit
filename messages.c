@@ -46,7 +46,7 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
   msg->text = text;
   msg->rendered_words = NULL;
   // Set the spacing data based on the font
-  msg->skip_line_height = TTF_FontSkipLine(font);
+  msg->skip_line_height = TTF_FontLineSkip(font);
   TTF_SizeText(font, " ", &msg->space_width, NULL);
   // Build the message object
   SDL_Color color = {255,255,255};
@@ -67,8 +67,9 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
       prev_surface->next = curr_surface;
     }
     prev_surface = curr_surface;
+    curr_word = strtok(NULL, " ");
+  } while ( curr_word != NULL);
 
-  } while ( (curr_word = strtok(NULL, " ")) != NULL);
 
   // Build the message node
   MessageNodePtr new_node = malloc( sizeof(MessageNode) );
@@ -76,7 +77,9 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
 
   // Attach the message node to the message list
   new_node->next = mlist->first;
-  mlist->first->prev = new_node;
+  if (mlist->first != NULL) {
+    mlist->first->prev = new_node;
+  }
   mlist->first = new_node;
   mlist->length++;
 
@@ -84,26 +87,53 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
 
 }
 
-int build_single_message(Message *m, int w) {
-  /*
-   * Internal function to construct a single message, possibly of multiple
-   * lines.
-   */
-
+int get_message_height(Message *msg, int w) {
+  SurfaceNodePtr curr = msg->rendered_words;
+  int line_width = 0;
+  int line_rows = 0; // how many rows of text at this width
+  while (curr != NULL) {
+    if (line_width + curr->surface->w > w) {
+      line_rows += 1;
+      line_width = curr->surface->w;
+    } else {
+      line_width += curr->surface->w;
+    }
+    curr = curr->next;
+  }
+  return line_rows;
 }
 
-int render_messages(int x, int y, int w, int h, SDL_Surface screen,
+int render_messages(int x, int y, int w, int h, SDL_Surface *screen,
     MessageList *mlist) {
+  printf("Rendering messages\n");
   MessageNodePtr curr;
   curr = mlist->first;
-  int available_height = h;
-  while (curr != NULL and available_height > 0) {
+  while (curr != NULL && h > 0) {
   // While messages left & space left
+    printf("Rendering message %s", curr->data->text);
+    int rows = get_message_height(curr->data, w);
+    int h_offset = rows * curr->data->skip_line_height;
+    SurfaceNodePtr curr_word = curr->data->rendered_words;
+    int line_width = 0;
     // assemble the next message
-    // blit the message into the temp buffer
+    while (curr_word != NULL) {
+      printf("rendering another word\n");
+      SDL_Rect *write_coords;
+      if (line_width + curr_word->surface->w > w) {
+        // line wrap - set the line width to 0 and move the height down
+        line_width = 0;
+        h_offset -= curr->data->skip_line_height;
+      }
+      write_coords->x = x + line_width;
+      write_coords->y = y + (h - h_offset);
+      SDL_BlitSurface(curr_word->surface, NULL, screen, write_coords);
+      line_width += curr_word->surface->w;
+    }
+    printf("message rendered\n");
+    curr = curr->next;
+    h -= rows * curr->data->skip_line_height;
   }
-  // blit the temp buffer into the screen
-  // render the screen
+  SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
 }
 
 void free_message_queue(MessageList *queue) {

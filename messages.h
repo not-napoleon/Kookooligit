@@ -35,7 +35,7 @@ typedef struct MessageList {
 
 MessageList *init_message_list();
 int add_message(MessageList *mlist, char *text, TTF_Font *font);
-int render_messages(int x, int y, int w, int h, SDL_Surface screen,
+int render_messages(int x, int y, int w, int h, SDL_Surface *screen,
     MessageList *mlist);
 void free_message_queue(MessageList *queue);
 void free_message(Message *message);
