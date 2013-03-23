@@ -8,10 +8,10 @@ int get_configuration(GameConfiguration *config) {
   config->window_w = 1024;
   config->window_h = 768;
 
-  config->message_x = 0;
-  config->message_y = 640;
-  config->message_w = config->window_w;
-  config->message_h = config->window_h - config->message_y;
+  config->message_window.x = 0;
+  config->message_window.y = 640;
+  config->message_window.w = config->window_w;
+  config->message_window.h = config->window_h - config->message_window.y;
 
   return 0;
 }

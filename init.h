@@ -13,10 +13,7 @@ typedef struct GameConfiguration {
   int window_h;
 
   //Message window
-  int message_x;
-  int message_y;
-  int message_w;
-  int message_h;
+  SDL_Rect message_window;
 
 } GameConfiguration;
 
