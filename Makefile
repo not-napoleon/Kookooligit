@@ -1,7 +1,7 @@
-CC = gcc -I. `sdl-config --cflags`
+CC = gcc -I. `sdl-config --cflags` -g
 OBJECTS = messages.o
 game.out: main.c $(OBJECTS)
-	gcc main.c $(OBJECTS) -I. `sdl-config --cflags --libs` -lSDL_ttf -o game.out
+	gcc main.c $(OBJECTS) -I. `sdl-config --cflags --libs` -lSDL_ttf -o game.out -g
 
 messages.o: messages.c messages.h
 
