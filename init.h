@@ -12,8 +12,11 @@ typedef struct GameConfiguration {
   int window_w;
   int window_h;
 
-  //Message window
+  //Layout Dimensions
   SDL_Rect message_window;
+  SDL_Rect map_window;
+  SDL_Rect status_window;
+  SDL_Rect command_window;
 
 } GameConfiguration;
 

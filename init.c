@@ -1,5 +1,17 @@
 #include <init.h>
 
+SDL_Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
+  /*
+   * helper function to build a rect out of its four component values
+   */
+  SDL_Rect ret;
+  ret.x = x;
+  ret.y = y;
+  ret.w = w;
+  ret.h = h;
+  return ret;
+}
+
 int get_configuration(GameConfiguration *config) {
   /* Load game configuration data into the caller provided struct
    */
@@ -8,10 +20,11 @@ int get_configuration(GameConfiguration *config) {
   config->window_w = 1024;
   config->window_h = 768;
 
-  config->message_window.x = 0;
-  config->message_window.y = 640;
-  config->message_window.w = config->window_w;
-  config->message_window.h = config->window_h - config->message_window.y;
+  // Windows are set as x, y, w, h
+  config->map_window     = make_rect(  0,   0, 768, 640);
+  config->command_window = make_rect(768,   0, 256, 640);
+  config->message_window = make_rect(  0, 640, 768, 128);
+  config->status_window  = make_rect(768, 640, 256, 128);
 
   return 0;
 }
