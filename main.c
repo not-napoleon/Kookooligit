@@ -48,23 +48,16 @@ int main(int argc, char *argv[]) {
   initilize(state);
 
   SDL_Event event;
-  SDL_Rect msg_area = {128, 128, 512, 512};
-
-  //DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
-  char msg1[] = "first message";
-  char msg2[] = "Second Message";
-  char msg3[] = "Thrid Message";
+  char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1, state->font);
-  add_message(state->messages, msg2, state->font);
-  add_message(state->messages, msg3, state->font);
-  render_messages(&msg_area, state->screen, state->messages);
+  render_messages(&state->config->message_window, state->screen, state->messages);
   printf("entering main loop\n");
   while (state->is_running) {
     while (SDL_PollEvent(&event)) {
       handle_events(state, &event);
     }
     if (state->need_to_redraw == 1) {
-      render_messages(&msg_area, state->screen, state->messages);
+      render_messages(&state->config->message_window, state->screen, state->messages);
       state->need_to_redraw = 0;
     }
 
