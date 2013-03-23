@@ -134,10 +134,10 @@ void cleanup(GameState *state) {
 }
 
 void handle_events(GameState *state, SDL_Event *event) {
-  char key_msg[255];
+  printf("Handling events\n");
   switch (event->type) {
     case SDL_KEYDOWN:
-      sprintf(key_msg, "The %s key was pressed!\n",
+      printf("The %s key was pressed!\n",
         SDL_GetKeyName(event->key.keysym.sym));
       if (event->key.keysym.sym == 'q') {
         printf("Got quit signal from pressing q\n");
@@ -164,11 +164,15 @@ int main(int argc, char *argv[]) {
 
   SDL_Event *event;
 
-  DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
-  add_message(state->messages, "First message", state->font);
-  add_message(state->messages, "Second message", state->font);
-  add_message(state->messages, "Third message", state->font);
-  render_messages(128, 128, 512, 512, state->screen, state->messages);
+  //DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
+  //char msg1[] = "first message";
+  //char msg2[] = "Second Message";
+  //char msg3[] = "Thrid Message";
+  //add_message(state->messages, msg1, state->font);
+  //add_message(state->messages, msg2, state->font);
+  //add_message(state->messages, msg3, state->font);
+  //render_messages(128, 128, 512, 512, state->screen, state->messages);
+  printf("entering main loop\n");
   while (state->is_running) {
     while (SDL_PollEvent(event)) {
       handle_events(state, event);

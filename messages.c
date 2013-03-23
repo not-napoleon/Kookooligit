@@ -37,24 +37,32 @@ MessageList *init_message_list() {
   mlist->first = NULL;
   mlist->last = NULL;
   mlist->length = 0;
+  printf("message list initilized\n");
   return mlist;
 }
 
 
 int add_message(MessageList *mlist, char *text, TTF_Font *font) {
+  printf(" adding message with text %s", text);
   Message *msg = malloc( sizeof(Message) );
-  msg->text = text;
+  // strtok will modify text
+  msg->text = malloc( sizeof(char) * strlen(text));
+  strcpy(msg->text, text);
   msg->rendered_words = NULL;
   // Set the spacing data based on the font
   msg->skip_line_height = TTF_FontLineSkip(font);
-  TTF_SizeText(font, " ", &msg->space_width, NULL);
   // Build the message object
   SDL_Color color = {255,255,255};
   char *curr_word = strtok(text, " ");
   SurfaceNodePtr curr_surface;
   SurfaceNodePtr prev_surface = NULL;
   do {
-    curr_surface = make_surface_node( TTF_RenderText_Solid(font, curr_word, color) );
+    // Append a space to the word, since we clobbered it in tokenization
+    char *tmp = malloc( sizeof(char) * (strlen(curr_word) + 1));
+    strcpy(tmp, curr_word);
+    strcat(tmp, " ");
+    curr_surface = make_surface_node( TTF_RenderText_Solid(font, tmp, color) );
+    free(tmp);
     if (curr_surface->surface == NULL) {
       fprintf(stderr, "Unable to draw text <<%s>>: %s\n", curr_word, SDL_GetError());
       return -1;
@@ -110,7 +118,7 @@ int render_messages(int x, int y, int w, int h, SDL_Surface *screen,
   curr = mlist->first;
   while (curr != NULL && h > 0) {
   // While messages left & space left
-    printf("Rendering message %s", curr->data->text);
+    printf("Rendering message %s\n", curr->data->text);
     int rows = get_message_height(curr->data, w);
     int h_offset = rows * curr->data->skip_line_height;
     SurfaceNodePtr curr_word = curr->data->rendered_words;
@@ -118,21 +126,23 @@ int render_messages(int x, int y, int w, int h, SDL_Surface *screen,
     // assemble the next message
     while (curr_word != NULL) {
       printf("rendering another word\n");
-      SDL_Rect *write_coords;
+      SDL_Rect write_coords;
       if (line_width + curr_word->surface->w > w) {
         // line wrap - set the line width to 0 and move the height down
         line_width = 0;
         h_offset -= curr->data->skip_line_height;
       }
-      write_coords->x = x + line_width;
-      write_coords->y = y + (h - h_offset);
-      SDL_BlitSurface(curr_word->surface, NULL, screen, write_coords);
+      write_coords.x = x + line_width;
+      write_coords.y = y + (h - h_offset);
+      SDL_BlitSurface(curr_word->surface, NULL, screen, &write_coords);
       line_width += curr_word->surface->w;
+      curr_word = curr_word->next;
     }
     printf("message rendered\n");
-    curr = curr->next;
     h -= rows * curr->data->skip_line_height;
+    curr = curr->next;
   }
+  printf("all messages rendered, updateing screen\n");
   SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
 }
 
