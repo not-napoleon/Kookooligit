@@ -71,6 +71,7 @@ void free_game_state(GameState *state) {
    */
   free(state->config);
   free_message_queue(state->messages);
+  TTF_CloseFont(state->font);
   free(state);
 }
 
@@ -162,20 +163,20 @@ int main(int argc, char *argv[]) {
   get_configuration(state->config);
   initilize(state);
 
-  SDL_Event *event;
+  SDL_Event event;
 
   //DrawText(state->screen, state->font, "Hello World", 0, 0, state->screen->w, state->screen->h);
-  //char msg1[] = "first message";
-  //char msg2[] = "Second Message";
-  //char msg3[] = "Thrid Message";
-  //add_message(state->messages, msg1, state->font);
-  //add_message(state->messages, msg2, state->font);
-  //add_message(state->messages, msg3, state->font);
-  //render_messages(128, 128, 512, 512, state->screen, state->messages);
+  char msg1[] = "first message";
+  char msg2[] = "Second Message";
+  char msg3[] = "Thrid Message";
+  add_message(state->messages, msg1, state->font);
+  add_message(state->messages, msg2, state->font);
+  add_message(state->messages, msg3, state->font);
+  render_messages(128, 128, 512, 512, state->screen, state->messages);
   printf("entering main loop\n");
   while (state->is_running) {
-    while (SDL_PollEvent(event)) {
-      handle_events(state, event);
+    while (SDL_PollEvent(&event)) {
+      handle_events(state, &event);
     }
   }
 
