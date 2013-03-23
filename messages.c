@@ -121,7 +121,7 @@ int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
   MessageNodePtr curr;
   curr = mlist->first;
   int h = dstrect->h;
-  while (curr != NULL && h > 0) {
+  while (curr != NULL && h >= curr->data->skip_line_height) {
   // While messages left & space left
     printf("Rendering message %s\n", curr->data->text);
     int rows = get_message_height(curr->data, dstrect->w);
