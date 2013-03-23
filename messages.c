@@ -98,7 +98,7 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
 int get_message_height(Message *msg, int w) {
   SurfaceNodePtr curr = msg->rendered_words;
   int line_width = 0;
-  int line_rows = 0; // how many rows of text at this width
+  int line_rows = 1; // how many rows of text at this width
   while (curr != NULL) {
     if (line_width + curr->surface->w > w) {
       line_rows += 1;
@@ -111,34 +111,40 @@ int get_message_height(Message *msg, int w) {
   return line_rows;
 }
 
-int render_messages(int x, int y, int w, int h, SDL_Surface *screen,
+int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
     MessageList *mlist) {
   printf("Rendering messages\n");
+  //blank the message area, since we're going to redraw it
+  // Fill rect can change the dest rect for clipping, so pass in a copy
+  SDL_Rect tmp = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
+  SDL_FillRect(screen, &tmp, SDL_MapRGB(screen->format, 0, 0, 0));
   MessageNodePtr curr;
   curr = mlist->first;
+  int h = dstrect->h;
   while (curr != NULL && h > 0) {
   // While messages left & space left
     printf("Rendering message %s\n", curr->data->text);
-    int rows = get_message_height(curr->data, w);
+    int rows = get_message_height(curr->data, dstrect->w);
     int h_offset = rows * curr->data->skip_line_height;
     SurfaceNodePtr curr_word = curr->data->rendered_words;
     int line_width = 0;
     // assemble the next message
     while (curr_word != NULL) {
-      printf("rendering another word\n");
       SDL_Rect write_coords;
-      if (line_width + curr_word->surface->w > w) {
+      if (line_width + curr_word->surface->w > dstrect->w) {
         // line wrap - set the line width to 0 and move the height down
         line_width = 0;
         h_offset -= curr->data->skip_line_height;
       }
-      write_coords.x = x + line_width;
-      write_coords.y = y + (h - h_offset);
+      write_coords.x = dstrect->x + line_width;
+      write_coords.y = dstrect->y + (h - h_offset);
+      printf("writing at %i, %i\n", write_coords.x, write_coords.y);
+      printf("h is %i, h_offset is %i\n", h, h_offset);
       SDL_BlitSurface(curr_word->surface, NULL, screen, &write_coords);
       line_width += curr_word->surface->w;
       curr_word = curr_word->next;
     }
-    printf("message rendered\n");
+    printf("message rendered in %i rows\n", rows);
     h -= rows * curr->data->skip_line_height;
     curr = curr->next;
   }
