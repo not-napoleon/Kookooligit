@@ -7,3 +7,4 @@ messages.o: messages.c messages.h
 
 clean:
 	rm $(OBJECTS)
+	rm game.out
