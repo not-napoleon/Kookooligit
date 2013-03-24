@@ -15,7 +15,7 @@ void cleanup(GameState *state) {
 }
 
 typedef enum {
-  Error, MoveLeft, MoveRight, MoveUp, MoveDown
+  Error, MoveLeft, MoveRight, MoveUp, MoveDown, Quit
 } CommandCode;
 
 CommandCode parse_keypress(SDL_Event *event) {
@@ -26,7 +26,7 @@ CommandCode parse_keypress(SDL_Event *event) {
       ret_val = MoveLeft;
       break;
     case SDLK_j:
-    case SDKL_KP2:
+    case SDLK_KP2:
       ret_val = MoveDown;
       break;
     case SDLK_k:
@@ -36,6 +36,9 @@ CommandCode parse_keypress(SDL_Event *event) {
     case SDLK_l:
     case SDLK_KP6:
       ret_val = MoveRight;
+      break;
+    case SDLK_q:
+      ret_val = Quit;
       break;
 
     default:
@@ -51,15 +54,34 @@ void handle_events(GameState *state, SDL_Event *event) {
   switch (event->type) {
     case SDL_KEYDOWN:
       cmd = parse_keypress(event);
-      printf("The %i key was pressed!\n", cmd);
+
       sprintf(msg, "The %s key was pressed!",
         SDL_GetKeyName(event->key.keysym.sym));
       add_message(state->messages, msg, state->font);
-      if (event->key.keysym.sym == 'q') {
-        printf("Got quit signal from pressing q\n");
-        state->is_running = 0;
+      state->need_to_redraw_messages = 1;
+
+      switch (cmd) {
+        case MoveLeft:
+          state->at_location.x -= 1;
+          state->need_to_redraw_map = 1;
+          break;
+        case MoveRight:
+          state->at_location.x += 1;
+          state->need_to_redraw_map = 1;
+          break;
+        case MoveUp:
+          state->at_location.y -= 1;
+          state->need_to_redraw_map = 1;
+          break;
+        case MoveDown:
+          state->at_location.y += 1;
+          state->need_to_redraw_map = 1;
+          break;
+        case Quit:
+          printf("Got quit signal from pressing q\n");
+          state->is_running = 0;
+          break;
       }
-      state->need_to_redraw = 1;
       break;
     case SDL_QUIT:
       printf("Got quit signal by magic\n");
@@ -87,9 +109,13 @@ int main(int argc, char *argv[]) {
     while (SDL_PollEvent(&event)) {
       handle_events(state, &event);
     }
-    if (state->need_to_redraw == 1) {
+    if (state->need_to_redraw_messages == 1) {
       render_messages(&state->config->message_window, state->screen, state->messages);
-      state->need_to_redraw = 0;
+      state->need_to_redraw_messages = 0;
+    }
+    if (state->need_to_redraw_map == 1) {
+      draw_map(state->at_location, state->font, state->screen, &state->config->map_window);
+      state->need_to_redraw_map = 0;
     }
 
   }

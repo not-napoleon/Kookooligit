@@ -5,6 +5,8 @@
 #include "SDL_ttf.h"
 
 #include <messages.h>
+#include <map.h>
+
 typedef struct GameConfiguration {
   char *font_path;
   int point_size;
@@ -26,7 +28,9 @@ typedef struct GameState {
   SDL_Surface *screen;
   TTF_Font *font;
   MessageList *messages;
-  int need_to_redraw;
+  int need_to_redraw_messages;
+  int need_to_redraw_map;
+  Point at_location;
 } GameState;
 
 int get_configuration(GameConfiguration *config);

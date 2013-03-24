@@ -65,7 +65,8 @@ void initilize(GameState *state) {
   }
 
   state->is_running = 1;
-  state->need_to_redraw = 0;
+  state->need_to_redraw_messages = state->need_to_redraw_map = 0;
+  state->at_location.x = state->at_location.y = 20;
 }
 
 GameState *allocate_game_state() {
