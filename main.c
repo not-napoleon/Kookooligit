@@ -14,13 +14,44 @@ void cleanup(GameState *state) {
   free_game_state(state);
 }
 
+typedef enum {
+  Error, MoveLeft, MoveRight, MoveUp, MoveDown
+} CommandCode;
+
+CommandCode parse_keypress(SDL_Event *event) {
+  CommandCode ret_val;
+  switch(event->key.keysym.sym) {
+    case SDLK_h:
+    case SDLK_KP4:
+      ret_val = MoveLeft;
+      break;
+    case SDLK_j:
+    case SDKL_KP2:
+      ret_val = MoveDown;
+      break;
+    case SDLK_k:
+    case SDLK_KP8:
+      ret_val = MoveUp;
+      break;
+    case SDLK_l:
+    case SDLK_KP6:
+      ret_val = MoveRight;
+      break;
+
+    default:
+      ret_val = Error;
+    }
+  return ret_val;
+}
+
 void handle_events(GameState *state, SDL_Event *event) {
   printf("Handling events\n");
   char msg[255];
+  CommandCode cmd;
   switch (event->type) {
     case SDL_KEYDOWN:
-      printf("The %s key was pressed!\n",
-        SDL_GetKeyName(event->key.keysym.sym));
+      cmd = parse_keypress(event);
+      printf("The %i key was pressed!\n", cmd);
       sprintf(msg, "The %s key was pressed!",
         SDL_GetKeyName(event->key.keysym.sym));
       add_message(state->messages, msg, state->font);
