@@ -1,6 +1,10 @@
 #ifndef MESSAGES_H_INCLUDED
 #define MESSAGES_H_INCLUDED
 
+#include "SDL.h"
+#include "SDL_ttf.h"
+
+
 typedef struct SurfaceNode *SurfaceNodePtr;
 
 typedef struct SurfaceNode {
