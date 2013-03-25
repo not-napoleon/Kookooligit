@@ -66,7 +66,12 @@ void initilize(GameState *state) {
 
   state->is_running = 1;
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
-  state->at_location.x = state->at_location.y = 20;
+  init_map_graphics(state->font);
+  generate_map(state->map);
+  state->at_location.x = state->at_location.y = 10;
+  state->map->center = state->at_location;
+  state->map->matrix[10][10].contains_player = 1;
+
 }
 
 GameState *allocate_game_state() {
@@ -76,6 +81,8 @@ GameState *allocate_game_state() {
   state = malloc(sizeof(GameState));
   state->config = malloc(sizeof(GameConfiguration));
   state->messages = init_message_list();
+  state->map = malloc(sizeof(MapSection));
+  printf("Allocated new game state\n");
   return state;
 }
 
@@ -85,5 +92,6 @@ void free_game_state(GameState *state) {
   free(state->config);
   free_message_queue(state->messages);
   TTF_CloseFont(state->font);
+  free(state->map);
   free(state);
 }

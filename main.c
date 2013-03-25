@@ -55,33 +55,51 @@ void handle_events(GameState *state, SDL_Event *event) {
     case SDL_KEYDOWN:
       cmd = parse_keypress(event);
 
+      /*
       sprintf(msg, "The %s key was pressed!",
         SDL_GetKeyName(event->key.keysym.sym));
       add_message(state->messages, msg, state->font);
       state->need_to_redraw_messages = 1;
+      */
 
+      state->map->matrix[state->at_location.x][state->at_location.y].contains_player = 0;
+      Point target_point = state->at_location;
       switch (cmd) {
         case MoveLeft:
-          state->at_location.x -= 1;
-          state->need_to_redraw_map = 1;
+            target_point.x -= 1;
           break;
         case MoveRight:
-          state->at_location.x += 1;
-          state->need_to_redraw_map = 1;
+          target_point.x += 1;
           break;
         case MoveUp:
-          state->at_location.y -= 1;
-          state->need_to_redraw_map = 1;
+          target_point.y -= 1;
           break;
         case MoveDown:
-          state->at_location.y += 1;
-          state->need_to_redraw_map = 1;
+          target_point.y += 1;
           break;
         case Quit:
           printf("Got quit signal from pressing q\n");
           state->is_running = 0;
           break;
       }
+      if (is_passable_point(state->map, target_point) == 1) {
+        state->at_location = target_point;
+        state->need_to_redraw_map = 1;
+      } else {
+        char tmp[50] = "You can't walk through walls";
+        add_message(state->messages, tmp, state->font);
+        state->need_to_redraw_messages = 1;
+      }
+      // Decide if we need to recenter the map section
+      if (abs(state->at_location.x - state->map->center.x) > 10) {
+        state->map->center.x = state->at_location.x;
+      }
+      if (abs(state->at_location.y - state->map->center.y) > 10) {
+        state->map->center.y = state->at_location.y;
+      }
+      printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
+          state->at_location.y, state->map->center.x, state->map->center.y);
+      state->map->matrix[state->at_location.x][state->at_location.y].contains_player = 1;
       break;
     case SDL_QUIT:
       printf("Got quit signal by magic\n");
@@ -100,10 +118,12 @@ int main(int argc, char *argv[]) {
   get_configuration(state->config);
   initilize(state);
 
+  printf("tile size is %li\n", sizeof(Tile));
   SDL_Event event;
   char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1, state->font);
   render_messages(&state->config->message_window, state->screen, state->messages);
+  state->need_to_redraw_map = 1;
   printf("entering main loop\n");
   while (state->is_running) {
     while (SDL_PollEvent(&event)) {
@@ -114,7 +134,7 @@ int main(int argc, char *argv[]) {
       state->need_to_redraw_messages = 0;
     }
     if (state->need_to_redraw_map == 1) {
-      draw_map(state->at_location, state->font, state->screen, &state->config->map_window);
+      draw_map(state->map, state->font, state->screen, &state->config->map_window);
       state->need_to_redraw_map = 0;
     }
 

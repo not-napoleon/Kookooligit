@@ -23,13 +23,20 @@ typedef struct GameConfiguration {
 } GameConfiguration;
 
 typedef struct GameState {
-  int is_running;
+  //flags
+  unsigned int is_running :1;
+  unsigned int need_to_redraw_messages :1;
+  unsigned int need_to_redraw_map :1;
+
+  // Config
   GameConfiguration *config;
+
+  // Graphics
   SDL_Surface *screen;
   TTF_Font *font;
+
   MessageList *messages;
-  int need_to_redraw_messages;
-  int need_to_redraw_map;
+  MapSection *map;
   Point at_location;
 } GameState;
 
