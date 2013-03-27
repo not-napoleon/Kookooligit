@@ -72,6 +72,8 @@ void initilize(GameState *state) {
   printf("map window size in characters is %i by %i\n", state->map_window_x_chars,
       state->map_window_y_chars);
 
+  SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
   state->is_running = 1;
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
   init_map_graphics(state->font);
