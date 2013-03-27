@@ -5,6 +5,8 @@
 
 #include <messages.h>
 #include <init.h>
+#include <map.h>
+#include <draw_map.h>
 
 /*
  * Game logic here
@@ -53,6 +55,7 @@ void handle_events(GameState *state, SDL_Event *event) {
   CommandCode cmd;
   switch (event->type) {
     case SDL_KEYDOWN:
+      printf("got keypress event\n");
       cmd = parse_keypress(event);
 
       /*
@@ -104,6 +107,9 @@ void handle_events(GameState *state, SDL_Event *event) {
     case SDL_QUIT:
       printf("Got quit signal by magic\n");
       state->is_running = 0;
+      break;
+    default:
+      printf("got some other event\n");
   }
 }
 
@@ -134,7 +140,12 @@ int main(int argc, char *argv[]) {
       state->need_to_redraw_messages = 0;
     }
     if (state->need_to_redraw_map == 1) {
-      draw_map(state->map, state->font, state->screen, &state->config->map_window);
+      Point top_left;
+      Point bottom_right;
+      get_visible_region(state->map, state->map_window_x_chars,
+          state->map_window_y_chars, &top_left, &bottom_right);
+      render_map_window(state->map, &top_left, &bottom_right, state->screen,
+          &state->config->map_window, state->at_width, state->line_height);
       state->need_to_redraw_map = 0;
     }
 

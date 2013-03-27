@@ -63,6 +63,14 @@ void initilize(GameState *state) {
   if (TTF_GetFontKerning(state->font) != 0) {
     TTF_SetFontKerning(state->font, 0);
   }
+  // set font size data
+  int at_width, line_height;
+  state->line_height = TTF_FontLineSkip(state->font);
+  TTF_SizeText(state->font, "@", &state->at_width, NULL);
+  state->map_window_x_chars = state->config->map_window.w / state->at_width;
+  state->map_window_y_chars = state->config->map_window.h / state->line_height;
+  printf("map window size in characters is %i by %i\n", state->map_window_x_chars,
+      state->map_window_y_chars);
 
   state->is_running = 1;
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;

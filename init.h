@@ -33,7 +33,14 @@ typedef struct GameState {
 
   // Graphics
   SDL_Surface *screen;
+
+  // TODO: different message & map fonts
+  // Map Dat
   TTF_Font *font;
+  int line_height;
+  int at_width;
+  int map_window_x_chars;
+  int map_window_y_chars;
 
   MessageList *messages;
   MapSection *map;
