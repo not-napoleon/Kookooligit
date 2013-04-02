@@ -103,6 +103,7 @@ void handle_events(GameState *state, SDL_Event *event) {
       printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
           state->at_location.y, state->map->center.x, state->map->center.y);
       state->map->matrix[state->at_location.x][state->at_location.y].contains_player = 1;
+      calculate_visible_tiles(state->map, state->at_location);
       break;
     case SDL_QUIT:
       printf("Got quit signal by magic\n");

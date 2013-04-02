@@ -82,6 +82,7 @@ void initilize(GameState *state) {
   state->map->center = state->at_location;
   state->map->matrix[10][10].contains_player = 1;
 
+  printf("initilized\n");
 }
 
 GameState *allocate_game_state() {
