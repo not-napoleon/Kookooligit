@@ -17,7 +17,10 @@ void cleanup(GameState *state) {
 }
 
 typedef enum {
-  Error, MoveLeft, MoveRight, MoveUp, MoveDown, Quit
+  Error,
+  MoveLeft, MoveRight, MoveUp, MoveDown,
+  MoveUpLeft, MoveDownLeft, MoveUpRight, MoveDownRight,
+  Quit
 } CommandCode;
 
 CommandCode parse_keypress(SDL_Event *event) {
@@ -38,6 +41,22 @@ CommandCode parse_keypress(SDL_Event *event) {
     case SDLK_l:
     case SDLK_KP6:
       ret_val = MoveRight;
+      break;
+    case SDLK_y:
+    case SDLK_KP7:
+      ret_val = MoveUpLeft;
+      break;
+    case SDLK_n:
+    case SDLK_KP1:
+      ret_val = MoveDownLeft;
+      break;
+    case SDLK_u:
+    case SDLK_KP9:
+      ret_val = MoveUpRight;
+      break;
+    case SDLK_m:
+    case SDLK_KP3:
+      ret_val = MoveDownRight;
       break;
     case SDLK_q:
       ret_val = Quit;
@@ -69,7 +88,7 @@ void handle_events(GameState *state, SDL_Event *event) {
       Point target_point = state->at_location;
       switch (cmd) {
         case MoveLeft:
-            target_point.x -= 1;
+          target_point.x -= 1;
           break;
         case MoveRight:
           target_point.x += 1;
@@ -78,6 +97,22 @@ void handle_events(GameState *state, SDL_Event *event) {
           target_point.y -= 1;
           break;
         case MoveDown:
+          target_point.y += 1;
+          break;
+        case MoveUpLeft:
+          target_point.x -= 1;
+          target_point.y -= 1;
+          break;
+        case MoveDownLeft:
+          target_point.x -= 1;
+          target_point.y += 1;
+          break;
+        case MoveUpRight:
+          target_point.x += 1;
+          target_point.y -= 1;
+          break;
+        case MoveDownRight:
+          target_point.x += 1;
           target_point.y += 1;
           break;
         case Quit:
