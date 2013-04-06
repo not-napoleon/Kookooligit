@@ -26,7 +26,6 @@ typedef struct Tile {
   unsigned int is_passable :1;
   unsigned int is_explored :1;
   unsigned int is_lit :1;
-  unsigned int contains_player :1;
 
   TileType type;
 } Tile;

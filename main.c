@@ -84,7 +84,6 @@ void handle_events(GameState *state, SDL_Event *event) {
       state->need_to_redraw_messages = 1;
       */
 
-      state->map->matrix[state->at_location.x][state->at_location.y].contains_player = 0;
       Point target_point = state->at_location;
       switch (cmd) {
         case MoveLeft:
@@ -137,7 +136,6 @@ void handle_events(GameState *state, SDL_Event *event) {
       }
       printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
           state->at_location.y, state->map->center.x, state->map->center.y);
-      state->map->matrix[state->at_location.x][state->at_location.y].contains_player = 1;
       calculate_visible_tiles(state->map, state->at_location);
       break;
     case SDL_QUIT:
@@ -165,6 +163,7 @@ int main(int argc, char *argv[]) {
   char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1, state->font);
   render_messages(&state->config->message_window, state->screen, state->messages);
+  calculate_visible_tiles(state->map, state->at_location);
   state->need_to_redraw_map = 1;
   printf("entering main loop\n");
   while (state->is_running) {
@@ -181,7 +180,8 @@ int main(int argc, char *argv[]) {
       get_visible_region(state->map, state->map_window_x_chars,
           state->map_window_y_chars, &top_left, &bottom_right);
       render_map_window(state->map, &top_left, &bottom_right, state->screen,
-          &state->config->map_window, state->at_width, state->line_height);
+          &state->config->map_window, state->at_width, state->line_height,
+          state->at_location);
       state->need_to_redraw_map = 0;
     }
 

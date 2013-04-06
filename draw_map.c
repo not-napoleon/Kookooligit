@@ -34,14 +34,14 @@ int init_map_graphics(TTF_Font *font) {
 }
 
 int render_map_window(MapSection *map, Point *top_left, Point *bottom_right,
-    SDL_Surface *screen, SDL_Rect *map_window, int at_width, int line_height) {
+    SDL_Surface *screen, SDL_Rect *map_window, int at_width, int line_height,
+    Point at_location) {
 
   printf("attempting to render map\n");
   if (was_initilized == 0) {
     printf("Map was not initilized\n");
     return -1;
   }
-  SDL_Color color = {255,255,255};
   // blank the screen
   // Fill rect can change the dest rect for clipping, so pass in a copy
   SDL_Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
@@ -56,11 +56,13 @@ int render_map_window(MapSection *map, Point *top_left, Point *bottom_right,
     for (y = top_left->y; y <= bottom_right->y; y++) {
       write_coords.y = map_window->y + ((y - top_left->y) * line_height);
       SDL_Surface *map_char;
-      if ( (x < 0) || (y < 0) || (x >= MAP_SECTION_SIZE)
-          || (y >= MAP_SECTION_SIZE) ) {
+      if ( (x < 0) || (y < 0)
+          || (x >= MAP_SECTION_SIZE)
+          || (y >= MAP_SECTION_SIZE)
+          || map->matrix[x][y].is_explored == 0) {
         map_char = MapGraphics[OffGrid].lit_graphic;
       } else {
-        if (map->matrix[x][y].contains_player == 1) {
+        if (x == at_location.x && y == at_location.y) {
           map_char = rendered_at;
         } else {
           if (map->matrix[x][y].is_lit) {

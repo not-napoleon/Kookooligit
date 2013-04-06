@@ -45,7 +45,6 @@ int generate_map(MapSection *map) {
         map->matrix[x][y].is_passable = 1;
       }
       map->matrix[x][y].is_explored = 0;
-      map->matrix[x][y].contains_player = 0;
     }
   }
   dark_map(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE);
@@ -60,6 +59,7 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   MapSection *map;
   map = (MapSection*)vmap;
   map->matrix[x][y].is_lit = 1;
+  map->matrix[x][y].is_explored = 1;
 }
 
 
@@ -82,11 +82,14 @@ int get_visible_region(MapSection *map, int window_x_chars, int window_y_chars,
 int calculate_visible_tiles(MapSection *map, Point at_location) {
   dark_map(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE);
 
+  // make sure the tile the player is on is lit.  Player could land on an unlit
+  // tile by, e.g., teleport.  Or game start.
+  light_tile(map, at_location.x, at_location.y, 0, 0, NULL);
+
   printf("calculating field of vision\n");
   fov_settings_type *fov_settings;
   fov_settings = malloc( sizeof(fov_settings_type) );
   fov_settings_init(fov_settings);
-  fov_settings_set_opaque_apply(fov_settings, FOV_OPAQUE_NOAPPLY);
   fov_settings_set_opacity_test_function(fov_settings, *wrapper_is_opaque);
   fov_settings_set_apply_lighting_function(fov_settings, *light_tile);
 

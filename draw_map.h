@@ -8,6 +8,7 @@
 
 int init_map_graphics(TTF_Font *font);
 int render_map_window(MapSection *map, Point *top_left, Point *bottom_right,
-    SDL_Surface *screen, SDL_Rect *map_window, int at_width, int line_height);
+    SDL_Surface *screen, SDL_Rect *map_window, int at_width, int line_height,
+    Point at_location);
 
 #endif
