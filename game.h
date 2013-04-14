@@ -5,6 +5,12 @@
 #include "SDL_ttf.h"
 #include <messages.h>
 #include <map.h>
+#include <command.h>
+
+typedef enum {
+  Move,
+  Look
+} States;
 
 typedef struct GameConfiguration {
   char *font_path;
@@ -34,7 +40,7 @@ typedef struct GameState {
   SDL_Surface *screen;
 
   // TODO: different message & map fonts
-  // Map Dat
+  // Map Data
   TTF_Font *font;
   int line_height;
   int at_width;
@@ -44,6 +50,12 @@ typedef struct GameState {
   MessageList *messages;
   MapSection *map;
   Point at_location;
+
+  Point cursor_location;
+
+  States state;
 } GameState;
 
+
+void process_command(GameState *state, CommandCode cmd);
 #endif

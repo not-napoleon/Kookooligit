@@ -38,89 +38,36 @@ CommandCode parse_keypress(SDL_Event *event) {
     case SDLK_q:
       ret_val = Quit;
       break;
-
+    case SDLK_SEMICOLON:
+      ret_val = EnterLookMode;
+      break;
+    case SDLK_ESCAPE:
+      ret_val = ExitLookMode;
+      break;
     default:
-      ret_val = Error;
+      ret_val = NoOp;
     }
   return ret_val;
 }
 
-void handle_events(GameState *state, SDL_Event *event) {
-  printf("Handling events\n");
-  char msg[255];
+
+CommandCode get_command(SDL_Event *event) {
+  /* Just call parse keypress if it's a keypress, and ignore it otherwise
+   */
   CommandCode cmd;
   switch (event->type) {
     case SDL_KEYDOWN:
       printf("got keypress event\n");
       cmd = parse_keypress(event);
-
-      /*
-      sprintf(msg, "The %s key was pressed!",
-        SDL_GetKeyName(event->key.keysym.sym));
-      add_message(state->messages, msg, state->font);
-      state->need_to_redraw_messages = 1;
-      */
-
-      Point target_point = state->at_location;
-      switch (cmd) {
-        case MoveLeft:
-          target_point.x -= 1;
-          break;
-        case MoveRight:
-          target_point.x += 1;
-          break;
-        case MoveUp:
-          target_point.y -= 1;
-          break;
-        case MoveDown:
-          target_point.y += 1;
-          break;
-        case MoveUpLeft:
-          target_point.x -= 1;
-          target_point.y -= 1;
-          break;
-        case MoveDownLeft:
-          target_point.x -= 1;
-          target_point.y += 1;
-          break;
-        case MoveUpRight:
-          target_point.x += 1;
-          target_point.y -= 1;
-          break;
-        case MoveDownRight:
-          target_point.x += 1;
-          target_point.y += 1;
-          break;
-        case Quit:
-          printf("Got quit signal from pressing q\n");
-          state->is_running = 0;
-          break;
-      }
-      if (is_passable_point(state->map, target_point) == 1) {
-        state->at_location = target_point;
-        state->need_to_redraw_map = 1;
-      } else {
-        char tmp[50] = "You can't walk through walls";
-        add_message(state->messages, tmp, state->font);
-        state->need_to_redraw_messages = 1;
-      }
-      // Decide if we need to recenter the map section
-      if (abs(state->at_location.x - state->map->center.x) > 10) {
-        state->map->center.x = state->at_location.x;
-      }
-      if (abs(state->at_location.y - state->map->center.y) > 10) {
-        state->map->center.y = state->at_location.y;
-      }
-      printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
-          state->at_location.y, state->map->center.x, state->map->center.y);
-      calculate_visible_tiles(state->map, state->at_location);
       break;
     case SDL_QUIT:
       printf("Got quit signal by magic\n");
-      state->is_running = 0;
+      cmd = Quit;
       break;
     default:
-      printf("got some other event\n");
+      printf("Unknown event type %d\n", event->type);
+      cmd = NoOp;
+      break;
   }
+  return cmd;
 }
-

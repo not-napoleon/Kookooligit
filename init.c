@@ -74,12 +74,14 @@ void initilize(GameState *state) {
 
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-  state->is_running = 1;
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
   init_map_graphics(state->font);
   generate_map(state->map);
   state->at_location.x = state->at_location.y = 10;
   state->map->center = state->at_location;
+
+  state->is_running = 1;
+  state->state = Move;
 
   printf("initilized\n");
 }
