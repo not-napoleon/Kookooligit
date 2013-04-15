@@ -44,6 +44,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->cursor_location.x = state->at_location.x;
         state->cursor_location.y = state->at_location.y;
       }
+      set_draw_cursor(state->map_graphics_state);
       break;
     case ExitLookMode:
       printf("Exiting look mode\n");
@@ -52,6 +53,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->cursor_location.x = state->at_location.x;
         state->cursor_location.y = state->at_location.y;
       }
+      clear_draw_cursor(state->map_graphics_state);
       break;
     case MoveLeft:
       target_point.x -= 1;

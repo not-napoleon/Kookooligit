@@ -19,6 +19,8 @@ typedef struct MapGraphicsState {
 
 
 int init_map_graphics(TTF_Font *font);
+void set_draw_cursor(MapGraphicsState *mgs);
+void clear_draw_cursor(MapGraphicsState *mgs);
 int render_map_window(MapSection *map, SDL_Surface *screen,
     MapGraphicsState *mgs, SDL_Rect *map_window,
     Point at_location, Point cursor_location);

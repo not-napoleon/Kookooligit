@@ -33,6 +33,14 @@ int init_map_graphics(TTF_Font *font) {
   printf("Map graphics initilized\n");
 }
 
+void set_draw_cursor(MapGraphicsState *mgs) {
+  mgs->draw_cursor = 1;
+}
+
+void clear_draw_cursor(MapGraphicsState *mgs) {
+  mgs->draw_cursor = 0;
+}
+
 int render_map_window(MapSection *map, SDL_Surface *screen,
     MapGraphicsState *mgs, SDL_Rect *map_window,
     Point at_location, Point cursor_location){
@@ -63,8 +71,7 @@ int render_map_window(MapSection *map, SDL_Surface *screen,
       SDL_Surface *map_char;
       if (x == cursor_location.x
           && y == cursor_location.y
-          && !(cursor_location.x == at_location.x
-               && cursor_location.y == at_location.y) ) {
+          && mgs->draw_cursor == 1) {
         // Top priority - the cursor is always visible, if rendered at all
         map_char = rendered_cursor;
       } else if ( (x < 0) || (y < 0)
