@@ -29,13 +29,8 @@ void process_command(GameState *state, CommandCode cmd) {
   if (cmd == NoOp) {
     return;
   }
-  Point target_point;
-  if (state->state == Move) {
-    target_point = state->at_location;
-  } else if (state->state == Look) {
-    target_point = state->cursor_location;
-  }
-
+  int delta_x = 0;
+  int delta_y = 0;
   switch (cmd) {
     case EnterLookMode:
       printf("Enter look mode\n");
@@ -50,51 +45,60 @@ void process_command(GameState *state, CommandCode cmd) {
       printf("Exiting look mode\n");
       if (state->state == Look) {
         state->state = Move;
-        state->cursor_location.x = state->at_location.x;
-        state->cursor_location.y = state->at_location.y;
       }
       clear_draw_cursor(state->map_graphics_state);
       break;
     case MoveLeft:
-      target_point.x -= 1;
+      delta_x -= 1;
       printf("Move left\n");
       break;
     case MoveRight:
-      target_point.x += 1;
+      delta_x += 1;
       printf("Move right\n");
       break;
     case MoveUp:
-      target_point.y -= 1;
+      delta_y -= 1;
       printf("Move up\n");
       break;
     case MoveDown:
-      target_point.y += 1;
+      delta_y += 1;
       printf("Move down\n");
       break;
     case MoveUpLeft:
-      target_point.x -= 1;
-      target_point.y -= 1;
+      delta_x -= 1;
+      delta_y -= 1;
       printf("Move up left\n");
       break;
     case MoveDownLeft:
-      target_point.x -= 1;
-      target_point.y += 1;
+      delta_x -= 1;
+      delta_y += 1;
       printf("Move down left\n");
       break;
     case MoveUpRight:
-      target_point.x += 1;
-      target_point.y -= 1;
+      delta_x += 1;
+      delta_y -= 1;
       printf("Move up right\n");
       break;
     case MoveDownRight:
-      target_point.x += 1;
-      target_point.y += 1;
+      delta_x += 1;
+      delta_y += 1;
       printf("Move down right\n");
       break;
     case Quit:
       state->is_running = 0;
       break;
   }
+
+  Point target_point;
+  if (state->state == Move) {
+    target_point = state->at_location;
+  } else if (state->state == Look) {
+    target_point = state->cursor_location;
+  }
+
+  target_point.x = target_point.x + delta_x;
+  target_point.y = target_point.y + delta_y;
+
   if (state->state == Move) {
     if (is_passable_point(state->map, target_point) == 1) {
       state->at_location = target_point;
