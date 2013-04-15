@@ -40,6 +40,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->cursor_location.y = state->at_location.y;
       }
       set_draw_cursor(state->map_graphics_state);
+      state->need_to_redraw_map = 1;
       break;
     case ExitLookMode:
       printf("Exiting look mode\n");
@@ -47,6 +48,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->state = Move;
       }
       clear_draw_cursor(state->map_graphics_state);
+      state->need_to_redraw_map = 1;
       break;
     case MoveLeft:
       delta_x -= 1;
@@ -89,51 +91,56 @@ void process_command(GameState *state, CommandCode cmd) {
       break;
   }
 
-  Point target_point;
-  if (state->state == Move) {
-    target_point = state->at_location;
-  } else if (state->state == Look) {
-    target_point = state->cursor_location;
-  }
+  // Resolve charcter or cursor movement
+  // TODO: This whole block probably belongs in map.c
+  if (delta_x != 0 || delta_y != 0) {
 
-  target_point.x = target_point.x + delta_x;
-  target_point.y = target_point.y + delta_y;
+    Point target_point;
+    if (state->state == Move) {
+      target_point = state->at_location;
+    } else if (state->state == Look) {
+      target_point = state->cursor_location;
+    }
 
-  if (state->state == Move) {
-    if (is_passable_point(state->map, target_point) == 1) {
-      state->at_location = target_point;
-      state->need_to_redraw_map = 1;
-    } else {
-      char tmp[50] = "You can't walk through walls";
-      add_message(state->messages, tmp, state->font);
-      state->need_to_redraw_messages = 1;
-    }
-    // Decide if we need to recenter the map section
-    if (abs(state->at_location.x - state->map->center.x) > 10) {
-      state->map->center.x = state->at_location.x;
-    }
-    if (abs(state->at_location.y - state->map->center.y) > 10) {
-      state->map->center.y = state->at_location.y;
-    }
-    printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
-        state->at_location.y, state->map->center.x, state->map->center.y);
-    calculate_visible_tiles(state->map, state->at_location);
-  } else if (state->state == Look) {
-    Point top_left, bottom_right;
-    //TODO: Calling get_visible_region here is probably the Wrong Thing to do
-    get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,
-        state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);
-    printf("attempting to move cursor to %d, %d\n", target_point.x,
-        target_point.y);
-    printf("top_left: (%d, %d)\n", top_left.x, top_left.y);
-    printf("bottom_right: (%d, %d)\n", bottom_right.x, bottom_right.y);
-    if ( (target_point.x >= top_left.x)
-        && (target_point.x <= bottom_right.x)
-        && (target_point.y >= top_left.y)
-        && (target_point.y <= bottom_right.y) ) {
-      printf("drawing cursor? maybe?\n");
-      state->cursor_location = target_point;
-      state->need_to_redraw_map = 1;
+    target_point.x = target_point.x + delta_x;
+    target_point.y = target_point.y + delta_y;
+
+    if (state->state == Move) {
+      if (is_passable_point(state->map, target_point) == 1) {
+        state->at_location = target_point;
+        state->need_to_redraw_map = 1;
+      } else {
+        char tmp[50] = "You can't walk through walls";
+        add_message(state->messages, tmp, state->font);
+        state->need_to_redraw_messages = 1;
+      }
+      // Decide if we need to recenter the map section
+      if (abs(state->at_location.x - state->map->center.x) > 10) {
+        state->map->center.x = state->at_location.x;
+      }
+      if (abs(state->at_location.y - state->map->center.y) > 10) {
+        state->map->center.y = state->at_location.y;
+      }
+      printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
+          state->at_location.y, state->map->center.x, state->map->center.y);
+      calculate_visible_tiles(state->map, state->at_location);
+    } else if (state->state == Look) {
+      Point top_left, bottom_right;
+      //TODO: Calling get_visible_region here is probably the Wrong Thing to do
+      get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,
+          state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);
+      printf("attempting to move cursor to %d, %d\n", target_point.x,
+          target_point.y);
+      printf("top_left: (%d, %d)\n", top_left.x, top_left.y);
+      printf("bottom_right: (%d, %d)\n", bottom_right.x, bottom_right.y);
+      if ( (target_point.x >= top_left.x)
+          && (target_point.x <= bottom_right.x)
+          && (target_point.y >= top_left.y)
+          && (target_point.y <= bottom_right.y) ) {
+        printf("drawing cursor? maybe?\n");
+        state->cursor_location = target_point;
+        state->need_to_redraw_map = 1;
+      }
     }
   }
 }
