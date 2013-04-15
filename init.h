@@ -9,7 +9,5 @@
 
 int get_configuration(GameConfiguration *config);
 void initilize(GameState *state);
-void free_game_state(GameState *state);
-GameState *allocate_game_state();
 
 #endif

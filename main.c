@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "SDL.h"
-#include "SDL_ttf.h"
 
 #include <messages.h>
 #include <init.h>
@@ -51,13 +50,9 @@ int main(int argc, char *argv[]) {
       state->need_to_redraw_messages = 0;
     }
     if (state->need_to_redraw_map == 1) {
-      Point top_left;
-      Point bottom_right;
-      get_visible_region(state->map, state->map_window_x_chars,
-          state->map_window_y_chars, &top_left, &bottom_right);
-      render_map_window(state->map, &top_left, &bottom_right, state->screen,
-          &state->config->map_window, state->at_width, state->line_height,
-          state->at_location, state->cursor_location);
+      render_map_window(state->map, state->screen, state->map_graphics_state,
+          &state->config->map_window, state->at_location,
+          state->cursor_location);
       state->need_to_redraw_map = 0;
       printf("\n\n", state->state);
     }

@@ -6,6 +6,7 @@
 #include <messages.h>
 #include <map.h>
 #include <command.h>
+#include <draw_map.h>
 
 typedef enum {
   Move,
@@ -41,12 +42,9 @@ typedef struct GameState {
 
   // TODO: different message & map fonts
   // Map Data
-  TTF_Font *font;
-  int line_height;
-  int at_width;
-  int map_window_x_chars;
-  int map_window_y_chars;
+  MapGraphicsState *map_graphics_state;
 
+  TTF_Font *font;
   MessageList *messages;
   MapSection *map;
   Point at_location;
@@ -58,4 +56,7 @@ typedef struct GameState {
 
 
 void process_command(GameState *state, CommandCode cmd);
+void free_game_state(GameState *state);
+GameState *allocate_game_state();
+
 #endif

@@ -50,6 +50,8 @@ void initilize(GameState *state) {
 
   // Load font
   state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
+  state->map_graphics_state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
+
   if (state->font == NULL) {
     fprintf(stderr, "Unable to load font %s: %s\n", state->config->font_path,
         SDL_GetError());
@@ -65,17 +67,17 @@ void initilize(GameState *state) {
   }
   // set font size data
   int at_width, line_height;
-  state->line_height = TTF_FontLineSkip(state->font);
-  TTF_SizeText(state->font, "@", &state->at_width, NULL);
-  state->map_window_x_chars = state->config->map_window.w / state->at_width;
-  state->map_window_y_chars = state->config->map_window.h / state->line_height;
-  printf("map window size in characters is %i by %i\n", state->map_window_x_chars,
-      state->map_window_y_chars);
+  state->map_graphics_state->line_height = TTF_FontLineSkip(state->font);
+  TTF_SizeText(state->font, "@", &state->map_graphics_state->at_width, NULL);
+  state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
+  state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
+  printf("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
+      state->map_graphics_state->map_window_y_chars);
 
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
-  init_map_graphics(state->font);
+  init_map_graphics(state->map_graphics_state->font);
   generate_map(state->map);
   state->at_location.x = state->at_location.y = 10;
   state->map->center = state->at_location;
@@ -86,24 +88,3 @@ void initilize(GameState *state) {
   printf("initilized\n");
 }
 
-GameState *allocate_game_state() {
-  /*Allocate a new game state struct
-   */
-  GameState *state;
-  state = malloc(sizeof(GameState));
-  state->config = malloc(sizeof(GameConfiguration));
-  state->messages = init_message_list();
-  state->map = malloc(sizeof(MapSection));
-  printf("Allocated new game state\n");
-  return state;
-}
-
-void free_game_state(GameState *state) {
-  /* Recursively free GameState struct
-   */
-  free(state->config);
-  free_message_queue(state->messages);
-  TTF_CloseFont(state->font);
-  free(state->map);
-  free(state);
-}

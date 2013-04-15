@@ -33,9 +33,14 @@ int init_map_graphics(TTF_Font *font) {
   printf("Map graphics initilized\n");
 }
 
-int render_map_window(MapSection *map, Point *top_left, Point *bottom_right,
-    SDL_Surface *screen, SDL_Rect *map_window, int at_width, int line_height,
-    Point at_location, Point cursor_location) {
+int render_map_window(MapSection *map, SDL_Surface *screen,
+    MapGraphicsState *mgs, SDL_Rect *map_window,
+    Point at_location, Point cursor_location){
+
+  Point top_left;
+  Point bottom_right;
+  get_visible_region(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
+      &top_left, &bottom_right);
 
   printf("attempting to render map\n");
   if (was_initilized == 0) {
@@ -49,12 +54,12 @@ int render_map_window(MapSection *map, Point *top_left, Point *bottom_right,
 
   SDL_Rect write_coords;
   int x, y;
-  for (x = top_left->x; x <= bottom_right->x; x++) {
+  for (x = top_left.x; x <= bottom_right.x; x++) {
     // our x offset for writing is the top left corner of the visible window
     // plus the width of the characters witten so far.
-    write_coords.x = map_window->x + ((x - top_left->x) * at_width);
-    for (y = top_left->y; y <= bottom_right->y; y++) {
-      write_coords.y = map_window->y + ((y - top_left->y) * line_height);
+    write_coords.x = map_window->x + ((x - top_left.x) * mgs->at_width);
+    for (y = top_left.y; y <= bottom_right.y; y++) {
+      write_coords.y = map_window->y + ((y - top_left.y) * mgs->line_height);
       SDL_Surface *map_char;
       if (x == cursor_location.x
           && y == cursor_location.y

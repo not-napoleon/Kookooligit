@@ -1,5 +1,29 @@
 #include <game.h>
 
+GameState *allocate_game_state() {
+  /*Allocate a new game state struct
+   */
+  GameState *state;
+  state = malloc(sizeof(GameState));
+  state->config = malloc(sizeof(GameConfiguration));
+  state->messages = init_message_list();
+  state->map = malloc(sizeof(MapSection));
+  state->map_graphics_state = malloc(sizeof(MapGraphicsState));
+  printf("Allocated new game state\n");
+  return state;
+}
+
+void free_game_state(GameState *state) {
+  /* Recursively free GameState struct
+   */
+  free(state->config);
+  free_message_queue(state->messages);
+  TTF_CloseFont(state->font);
+  free(state->map);
+  free(state->map_graphics_state);
+  free(state);
+}
+
 void process_command(GameState *state, CommandCode cmd) {
   printf("Processing Command %d - state is %d\n", cmd, state->state);
   if (cmd == NoOp) {
@@ -90,8 +114,9 @@ void process_command(GameState *state, CommandCode cmd) {
     calculate_visible_tiles(state->map, state->at_location);
   } else if (state->state == Look) {
     Point top_left, bottom_right;
-    get_visible_region(state->map, state->map_window_x_chars,
-        state->map_window_y_chars, &top_left, &bottom_right);
+    //TODO: Calling get_visible_region here is probably the Wrong Thing to do
+    get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,
+        state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);
     printf("attempting to move cursor to %d, %d\n", target_point.x,
         target_point.y);
     printf("top_left: (%d, %d)\n", top_left.x, top_left.y);
