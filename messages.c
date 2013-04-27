@@ -4,6 +4,9 @@
 #include "SDL_ttf.h"
 
 #include <messages.h>
+
+//#define LOGGING_ENABLED
+#include <log.h>
 /*
  * Screen list
  *
@@ -37,13 +40,13 @@ MessageList *init_message_list() {
   mlist->first = NULL;
   mlist->last = NULL;
   mlist->length = 0;
-  printf("message list initilized\n");
+  INFO("message list initilized\n");
   return mlist;
 }
 
 
 int add_message(MessageList *mlist, char *text, TTF_Font *font) {
-  //printf(" adding message with text %s", text);
+  DEBUG(" adding message with text %s", text);
   Message *msg = malloc( sizeof(Message) );
   // strtok will modify text
   msg->text = malloc( sizeof(char) * strlen(text));
@@ -64,7 +67,7 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
     curr_surface = make_surface_node( TTF_RenderText_Solid(font, tmp, color) );
     free(tmp);
     if (curr_surface->surface == NULL) {
-      fprintf(stderr, "Unable to draw text <<%s>>: %s\n", curr_word, SDL_GetError());
+      ERROR("Unable to draw text <<%s>>: %s\n", curr_word, SDL_GetError());
       return -1;
     }
     // Don't lose the start of the list
@@ -113,7 +116,7 @@ int get_message_height(Message *msg, int w) {
 
 int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
     MessageList *mlist) {
-  //printf("Rendering messages\n");
+  TRACE("Rendering messages\n");
   //blank the message area, since we're going to redraw it
   // Fill rect can change the dest rect for clipping, so pass in a copy
   SDL_Rect tmp = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
@@ -123,7 +126,7 @@ int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
   int h = dstrect->h;
   while (curr != NULL && h >= curr->data->skip_line_height) {
   // While messages left & space left
-    //printf("Rendering message %s\n", curr->data->text);
+    DEBUG("Rendering message %s\n", curr->data->text);
     int rows = get_message_height(curr->data, dstrect->w);
     int h_offset = rows * curr->data->skip_line_height;
     SurfaceNodePtr curr_word = curr->data->rendered_words;
@@ -138,17 +141,17 @@ int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
       }
       write_coords.x = dstrect->x + line_width;
       write_coords.y = dstrect->y + (h - h_offset);
-      //printf("writing at %i, %i\n", write_coords.x, write_coords.y);
-      //printf("h is %i, h_offset is %i\n", h, h_offset);
+      DEBUG("writing at %i, %i\n", write_coords.x, write_coords.y);
+      DEBUG("h is %i, h_offset is %i\n", h, h_offset);
       SDL_BlitSurface(curr_word->surface, NULL, screen, &write_coords);
       line_width += curr_word->surface->w;
       curr_word = curr_word->next;
     }
-    //printf("message rendered in %i rows\n", rows);
+    DEBUG("message rendered in %i rows\n", rows);
     h -= rows * curr->data->skip_line_height;
     curr = curr->next;
   }
-  //printf("all messages rendered, updateing screen\n");
+  DEBUG("all messages rendered, updateing screen\n");
   SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
 }
 

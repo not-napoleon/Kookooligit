@@ -1,4 +1,6 @@
 #include <game.h>
+#define LOGGING_ENABLED
+#include <log.h>
 
 GameState *allocate_game_state() {
   /*Allocate a new game state struct
@@ -9,7 +11,7 @@ GameState *allocate_game_state() {
   state->messages = init_message_list();
   state->map = malloc(sizeof(MapSection));
   state->map_graphics_state = malloc(sizeof(MapGraphicsState));
-  printf("Allocated new game state\n");
+  INFO("Allocated new game state\n");
   return state;
 }
 
@@ -25,7 +27,7 @@ void free_game_state(GameState *state) {
 }
 
 void process_command(GameState *state, CommandCode cmd) {
-  printf("Processing Command %d - state is %d\n", cmd, state->state);
+  TRACE("Processing Command %d - state is %d\n", cmd, state->state);
   if (cmd == NoOp) {
     return;
   }
@@ -33,7 +35,7 @@ void process_command(GameState *state, CommandCode cmd) {
   int delta_y = 0;
   switch (cmd) {
     case EnterLookMode:
-      printf("Enter look mode\n");
+      DEBUG("Enter look mode\n");
       if (state->state == Move) {
         state->state = Look;
         state->cursor_location.x = state->at_location.x;
@@ -43,7 +45,7 @@ void process_command(GameState *state, CommandCode cmd) {
       state->need_to_redraw_map = 1;
       break;
     case ExitLookMode:
-      printf("Exiting look mode\n");
+      DEBUG("Exiting look mode\n");
       if (state->state == Look) {
         state->state = Move;
       }
@@ -52,39 +54,39 @@ void process_command(GameState *state, CommandCode cmd) {
       break;
     case MoveLeft:
       delta_x -= 1;
-      printf("Move left\n");
+      DEBUG("Move left\n");
       break;
     case MoveRight:
       delta_x += 1;
-      printf("Move right\n");
+      DEBUG("Move right\n");
       break;
     case MoveUp:
       delta_y -= 1;
-      printf("Move up\n");
+      DEBUG("Move up\n");
       break;
     case MoveDown:
       delta_y += 1;
-      printf("Move down\n");
+      DEBUG("Move down\n");
       break;
     case MoveUpLeft:
       delta_x -= 1;
       delta_y -= 1;
-      printf("Move up left\n");
+      DEBUG("Move up left\n");
       break;
     case MoveDownLeft:
       delta_x -= 1;
       delta_y += 1;
-      printf("Move down left\n");
+      DEBUG("Move down left\n");
       break;
     case MoveUpRight:
       delta_x += 1;
       delta_y -= 1;
-      printf("Move up right\n");
+      DEBUG("Move up right\n");
       break;
     case MoveDownRight:
       delta_x += 1;
       delta_y += 1;
-      printf("Move down right\n");
+      DEBUG("Move down right\n");
       break;
     case Quit:
       state->is_running = 0;
@@ -121,7 +123,7 @@ void process_command(GameState *state, CommandCode cmd) {
       if (abs(state->at_location.y - state->map->center.y) > 10) {
         state->map->center.y = state->at_location.y;
       }
-      printf("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
+      DEBUG("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
           state->at_location.y, state->map->center.x, state->map->center.y);
       calculate_visible_tiles(state->map, state->at_location);
     } else if (state->state == Look) {
@@ -129,15 +131,15 @@ void process_command(GameState *state, CommandCode cmd) {
       //TODO: Calling get_visible_region here is probably the Wrong Thing to do
       get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,
           state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);
-      printf("attempting to move cursor to %d, %d\n", target_point.x,
+      DEBUG("attempting to move cursor to %d, %d\n", target_point.x,
           target_point.y);
-      printf("top_left: (%d, %d)\n", top_left.x, top_left.y);
-      printf("bottom_right: (%d, %d)\n", bottom_right.x, bottom_right.y);
+      DEBUG("top_left: (%d, %d)\n", top_left.x, top_left.y);
+      DEBUG("bottom_right: (%d, %d)\n", bottom_right.x, bottom_right.y);
       if ( (target_point.x >= top_left.x)
           && (target_point.x <= bottom_right.x)
           && (target_point.y >= top_left.y)
           && (target_point.y <= bottom_right.y) ) {
-        printf("drawing cursor? maybe?\n");
+        DEBUG("drawing cursor? maybe?\n");
         state->cursor_location = target_point;
         state->need_to_redraw_map = 1;
       }

@@ -1,5 +1,8 @@
 #include <command.h>
 
+//#define LOGGING_ENABLED
+#include <log.h>
+
 CommandCode parse_keypress(SDL_Event *event) {
   CommandCode ret_val;
   switch(event->key.keysym.sym) {
@@ -57,15 +60,15 @@ CommandCode get_command(SDL_Event *event) {
   CommandCode cmd;
   switch (event->type) {
     case SDL_KEYDOWN:
-      printf("got keypress event\n");
+      TRACE("got keypress event\n");
       cmd = parse_keypress(event);
       break;
     case SDL_QUIT:
-      printf("Got quit signal by magic\n");
+      TRACE("Got quit signal by magic\n");
       cmd = Quit;
       break;
     default:
-      printf("Unknown event type %d\n", event->type);
+      WARN("Unknown event type %d\n", event->type);
       cmd = NoOp;
       break;
   }

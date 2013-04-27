@@ -1,5 +1,8 @@
 #include <init.h>
 
+#define LOGGING_ENABLED
+#include <log.h>
+
 SDL_Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
   /*
    * helper function to build a rect out of its four component values
@@ -31,20 +34,20 @@ int get_configuration(GameConfiguration *config) {
 
 void initilize(GameState *state) {
   if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0) {
-    fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
+    ERROR( "Unable to init SDL: %s\n", SDL_GetError());
     exit(1);
   }
   atexit(SDL_Quit);
 
   if (TTF_Init() < 0) {
-    fprintf(stderr, "Unable to init SDL_ttf: %s\n", SDL_GetError());
+    ERROR( "Unable to init SDL_ttf: %s\n", SDL_GetError());
     exit(1);
   }
   atexit(TTF_Quit);
 
   state->screen = SDL_SetVideoMode(state->config->window_w, state->config->window_h, 16, 0);
   if (state->screen == NULL) {
-    fprintf(stderr, "Unable to set SDL video mode: %s\n", SDL_GetError());
+    ERROR( "Unable to set SDL video mode: %s\n", SDL_GetError());
     exit(1);
   }
 
@@ -53,13 +56,13 @@ void initilize(GameState *state) {
   state->map_graphics_state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
 
   if (state->font == NULL) {
-    fprintf(stderr, "Unable to load font %s: %s\n", state->config->font_path,
+    ERROR( "Unable to load font %s: %s\n", state->config->font_path,
         SDL_GetError());
     exit(1);
   }
   // Check for fixed with
   if (TTF_FontFaceIsFixedWidth(state->font) == 0) {
-    fprintf(stderr, "Font is not fixed width, chances are nothing will look right");
+    ERROR( "Font is not fixed width, chances are nothing will look right");
   }
   // Turn off kerning, since we want our characters to line up in a grid
   if (TTF_GetFontKerning(state->font) != 0) {
@@ -71,7 +74,7 @@ void initilize(GameState *state) {
   TTF_SizeText(state->font, "@", &state->map_graphics_state->at_width, NULL);
   state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
   state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
-  printf("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
+  INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
       state->map_graphics_state->map_window_y_chars);
 
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -85,6 +88,6 @@ void initilize(GameState *state) {
   state->is_running = 1;
   state->state = Move;
 
-  printf("initilized\n");
+  TRACE("initilized\n");
 }
 

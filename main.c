@@ -9,6 +9,9 @@
 #include <command.h>
 #include <game.h>
 
+#define LOGGING_ENABLED
+#include <log.h>
+
 /*
  * Game logic here
  */
@@ -29,21 +32,21 @@ int main(int argc, char *argv[]) {
   get_configuration(state->config);
   initilize(state);
 
-  printf("tile size is %li\n", sizeof(Tile));
+  INFO("tile size is %li\n", sizeof(Tile));
   SDL_Event event;
   char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1, state->font);
   render_messages(&state->config->message_window, state->screen, state->messages);
   calculate_visible_tiles(state->map, state->at_location);
   state->need_to_redraw_map = 1;
-  printf("entering main loop\n");
+  TRACE("entering main loop\n");
   while (state->is_running) {
     while (SDL_PollEvent(&event)) {
       CommandCode cmd;
       cmd = get_command(&event);
       process_command(state, cmd);
-      printf("state is %d\n", state->state);
-      printf("******************************\n");
+      DEBUG("state is %d\n", state->state);
+      DEBUG("******************************\n");
     }
     if (state->need_to_redraw_messages == 1) {
       render_messages(&state->config->message_window, state->screen, state->messages);
@@ -54,7 +57,6 @@ int main(int argc, char *argv[]) {
           &state->config->map_window, state->at_location,
           state->cursor_location);
       state->need_to_redraw_map = 0;
-      printf("\n\n", state->state);
     }
 
   }

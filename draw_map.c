@@ -1,6 +1,9 @@
 #include <draw_map.h>
 #include <color_palette.h>
 
+#define LOGGING_ENABLED
+#include <log.h>
+
 typedef struct tile_data {
   SDL_Surface *lit_graphic;
   SDL_Surface *hidden_graphic;
@@ -30,7 +33,7 @@ int init_map_graphics(TTF_Font *font) {
   MapGraphics[ImpassableWall].hidden_graphic = TTF_RenderText_Solid(font, "#", color_hidden);
 
   was_initilized = 1;
-  printf("Map graphics initilized\n");
+  INFO("Map graphics initilized\n");
 }
 
 void set_draw_cursor(MapGraphicsState *mgs) {
@@ -50,9 +53,9 @@ int render_map_window(MapSection *map, SDL_Surface *screen,
   get_visible_region(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
       &top_left, &bottom_right);
 
-  printf("attempting to render map\n");
+  DEBUG("attempting to render map\n");
   if (was_initilized == 0) {
-    printf("Map was not initilized\n");
+    ERROR("Map was not initilized\n");
     return -1;
   }
   // blank the screen
