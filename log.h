@@ -7,13 +7,13 @@
  */
 
 #ifdef LOGGING_ENABLED
-#define TRACE(...) do { printf(__VA_ARGS__); } while(0)
-#define DEBUG(...) do { printf(__VA_ARGS__); } while(0)
-#define INFO(...) do { printf(__VA_ARGS__); } while(0)
-#define WARN(...) do { printf(__VA_ARGS__); } while(0)
-#define ERROR(...) do { printf(__VA_ARGS__); } while(0)
-#define CRITICAL(...) do { printf(__VA_ARGS__); } while(0)
-#define LOG(...) do { printf(__VA_ARGS__); } while(0)
+#define TRACE(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define DEBUG(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define INFO(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define WARN(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define ERROR(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define CRITICAL(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
+#define LOG(...) do { printf("%s\t", __FILE__); printf(__VA_ARGS__); } while(0)
 #else
 #define TRACE(...) do { } while(0)
 #define DEBUG(...) do { } while(0)

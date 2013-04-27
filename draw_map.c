@@ -1,7 +1,7 @@
 #include <draw_map.h>
 #include <color_palette.h>
 
-#define LOGGING_ENABLED
+//#define LOGGING_ENABLED
 #include <log.h>
 
 typedef struct tile_data {

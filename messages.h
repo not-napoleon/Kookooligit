@@ -4,14 +4,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-
-typedef struct SurfaceNode *SurfaceNodePtr;
-
-typedef struct SurfaceNode {
-  SDL_Surface *surface;
-  SurfaceNodePtr next;
-} SurfaceNode;
-
+#include <render_text.h>
 
 typedef struct Message{
   char *text; // the raw text
@@ -39,9 +32,9 @@ typedef struct MessageList {
 
 MessageList *init_message_list();
 int add_message(MessageList *mlist, char *text, TTF_Font *font);
-int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
-    MessageList *mlist);
 void free_message_queue(MessageList *queue);
 void free_message(Message *message);
+int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
+    MessageList *mlist);
 
 #endif

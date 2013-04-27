@@ -3,7 +3,7 @@
 #include <map.h>
 #include <fov.h>
 
-#define LOGGING_ENABLED
+//#define LOGGING_ENABLED
 #include <log.h>
 
 bool is_passable_point(MapSection *map, Point p) {

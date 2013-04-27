@@ -6,6 +6,7 @@
 #include <init.h>
 #include <map.h>
 #include <draw_map.h>
+#include <render_text.h>
 #include <command.h>
 #include <game.h>
 
