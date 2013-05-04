@@ -1,5 +1,6 @@
 #include <draw_map.h>
 #include <color_palette.h>
+#include<tile.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
