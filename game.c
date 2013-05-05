@@ -1,6 +1,9 @@
 #include <game.h>
+// We need tile to get the tile discriptor text for look mode.  Eventually
+// that needs to get refactored into map.c
+#include <tile.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 GameState *allocate_game_state() {
@@ -143,6 +146,21 @@ void process_command(GameState *state, CommandCode cmd) {
         DEBUG("drawing cursor? maybe?\n");
         state->cursor_location = target_point;
         state->need_to_redraw_map = 1;
+        // Get descriptor text
+        const char* tile_desc;
+        tile_desc = get_tile_description(state->map->matrix[target_point.x][target_point.y].type);
+        DEBUG("got tile description %s\n", tile_desc);
+        // draw look message
+        DEBUG("Dest rect x: %d, y: %d, w: %d, h: %d\n",
+            state->config->status_window.x,
+            state->config->status_window.y,
+            state->config->status_window.w,
+            state->config->status_window.h);
+        if ( render_look_message(tile_desc, state->screen, &state->config->status_window, state->font) == -1) {
+          exit(-1);
+        }
+        // flag status window to redraw
+        state->need_to_redraw_status = 1;
       }
     }
   }

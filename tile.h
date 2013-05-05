@@ -20,4 +20,6 @@ typedef struct Tile {
   TileType type;
 } Tile;
 
+const char* get_tile_description(TileType);
+
 #endif

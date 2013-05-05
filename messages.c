@@ -89,7 +89,7 @@ int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
 
     DEBUG("Rendering message %s\n", curr->data->text);
     render_message_to_window(&write_coords, screen, curr->data->rendered_words,
-        curr->data->skip_line_height, rows);
+        curr->data->skip_line_height, rows, scroll_up);
 
     h -= rows * curr->data->skip_line_height;
     DEBUG("message rendered in %i rows\n", rows);
