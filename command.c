@@ -26,7 +26,7 @@ CommandCode parse_keypress(SDL_Event *event) {
     case SDLK_KP7:
       ret_val = MoveUpLeft;
       break;
-    case SDLK_n:
+    case SDLK_b:
     case SDLK_KP1:
       ret_val = MoveDownLeft;
       break;
@@ -34,7 +34,7 @@ CommandCode parse_keypress(SDL_Event *event) {
     case SDLK_KP9:
       ret_val = MoveUpRight;
       break;
-    case SDLK_m:
+    case SDLK_n:
     case SDLK_KP3:
       ret_val = MoveDownRight;
       break;
