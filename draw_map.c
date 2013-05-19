@@ -46,7 +46,7 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
 }
 
 int render_map_window(MapSection *map, SDL_Surface *screen,
-    MapGraphicsState *mgs, SDL_Rect *map_window,
+    MapGraphicsState *mgs, Rect *map_window,
     Point at_location, Point cursor_location){
 
   Point top_left;

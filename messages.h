@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
+#include <graphics_wrapper.h>
 #include <render_text.h>
 
 typedef struct Message{
@@ -34,7 +35,7 @@ MessageList *init_message_list();
 int add_message(MessageList *mlist, char *text, TTF_Font *font);
 void free_message_queue(MessageList *queue);
 void free_message(Message *message);
-int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
+int render_messages(const Rect *dstrect, SDL_Surface *screen,
     MessageList *mlist);
 
 #endif

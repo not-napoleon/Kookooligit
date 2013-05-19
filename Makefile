@@ -1,6 +1,6 @@
 CC = gcc 
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ `sdl-config --cflags` -g
-OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o
+OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
@@ -9,6 +9,7 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 command.o: command.c command.h $(ALL_DEP)
 draw_map.o: draw_map.c draw_map.h map.h color_palette.h tile.h $(ALL_DEP)
 game.o: game.c game.h messages.h map.h command.h tile.h $(ALL_DEP)
+graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h $(ALL_DEP)
 init.o: init.c init.h messages.h map.h game.h $(ALL_DEP)
 look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
 map.o: map.c map.h tile.h $(ALL_DEP)

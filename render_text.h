@@ -4,6 +4,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
+#include <graphics_wrapper.h>
+
 typedef struct SurfaceNode *SurfaceNodePtr;
 
 typedef struct SurfaceNode {
@@ -21,7 +23,7 @@ void free_surface_list(SurfaceNodePtr slist);
 int build_word_list(const char *text, SurfaceNodePtr *dest, SDL_Color color,
     TTF_Font *font);
 int get_message_height(SurfaceNodePtr msg, int w);
-int render_message_to_window(const SDL_Rect *dstrect, SDL_Surface *screen,
+int render_message_to_window(const Rect *dstrect, SDL_Surface *screen,
     SurfaceNodePtr text, int skip_line_height, int rows, ScrollDir dir);
 
 #endif

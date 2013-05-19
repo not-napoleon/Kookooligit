@@ -67,21 +67,19 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
 
 }
 
-int render_messages(const SDL_Rect *dstrect, SDL_Surface *screen,
+int render_messages(const Rect *dstrect, SDL_Surface *screen,
     MessageList *mlist) {
   TRACE("rendering messages to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
   //blank the message area, since we're going to redraw it
-  // Fill rect can change the dest rect for clipping, so pass in a copy
-  SDL_Rect tmp = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
-  SDL_FillRect(screen, &tmp, SDL_MapRGB(screen->format, 0, 0, 0));
+  clear_rect(dstrect);
   MessageNodePtr curr;
   curr = mlist->first;
   int h = dstrect->h;
   // While messages left & space left
   while (curr != NULL && h >= curr->data->skip_line_height) {
     int rows = get_message_height(curr->data->rendered_words, dstrect->w);
-    SDL_Rect write_coords;
+    Rect write_coords;
     write_coords.x = dstrect->x;
     write_coords.y = dstrect->y + h;
     write_coords.w = dstrect->w;

@@ -1,6 +1,8 @@
 #ifndef COLOR_PALETTE_H_INCLUDED
 #define COLOR_PALETTE_H_INCLUDED
 
+#include <SDL.h>
+
 const static SDL_Color color_lit = {255,255,255};
 const static SDL_Color color_hidden = {127,127,127};
 

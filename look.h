@@ -4,6 +4,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
+#include <graphics_wrapper.h>
+
 int render_look_message(const char* message, SDL_Surface *screen,
-    const SDL_Rect *dstrect, TTF_Font *font);
+    const Rect *dstrect, TTF_Font *font);
 #endif

@@ -69,10 +69,11 @@ int get_message_height(SurfaceNodePtr msg, int w) {
   return line_rows;
 }
 
-int render_message_to_window(const SDL_Rect *dstrect, SDL_Surface *screen,
+int render_message_to_window(const Rect *dstrect, SDL_Surface *screen,
     SurfaceNodePtr text, int skip_line_height, int rows, ScrollDir dir) {
   TRACE("rendering text to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
+  SDL_Rect r = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
   int h_offset;
   if (dir == scroll_down) {
    h_offset = 0;
@@ -84,13 +85,13 @@ int render_message_to_window(const SDL_Rect *dstrect, SDL_Surface *screen,
   // assemble the next message
   while (curr_word != NULL) {
     SDL_Rect write_coords;
-    if (line_width + curr_word->surface->w > dstrect->w) {
+    if (line_width + curr_word->surface->w > r.w) {
       // line wrap - set the line width to 0 and move the height down
       line_width = 0;
       h_offset += skip_line_height * dir;
     }
-    write_coords.x = dstrect->x + line_width;
-    write_coords.y = dstrect->y + (dir * h_offset);
+    write_coords.x = r.x + line_width;
+    write_coords.y = r.y + (dir * h_offset);
     DEBUG("writing at %i, %i\n", write_coords.x, write_coords.y);
     //DEBUG("h is %i, h_offset is %i\n", h, h_offset);
     SDL_BlitSurface(curr_word->surface, NULL, screen, &write_coords);

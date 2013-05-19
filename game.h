@@ -3,10 +3,12 @@
 
 #include "SDL.h"
 #include "SDL_ttf.h"
-#include <messages.h>
-#include <map.h>
+
 #include <command.h>
 #include <draw_map.h>
+#include <graphics_wrapper.h>
+#include <map.h>
+#include <messages.h>
 
 typedef enum {
   Move,
@@ -21,10 +23,10 @@ typedef struct GameConfiguration {
   int window_h;
 
   //Layout Dimensions
-  SDL_Rect message_window;
-  SDL_Rect map_window;
-  SDL_Rect status_window;
-  SDL_Rect command_window;
+  Rect message_window;
+  Rect map_window;
+  Rect status_window;
+  Rect command_window;
 
 } GameConfiguration;
 

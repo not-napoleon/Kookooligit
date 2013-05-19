@@ -1,15 +1,14 @@
+#include <color_palette.h>
 #include <look.h>
 #include <render_text.h>
-#include <color_palette.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
 
 int render_look_message(const char* message, SDL_Surface *screen,
-    const SDL_Rect *dstrect, TTF_Font *font) {
+    const Rect *dstrect, TTF_Font *font) {
   DEBUG("rendering look message <%s>\n", message);
-  SDL_Rect tmp = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
-  SDL_FillRect(screen, &tmp, SDL_MapRGB(screen->format, 0, 0, 0));
+  clear_rect(dstrect);
   SurfaceNodePtr rendered_message = NULL;
   if (build_word_list(message, &rendered_message, color_default_text, font) == -1) {
     return -1;

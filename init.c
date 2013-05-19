@@ -1,19 +1,9 @@
 #include <init.h>
+#include <graphics_wrapper.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
 
-SDL_Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
-  /*
-   * helper function to build a rect out of its four component values
-   */
-  SDL_Rect ret;
-  ret.x = x;
-  ret.y = y;
-  ret.w = w;
-  ret.h = h;
-  return ret;
-}
 
 int get_configuration(GameConfiguration *config) {
   /* Load game configuration data into the caller provided struct
