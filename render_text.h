@@ -1,7 +1,6 @@
 #ifndef RENDER_TEXT_H_INCLUDED
 #define RENDER_TEXT_H_INCLUDED
 
-#include "SDL.h"
 #include "SDL_ttf.h"
 
 #include <graphics_wrapper.h>
@@ -13,7 +12,6 @@ typedef enum {
   scroll_down = 1
 } ScrollDir;
 
-SurfaceNodePtr make_surface_node(SDL_Surface *surface);
 void free_surface_list(SurfaceNodePtr slist);
 int build_word_list(const char *text, SurfaceNodePtr *dest, Color color,
     TTF_Font *font);
