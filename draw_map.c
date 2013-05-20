@@ -1,6 +1,9 @@
-#include <draw_map.h>
+#include "SDL.h"
+
 #include <color_palette.h>
-#include<tile.h>
+#include <draw_map.h>
+#include <SDL_Tools.h>
+#include <tile.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
@@ -22,16 +25,22 @@ int init_map_graphics(TTF_Font *font) {
    * pre-render the map graphics
    */
 
-  rendered_at = TTF_RenderText_Solid(font, "@", color_lit);
-  rendered_cursor = TTF_RenderText_Solid(font, "*", color_lit);
+  rendered_at = TTF_RenderText_Solid(font, "@", convert_color(color_lit));
+  rendered_cursor = TTF_RenderText_Solid(font, "*", convert_color(color_lit));
 
-  MapGraphics[OffGrid].lit_graphic = TTF_RenderText_Solid(font, " ", color_lit);
-  MapGraphics[OpenSpace].lit_graphic = TTF_RenderText_Solid(font, ".", color_lit);
-  MapGraphics[ImpassableWall].lit_graphic = TTF_RenderText_Solid(font, "#", color_lit);
+  MapGraphics[OffGrid].lit_graphic = TTF_RenderText_Solid(font, " ",
+      convert_color(color_lit));
+  MapGraphics[OpenSpace].lit_graphic = TTF_RenderText_Solid(font, ".",
+      convert_color(color_lit));
+  MapGraphics[ImpassableWall].lit_graphic = TTF_RenderText_Solid(font, "#",
+      convert_color(color_lit));
 
-  MapGraphics[OffGrid].hidden_graphic = TTF_RenderText_Solid(font, " ", color_hidden);
-  MapGraphics[OpenSpace].hidden_graphic = TTF_RenderText_Solid(font, ".", color_hidden);
-  MapGraphics[ImpassableWall].hidden_graphic = TTF_RenderText_Solid(font, "#", color_hidden);
+  MapGraphics[OffGrid].hidden_graphic = TTF_RenderText_Solid(font, " ",
+      convert_color(color_hidden));
+  MapGraphics[OpenSpace].hidden_graphic = TTF_RenderText_Solid(font, ".",
+      convert_color(color_hidden));
+  MapGraphics[ImpassableWall].hidden_graphic = TTF_RenderText_Solid(font, "#",
+      convert_color(color_hidden));
 
   was_initilized = 1;
   INFO("Map graphics initilized\n");
@@ -45,9 +54,13 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
   mgs->draw_cursor = 0;
 }
 
-int render_map_window(MapSection *map, SDL_Surface *screen,
-    MapGraphicsState *mgs, Rect *map_window,
+int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
     Point at_location, Point cursor_location){
+
+  SDL_Surface *screen = SDL_GetVideoSurface();
+  if (screen == NULL) {
+    CRITICAL("SDL_GetVideoSurface returned null!\n");
+  }
 
   Point top_left;
   Point bottom_right;

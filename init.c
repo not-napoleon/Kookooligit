@@ -35,8 +35,7 @@ void initilize(GameState *state) {
   }
   atexit(TTF_Quit);
 
-  state->screen = SDL_SetVideoMode(state->config->window_w, state->config->window_h, 16, 0);
-  if (state->screen == NULL) {
+  if( SDL_SetVideoMode(state->config->window_w, state->config->window_h, 16, 0) == NULL) { 
     ERROR( "Unable to set SDL video mode: %s\n", SDL_GetError());
     exit(1);
   }

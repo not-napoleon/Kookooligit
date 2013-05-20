@@ -47,7 +47,7 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
   // Set the spacing data based on the font
   msg->skip_line_height = TTF_FontLineSkip(font);
   // Build the message object
-  SDL_Color color = {255,255,255};
+  Color color = {255,255,255};
 
   build_word_list(text, &msg->rendered_words, color, font);
 

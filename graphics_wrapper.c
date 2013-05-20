@@ -11,6 +11,7 @@ SDL_Surface *get_screen() {
   if (screen == NULL) {
     CRITICAL("SDL_GetVideoSurface returned null!\n");
   }
+  return screen;
 }
 
 void clear_rect(const Rect *r) {

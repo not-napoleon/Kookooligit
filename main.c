@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
       state->need_to_redraw_messages = 0;
     }
     if (state->need_to_redraw_map == 1) {
-      render_map_window(state->map, state->screen, state->map_graphics_state,
+      render_map_window(state->map, state->map_graphics_state,
           &state->config->map_window, state->at_location,
           state->cursor_location);
       state->need_to_redraw_map = 0;

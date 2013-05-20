@@ -1,11 +1,12 @@
 CC = gcc 
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ `sdl-config --cflags` -g
-OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o
+OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
 	gcc main.c $(OBJECTS) -I. `sdl-config --cflags --libs` -lSDL_ttf -o game.out -g
 
+SDL_Tools.o: SDL_Tools.c SDL_Tools.h $(ALL_DEP)
 command.o: command.c command.h $(ALL_DEP)
 draw_map.o: draw_map.c draw_map.h map.h color_palette.h tile.h $(ALL_DEP)
 game.o: game.c game.h messages.h map.h command.h tile.h $(ALL_DEP)

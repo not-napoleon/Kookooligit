@@ -156,7 +156,7 @@ void process_command(GameState *state, CommandCode cmd) {
             state->config->status_window.y,
             state->config->status_window.w,
             state->config->status_window.h);
-        if ( render_look_message(tile_desc, state->screen, &state->config->status_window, state->font) == -1) {
+        if ( render_look_message(tile_desc, &state->config->status_window, state->font) == -1) {
           exit(-1);
         }
         // flag status window to redraw

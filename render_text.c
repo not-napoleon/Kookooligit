@@ -1,10 +1,16 @@
 #include <render_text.h>
+#include <SDL_Tools.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
 /*
  * Screen list
  */
+
+typedef struct SurfaceNode {
+  SDL_Surface *surface;
+  SurfaceNodePtr next;
+} SurfaceNode;
 
 SurfaceNodePtr make_surface_node(SDL_Surface *surface) {
   SurfaceNodePtr node = malloc( sizeof(SurfaceNode) );
@@ -22,8 +28,10 @@ void free_surface_list(SurfaceNodePtr slist) {
   }
 }
 
-int build_word_list(const char *text, SurfaceNodePtr *dest, SDL_Color color,
+int build_word_list(const char *text, SurfaceNodePtr *dest, Color color,
     TTF_Font *font) {
+  SDL_Color c;
+  c = convert_color(color);
   char *mutable_text = malloc( sizeof(char) * (strlen(text)));
   strcpy(mutable_text, text);
   char *curr_word = strtok(mutable_text, " ");
@@ -34,7 +42,7 @@ int build_word_list(const char *text, SurfaceNodePtr *dest, SDL_Color color,
     char *tmp = malloc( sizeof(char) * (strlen(curr_word) + 1));
     strcpy(tmp, curr_word);
     strcat(tmp, " ");
-    curr_surface = make_surface_node( TTF_RenderText_Solid(font, tmp, color) );
+    curr_surface = make_surface_node( TTF_RenderText_Solid(font, tmp, c) );
     free(tmp);
     if (curr_surface->surface == NULL) {
       ERROR("Unable to draw text <<%s>>: %s\n", curr_word, SDL_GetError());

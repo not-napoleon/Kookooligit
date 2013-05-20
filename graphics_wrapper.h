@@ -1,15 +1,21 @@
 #ifndef GRAPHICS_WRAPPER_H_INCLUDED
 #define GRAPHICS_WRAPPER_H_INCLUDED
 
-#include <inttypes.h>
+#include <stdint.h>
 
 typedef struct Rect {
-  Sint16 x, y;
-  Uint16 w, h;
+  int16_t x, y;
+  uint16_t w, h;
 } Rect;
 
+typedef struct Color {
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} Color;
+
 void clear_rect(const Rect *r);
-Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h);
+Rect make_rect(int16_t x, int16_t y, uint16_t w, uint16_t h);
 void draw_rect(const Rect *r);
 
 #endif

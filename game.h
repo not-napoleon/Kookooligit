@@ -1,7 +1,6 @@
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
 
-#include "SDL.h"
 #include "SDL_ttf.h"
 
 #include <command.h>
@@ -41,7 +40,6 @@ typedef struct GameState {
   GameConfiguration *config;
 
   // Graphics
-  SDL_Surface *screen;
 
   // TODO: different message & map fonts
   // Map Data
