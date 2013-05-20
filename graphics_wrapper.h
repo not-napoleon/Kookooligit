@@ -10,5 +10,6 @@ typedef struct Rect {
 
 void clear_rect(const Rect *r);
 Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h);
+void draw_rect(const Rect *r);
 
 #endif

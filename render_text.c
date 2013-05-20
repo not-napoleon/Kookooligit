@@ -69,11 +69,16 @@ int get_message_height(SurfaceNodePtr msg, int w) {
   return line_rows;
 }
 
-int render_message_to_window(const Rect *dstrect, SDL_Surface *screen,
-    SurfaceNodePtr text, int skip_line_height, int rows, ScrollDir dir) {
+int render_message_to_window(const Rect *dstrect, SurfaceNodePtr text,
+    int skip_line_height, int rows, ScrollDir dir) {
   TRACE("rendering text to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
   SDL_Rect r = {dstrect->x, dstrect->y, dstrect->w, dstrect->h};
+  SDL_Surface *screen = SDL_GetVideoSurface();
+  if (screen == NULL) {
+    CRITICAL("SDL_GetVideoSurface returned null\n");
+    exit(-1);
+  }
   int h_offset;
   if (dir == scroll_down) {
    h_offset = 0;

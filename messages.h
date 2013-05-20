@@ -35,7 +35,6 @@ MessageList *init_message_list();
 int add_message(MessageList *mlist, char *text, TTF_Font *font);
 void free_message_queue(MessageList *queue);
 void free_message(Message *message);
-int render_messages(const Rect *dstrect, SDL_Surface *screen,
-    MessageList *mlist);
+int render_messages(const Rect *dstrect, MessageList *mlist);
 
 #endif

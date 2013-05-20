@@ -67,8 +67,7 @@ int add_message(MessageList *mlist, char *text, TTF_Font *font) {
 
 }
 
-int render_messages(const Rect *dstrect, SDL_Surface *screen,
-    MessageList *mlist) {
+int render_messages(const Rect *dstrect, MessageList *mlist) {
   TRACE("rendering messages to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
   //blank the message area, since we're going to redraw it
@@ -86,7 +85,7 @@ int render_messages(const Rect *dstrect, SDL_Surface *screen,
     write_coords.h = dstrect->h;
 
     DEBUG("Rendering message %s\n", curr->data->text);
-    render_message_to_window(&write_coords, screen, curr->data->rendered_words,
+    render_message_to_window(&write_coords, curr->data->rendered_words,
         curr->data->skip_line_height, rows, scroll_up);
 
     h -= rows * curr->data->skip_line_height;
@@ -94,5 +93,5 @@ int render_messages(const Rect *dstrect, SDL_Surface *screen,
     curr = curr->next;
   }
   DEBUG("all messages rendered, updateing screen\n");
-  SDL_UpdateRect(screen, dstrect->x, dstrect->y, dstrect->w, dstrect->h);
+  draw_rect(dstrect);
 }

@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   SDL_Event event;
   char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1, state->font);
-  render_messages(&state->config->message_window, state->screen, state->messages);
+  render_messages(&state->config->message_window, state->messages);
   calculate_visible_tiles(state->map, state->at_location);
   state->need_to_redraw_map = 1;
   TRACE("entering main loop\n");
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
       DEBUG("******************************\n");
     }
     if (state->need_to_redraw_messages == 1) {
-      render_messages(&state->config->message_window, state->screen, state->messages);
+      render_messages(&state->config->message_window, state->messages);
       state->need_to_redraw_messages = 0;
     }
     if (state->need_to_redraw_map == 1) {
