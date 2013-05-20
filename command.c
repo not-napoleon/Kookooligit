@@ -1,3 +1,4 @@
+#include "SDL.h"
 #include <command.h>
 
 //#define LOGGING_ENABLED
@@ -54,9 +55,11 @@ CommandCode parse_keypress(SDL_Event *event) {
 }
 
 
-CommandCode get_command(SDL_Event *event) {
+CommandCode get_command() {
   /* Just call parse keypress if it's a keypress, and ignore it otherwise
    */
+  SDL_Event *event;
+  SDL_WaitEvent(event);
   CommandCode cmd;
   switch (event->type) {
     case SDL_KEYDOWN:

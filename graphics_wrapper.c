@@ -4,6 +4,7 @@
 
 #include <graphics_wrapper.h>
 
+#define LOGGING_ENABLED 
 #include <log.h>
 
 SDL_Surface *get_screen() {
@@ -39,7 +40,9 @@ Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
 }
 
 void draw_rect(const Rect *r) {
+  TRACE("Drawing rect x: %d, y: %d, w: %d, h: %d\n", r->x, r->y, r->w, r->h);
   SDL_Surface *screen;
   screen = get_screen();
   SDL_UpdateRect(screen, r->x, r->y, r->w, r->h);
+  TRACE("Screen updated\n");
 }
