@@ -1,7 +1,6 @@
 #ifndef MESSAGES_H_INCLUDED
 #define MESSAGES_H_INCLUDED
 
-#include "SDL.h"
 #include "SDL_ttf.h"
 
 #include <graphics_wrapper.h>
