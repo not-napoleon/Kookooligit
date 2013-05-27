@@ -1,5 +1,8 @@
+#include "SDL_ttf.h"
+
 #include <init.h>
 #include <graphics_wrapper.h>
+#include <SDL_Tools.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -41,26 +44,23 @@ void initilize(GameState *state) {
   }
 
   // Load font
-  state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
-  state->map_graphics_state->font = TTF_OpenFont(state->config->font_path, state->config->point_size);
+  set_map_font(state->config->font_path, state->config->point_size);
+  set_message_font(state->config->font_path, state->config->point_size);
+  set_status_font(state->config->font_path, state->config->point_size);
+  set_command_font(state->config->font_path, state->config->point_size);
 
-  if (state->font == NULL) {
-    ERROR( "Unable to load font %s: %s\n", state->config->font_path,
-        SDL_GetError());
-    exit(1);
-  }
   // Check for fixed with
-  if (TTF_FontFaceIsFixedWidth(state->font) == 0) {
+  if (TTF_FontFaceIsFixedWidth(get_map_font()) == 0) {
     ERROR( "Font is not fixed width, chances are nothing will look right");
   }
   // Turn off kerning, since we want our characters to line up in a grid
-  if (TTF_GetFontKerning(state->font) != 0) {
-    TTF_SetFontKerning(state->font, 0);
+  if (TTF_GetFontKerning(get_map_font()) != 0) {
+    TTF_SetFontKerning(get_map_font(), 0);
   }
   // set font size data
   int at_width, line_height;
-  state->map_graphics_state->line_height = TTF_FontLineSkip(state->font);
-  TTF_SizeText(state->font, "@", &state->map_graphics_state->at_width, NULL);
+  state->map_graphics_state->line_height = TTF_FontLineSkip(get_map_font());
+  TTF_SizeText(get_map_font(), "@", &state->map_graphics_state->at_width, NULL);
   state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
   state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
   INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
@@ -69,7 +69,7 @@ void initilize(GameState *state) {
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
-  init_map_graphics(state->map_graphics_state->font);
+  init_map_graphics();
   generate_map(state->map);
   state->at_location.x = state->at_location.y = 10;
   state->map->center = state->at_location;

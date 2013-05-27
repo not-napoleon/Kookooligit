@@ -1,3 +1,6 @@
+#include "SDL_ttf.h"
+
+#include <SDL_Tools.h>
 #include <color_palette.h>
 #include <look.h>
 #include <render_text.h>
@@ -5,8 +8,9 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
-int render_look_message(const char* message, const Rect *dstrect,
-    TTF_Font *font) {
+int render_look_message(const char* message, const Rect *dstrect) {
+  TTF_Font *font;
+  font = get_status_font();
   DEBUG("rendering look message <%s>\n", message);
   clear_rect(dstrect);
   SurfaceNodePtr rendered_message = NULL;

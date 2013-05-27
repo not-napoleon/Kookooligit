@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 
   INFO("tile size is %li\n", sizeof(Tile));
   char msg1[] = "Welcome to Kookoolegit!";
-  add_message(state->messages, msg1, state->font);
+  add_message(state->messages, msg1);
   render_messages(&state->config->message_window, state->messages);
   calculate_visible_tiles(state->map, state->at_location);
   state->need_to_redraw_map = 1;

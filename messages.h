@@ -1,8 +1,6 @@
 #ifndef MESSAGES_H_INCLUDED
 #define MESSAGES_H_INCLUDED
 
-#include "SDL_ttf.h"
-
 #include <graphics_wrapper.h>
 #include <render_text.h>
 
@@ -31,7 +29,7 @@ typedef struct MessageList {
 
 
 MessageList *init_message_list();
-int add_message(MessageList *mlist, char *text, TTF_Font *font);
+int add_message(MessageList *mlist, char *text);
 void free_message_queue(MessageList *queue);
 void free_message(Message *message);
 int render_messages(const Rect *dstrect, MessageList *mlist);

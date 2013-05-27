@@ -24,7 +24,6 @@ void free_game_state(GameState *state) {
    */
   free(state->config);
   free_message_queue(state->messages);
-  TTF_CloseFont(state->font);
   free(state->map);
   free(state->map_graphics_state);
   free(state);
@@ -117,7 +116,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->need_to_redraw_map = 1;
       } else {
         char tmp[50] = "You can't walk through walls";
-        add_message(state->messages, tmp, state->font);
+        add_message(state->messages, tmp);
         state->need_to_redraw_messages = 1;
       }
       // Decide if we need to recenter the map section
@@ -156,7 +155,7 @@ void process_command(GameState *state, CommandCode cmd) {
             state->config->status_window.y,
             state->config->status_window.w,
             state->config->status_window.h);
-        if ( render_look_message(tile_desc, &state->config->status_window, state->font) == -1) {
+        if ( render_look_message(tile_desc, &state->config->status_window) == -1) {
           exit(-1);
         }
         // flag status window to redraw

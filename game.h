@@ -1,8 +1,6 @@
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
 
-#include "SDL_ttf.h"
-
 #include <command.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
@@ -45,7 +43,6 @@ typedef struct GameState {
   // Map Data
   MapGraphicsState *map_graphics_state;
 
-  TTF_Font *font;
   MessageList *messages;
   MapSection *map;
   Point at_location;

@@ -4,6 +4,7 @@
 #include "SDL_ttf.h"
 
 #include <messages.h>
+#include <SDL_Tools.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -37,7 +38,9 @@ void free_message(Message *message) {
   free(message);
 }
 
-int add_message(MessageList *mlist, char *text, TTF_Font *font) {
+int add_message(MessageList *mlist, char *text) {
+  TTF_Font *font;
+  font = get_message_font();
   DEBUG(" adding message with text <%s>\n", text);
   Message *msg = malloc( sizeof(Message) );
   // strtok will modify text

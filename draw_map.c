@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include "SDL_ttf.h"
 
 #include <color_palette.h>
 #include <draw_map.h>
@@ -20,7 +21,9 @@ static SDL_Surface *rendered_at;
 static SDL_Surface *rendered_cursor;
 static tile_data MapGraphics[TILE_TYPE_COUNT];
 
-int init_map_graphics(TTF_Font *font) {
+int init_map_graphics() {
+  TTF_Font *font;
+  font = get_map_font();
   /*
    * pre-render the map graphics
    */
