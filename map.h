@@ -21,6 +21,7 @@ typedef struct MapSection {
   Point center;
 } MapSection;
 
+Tile get_tile(const MapSection *map, int x, int y);
 bool is_passable_point(MapSection * map, Point p);
 bool is_opaque_point(MapSection *map, Point p);
 int generate_map(MapSection *map);

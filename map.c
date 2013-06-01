@@ -55,6 +55,20 @@ int generate_map(MapSection *map) {
   return 0;
 }
 
+const static Tile off_grid_tile = {0, 0, 0, OffGrid};
+
+Tile get_tile(const MapSection *map, int x, int y) {
+  if (x < 0 || y < 0 || x >= MAP_SECTION_SIZE || y >= MAP_SECTION_SIZE) {
+    /*
+     * Asked for an out-of-bounds tile, return OffGrid
+     */
+    return off_grid_tile;
+  } else {
+    return map->matrix[x][y];
+  }
+}
+
+
 void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   /*
    * callback for lib fov to light a map tile

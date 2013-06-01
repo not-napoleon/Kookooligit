@@ -146,8 +146,11 @@ void process_command(GameState *state, CommandCode cmd) {
         state->cursor_location = target_point;
         state->need_to_redraw_map = 1;
         // Get descriptor text
+        Tile target_tile;
+        target_tile = get_tile(state->map, target_point.x, target_point.y);
+        DEBUG("looking up description for tile type %d", target_tile.type);
         const char* tile_desc;
-        tile_desc = get_tile_description(state->map->matrix[target_point.x][target_point.y].type);
+        tile_desc = get_tile_description(target_tile.type);
         DEBUG("got tile description %s\n", tile_desc);
         // draw look message
         DEBUG("Dest rect x: %d, y: %d, w: %d, h: %d\n",
