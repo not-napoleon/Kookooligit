@@ -25,5 +25,7 @@ int render_look_message(const char* message, const Rect *dstrect) {
   }
   DEBUG("Message rendered, updating screen\n");
   draw_rect(dstrect);
+
+  return 0;
 }
 
