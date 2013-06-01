@@ -6,7 +6,7 @@
 #include <messages.h>
 #include <SDL_Tools.h>
 
-#define LOGGING_ENABLED
+//#define LOGGING_ENABLED
 #include <log.h>
 /*
  * Message logic here

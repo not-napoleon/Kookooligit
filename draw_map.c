@@ -6,7 +6,7 @@
 #include <SDL_Tools.h>
 #include <tile.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 typedef struct tile_data {
@@ -50,10 +50,12 @@ int init_map_graphics() {
 }
 
 void set_draw_cursor(MapGraphicsState *mgs) {
+  TRACE("Setting draw cursor mode\n");
   mgs->draw_cursor = 1;
 }
 
 void clear_draw_cursor(MapGraphicsState *mgs) {
+  TRACE("Clearing draw cursor mode\n");
   mgs->draw_cursor = 0;
 }
 
@@ -93,6 +95,7 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
           && y == cursor_location.y
           && mgs->draw_cursor == 1) {
         // Top priority - the cursor is always visible, if rendered at all
+        DEBUG("Drawing Cursor\n");
         map_char = rendered_cursor;
       } else if ( (x < 0) || (y < 0)
                       || (x >= MAP_SECTION_SIZE)

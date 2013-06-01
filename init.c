@@ -1,9 +1,10 @@
 #include "SDL_ttf.h"
 
-#include <init.h>
-#include <graphics_wrapper.h>
-#include <SDL_Tools.h>
 
+#include <SDL_Tools.h>
+#include <draw_map.h>
+#include <graphics_wrapper.h>
+#include <init.h>
 #define LOGGING_ENABLED
 #include <log.h>
 
@@ -70,8 +71,10 @@ void initilize(GameState *state) {
 
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
   init_map_graphics();
+  clear_draw_cursor(state->map_graphics_state);
   generate_map(state->map);
   state->at_location.x = state->at_location.y = 10;
+  state->cursor_location.x = state->cursor_location.y = 10;
   state->map->center = state->at_location;
 
   state->is_running = 1;
