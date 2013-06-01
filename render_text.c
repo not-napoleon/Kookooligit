@@ -32,14 +32,14 @@ int build_word_list(const char *text, SurfaceNodePtr *dest, Color color,
     TTF_Font *font) {
   SDL_Color c;
   c = convert_color(color);
-  char *mutable_text = malloc( sizeof(char) * (strlen(text)));
+  char *mutable_text = malloc( sizeof(char) * (strlen(text) + 1));
   strcpy(mutable_text, text);
   char *curr_word = strtok(mutable_text, " ");
   SurfaceNodePtr curr_surface;
   SurfaceNodePtr prev_surface = NULL;
   do {
     // Append a space to the word, since we clobbered it in tokenization
-    char *tmp = malloc( sizeof(char) * (strlen(curr_word) + 1));
+    char *tmp = malloc( sizeof(char) * (strlen(curr_word) + 2));
     strcpy(tmp, curr_word);
     strcat(tmp, " ");
     curr_surface = make_surface_node( TTF_RenderText_Solid(font, tmp, c) );

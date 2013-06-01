@@ -44,7 +44,8 @@ int add_message(MessageList *mlist, char *text) {
   DEBUG(" adding message with text <%s>\n", text);
   Message *msg = malloc( sizeof(Message) );
   // strtok will modify text
-  msg->text = malloc( sizeof(char) * strlen(text));
+  msg->text = malloc( sizeof(char) * (strlen(text)+1));
+  DEBUG("length of text is %d", strlen(text));
   strcpy(msg->text, text);
   msg->rendered_words = NULL;
   // Set the spacing data based on the font
