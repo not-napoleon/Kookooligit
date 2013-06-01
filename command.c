@@ -4,9 +4,9 @@
 //#define LOGGING_ENABLED
 #include <log.h>
 
-CommandCode parse_keypress(SDL_Event *event) {
+CommandCode parse_keypress(const SDL_Event event) {
   CommandCode ret_val;
-  switch(event->key.keysym.sym) {
+  switch(event.key.keysym.sym) {
     case SDLK_h:
     case SDLK_KP4:
       ret_val = MoveLeft;
@@ -58,10 +58,10 @@ CommandCode parse_keypress(SDL_Event *event) {
 CommandCode get_command() {
   /* Just call parse keypress if it's a keypress, and ignore it otherwise
    */
-  SDL_Event *event;
-  SDL_WaitEvent(event);
+  SDL_Event event;
+  SDL_WaitEvent(&event);
   CommandCode cmd;
-  switch (event->type) {
+  switch (event.type) {
     case SDL_KEYDOWN:
       TRACE("got keypress event\n");
       cmd = parse_keypress(event);
@@ -71,7 +71,7 @@ CommandCode get_command() {
       cmd = Quit;
       break;
     default:
-      WARN("Unknown event type %d\n", event->type);
+      WARN("Unknown event type %d\n", event.type);
       cmd = NoOp;
       break;
   }
