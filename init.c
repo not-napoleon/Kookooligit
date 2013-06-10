@@ -3,6 +3,7 @@
 
 #include <SDL_Tools.h>
 #include <draw_map.h>
+#include <tile.h>
 #include <graphics_wrapper.h>
 #include <init.h>
 #define LOGGING_ENABLED
@@ -70,7 +71,7 @@ void initilize(GameState *state) {
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
-  init_map_graphics();
+  init_tile_types();
   clear_draw_cursor(state->map_graphics_state);
   generate_map(state->map);
   state->at_location.x = state->at_location.y = 10;

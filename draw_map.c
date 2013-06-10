@@ -9,45 +9,9 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
-typedef struct tile_data {
-  SDL_Surface *lit_graphic;
-  SDL_Surface *hidden_graphic;
-} tile_data;
 /*
  * File global to store the rendered map graphics
  */
-static short int was_initilized = 0;
-static SDL_Surface *rendered_at;
-static SDL_Surface *rendered_cursor;
-static tile_data MapGraphics[TILE_TYPE_COUNT];
-
-int init_map_graphics() {
-  TTF_Font *font;
-  font = get_map_font();
-  /*
-   * pre-render the map graphics
-   */
-
-  rendered_at = TTF_RenderText_Solid(font, "@", convert_color(color_lit));
-  rendered_cursor = TTF_RenderText_Solid(font, "*", convert_color(color_lit));
-
-  MapGraphics[OffGrid].lit_graphic = TTF_RenderText_Solid(font, " ",
-      convert_color(color_lit));
-  MapGraphics[OpenSpace].lit_graphic = TTF_RenderText_Solid(font, ".",
-      convert_color(color_lit));
-  MapGraphics[ImpassableWall].lit_graphic = TTF_RenderText_Solid(font, "#",
-      convert_color(color_lit));
-
-  MapGraphics[OffGrid].hidden_graphic = TTF_RenderText_Solid(font, " ",
-      convert_color(color_hidden));
-  MapGraphics[OpenSpace].hidden_graphic = TTF_RenderText_Solid(font, ".",
-      convert_color(color_hidden));
-  MapGraphics[ImpassableWall].hidden_graphic = TTF_RenderText_Solid(font, "#",
-      convert_color(color_hidden));
-
-  was_initilized = 1;
-  INFO("Map graphics initilized\n");
-}
 
 void set_draw_cursor(MapGraphicsState *mgs) {
   TRACE("Setting draw cursor mode\n");
@@ -59,9 +23,14 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
   mgs->draw_cursor = 0;
 }
 
+SDL_Surface *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
+  return TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
+}
+
 int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
     Point at_location, Point cursor_location){
 
+  DEBUG("attempting to render map\n");
   SDL_Surface *screen = SDL_GetVideoSurface();
   if (screen == NULL) {
     CRITICAL("SDL_GetVideoSurface returned null!\n");
@@ -72,11 +41,6 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
   get_visible_region(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
       &top_left, &bottom_right);
 
-  DEBUG("attempting to render map\n");
-  if (was_initilized == 0) {
-    ERROR("Map was not initilized\n");
-    return -1;
-  }
   // blank the screen
   // Fill rect can change the dest rect for clipping, so pass in a copy
   SDL_Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
@@ -96,21 +60,24 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
           && mgs->draw_cursor == 1) {
         // Top priority - the cursor is always visible, if rendered at all
         DEBUG("Drawing Cursor\n");
-        map_char = rendered_cursor;
+        map_char = _render_map_glyph("*", color_lit, cursor_bg_color);
       } else if ( (x < 0) || (y < 0)
                       || (x >= MAP_SECTION_SIZE)
                       || (y >= MAP_SECTION_SIZE)
                       || map->matrix[x][y].is_explored == 0) {
-        map_char = MapGraphics[OffGrid].lit_graphic;
+        map_char = _render_map_glyph(tile_data[OffGrid]->glyph, color_hidden, map_bg_color);
       } else {
         if (x == at_location.x && y == at_location.y) {
-          map_char = rendered_at;
+          map_char = _render_map_glyph("@", color_lit, cursor_bg_color);
         } else {
+          Color c;
           if (map->matrix[x][y].is_lit) {
-            map_char = MapGraphics[map->matrix[x][y].type].lit_graphic;
+            c = color_lit;
           } else {
-            map_char = MapGraphics[map->matrix[x][y].type].hidden_graphic;
+            c = color_hidden;
           }
+          map_char = _render_map_glyph(map->matrix[x][y].type->glyph, c,
+              map_bg_color);
         }
       }
       SDL_BlitSurface(map_char, NULL, screen, &write_coords);

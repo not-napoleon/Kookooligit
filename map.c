@@ -3,15 +3,19 @@
 #include <map.h>
 #include <fov.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 bool is_passable_point(MapSection *map, Point p) {
-  return map->matrix[p.x][p.y].is_passable;
+  return map->matrix[p.x][p.y].type->is_passable == 1;
 }
 
 bool is_opaque_point(MapSection *map, Point p) {
-  return map->matrix[p.x][p.y].is_passable == 0;
+  if (map->matrix[p.x][p.y].type == NULL) {
+    CRITICAL("Got NULL tile type data for coord %d, %d\n", p.x, p.y);
+    exit(1);
+  }
+  return map->matrix[p.x][p.y].type->is_passable == 0;
 }
 
 bool wrapper_is_opaque(void *map, int x, int y) {
@@ -21,7 +25,9 @@ bool wrapper_is_opaque(void *map, int x, int y) {
   Point p;
   p.x = x;
   p.y = y;
-  return is_opaque_point( (MapSection*)map, p);
+  bool res;
+  res = is_opaque_point( (MapSection*)map, p);
+  return res;
 }
 
 int dark_map(MapSection *map, int x_dimension, int y_dimension) {
@@ -35,17 +41,20 @@ int dark_map(MapSection *map, int x_dimension, int y_dimension) {
 }
 
 int generate_map(MapSection *map) {
+  TRACE("Generating map\n");
+  if (tiles_initilized == false) {
+    CRITICAL("Generate map called with uninitilized tile data\n");
+    exit(1);
+  }
   int x;
   int y;
   for(x = 0; x < MAP_SECTION_SIZE; x++) {
     for(y = 0; y < MAP_SECTION_SIZE; y++) {
       if( ((((x/8) % 2) == 0) && (((y/8) % 2) == 0))
        || ( x == 0) || (x == 63) || (y == 0) || (y == 63) ){
-        map->matrix[x][y].type = ImpassableWall;
-        map->matrix[x][y].is_passable = 0;
+        map->matrix[x][y].type = tile_data[ImpassableWall];
       } else {
-        map->matrix[x][y].type = OpenSpace;
-        map->matrix[x][y].is_passable = 1;
+        map->matrix[x][y].type = tile_data[OpenSpace];
       }
       map->matrix[x][y].is_explored = 0;
     }
@@ -55,14 +64,13 @@ int generate_map(MapSection *map) {
   return 0;
 }
 
-const static Tile off_grid_tile = {0, 0, 0, OffGrid};
 
 Tile get_tile(const MapSection *map, int x, int y) {
   if (x < 0 || y < 0 || x >= MAP_SECTION_SIZE || y >= MAP_SECTION_SIZE) {
     /*
      * Asked for an out-of-bounds tile, return OffGrid
      */
-    return off_grid_tile;
+    return (Tile){0, 0, tile_data[OffGrid]};
   } else {
     return map->matrix[x][y];
   }
@@ -114,6 +122,7 @@ int calculate_visible_tiles(MapSection *map, Point at_location) {
 
   fov_settings_free(fov_settings);
   free(fov_settings);
+  TRACE("Field of vision finished\n");
   return 0;
 }
 

@@ -1,5 +1,6 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
+#include <stdio.h>
 
 /*
  * For now, logging is a boolean, but by creating level macros now, I can turn
