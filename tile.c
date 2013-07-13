@@ -37,8 +37,15 @@ void init_tile_types() {
       "of some kind", true);
   tile_data[ImpassableWall] = _make_tile_type("#", "A hardened bulkhead, "
       "probably with hardened vaccuum on the other side", false);
+  tile_data[RockWall] = _make_tile_type("#", "A rough stone wall, part "
+      "of the asteroid <SHIPNAME> was carved from", false);
+  tile_data[RockCorridor] = _make_tile_type("~", "A rough, natural passage "
+      "through the asteroid", true);
+  tile_data[TechWall] = _make_tile_type("%", "A a wall made of an unknown "
+      "metal, by an unknown builder", false);
+  tile_data[TechCorridor] = _make_tile_type(".", "A metal corridor. The "
+      "height suggests the builder was not human", true);
   _was_initilized = true;
-  DEBUG("open space is %d\n", tile_data[OpenSpace]);
   INFO("Tile Data initilized\n");
 }
 

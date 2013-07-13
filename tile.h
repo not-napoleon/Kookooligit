@@ -7,6 +7,10 @@ typedef enum {
   OffGrid, // Space outside the map
   OpenSpace, // passable, unoccupied space
   ImpassableWall, // impassable wall
+  RockWall, // 'asteroid' terrain wall
+  RockCorridor, // 'asteroid' terrain open space
+  TechWall, // 'constructed' terrain wall
+  TechCorridor, // 'constructed' terrain open space
   TILE_TYPE_COUNT
 } TileTypeIndex;
 
