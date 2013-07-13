@@ -8,6 +8,14 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
+MapSection *init_map_section() {
+  MapSection *new;
+  new = malloc(sizeof(MapSection));
+  new->x_size = MAP_SECTION_SIZE;
+  new->y_size = MAP_SECTION_SIZE;
+  return new;
+}
+
 bool is_passable_point(MapSection *map, Point p) {
   return map->matrix[p.x][p.y].type->is_passable == 1;
 }
@@ -50,23 +58,23 @@ int generate_map(MapSection *map) {
   }
   int x;
   int y;
-  for(x = 0; x < MAP_SECTION_SIZE; x++) {
-    for(y = 0; y < MAP_SECTION_SIZE; y++) {
+  for(x = 0; x < map->x_size; x++) {
+    for(y = 0; y < map->y_size; y++) {
       // start with a blank map
       map->matrix[x][y].type = tile_data[OffGrid];
       map->matrix[x][y].is_explored = 0;
     }
   }
   // splat terrains on with seed fill
-  splat(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE,
+  splat(map, map->x_size, map->y_size,
       (TileTypeIndex[2]){RockCorridor, TechCorridor}, 2);
 
 
   // For each terrain block, generate a map
 
   // CHEAT until we get the map generating correctly
-  for(x = 0; x < MAP_SECTION_SIZE; x++) {
-    for(y = 0; y < MAP_SECTION_SIZE; y++) {
+  for(x = 0; x < map->x_size; x++) {
+    for(y = 0; y < map->y_size; y++) {
       if( ((((x/8) % 2) == 0) && (((y/8) % 2) == 0))
        || ( x == 0) || (x == 63) || (y == 0) || (y == 63) ){
         map->matrix[x][y].type = tile_data[ImpassableWall];
@@ -76,14 +84,14 @@ int generate_map(MapSection *map) {
     }
   }
   // Mark the whole map as unlit
-  dark_map(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE);
+  dark_map(map, map->x_size, map->y_size);
   INFO("Map generated\n");
   return 0;
 }
 
 
 Tile get_tile(const MapSection *map, int x, int y) {
-  if (x < 0 || y < 0 || x >= MAP_SECTION_SIZE || y >= MAP_SECTION_SIZE) {
+  if (x < 0 || y < 0 || x >= map->x_size || y >= map->y_size) {
     /*
      * Asked for an out-of-bounds tile, return OffGrid
      */
@@ -122,7 +130,7 @@ int get_visible_region(MapSection *map, int window_x_chars, int window_y_chars,
 
 
 int calculate_visible_tiles(MapSection *map, Point at_location) {
-  dark_map(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE);
+  dark_map(map, map->x_size, map->y_size);
 
   // make sure the tile the player is on is lit.  Player could land on an unlit
   // tile by, e.g., teleport.  Or game start.

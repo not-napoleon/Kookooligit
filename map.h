@@ -19,8 +19,11 @@ typedef struct Point {
 typedef struct MapSection {
   Tile matrix[MAP_SECTION_SIZE][MAP_SECTION_SIZE];
   Point center;
+  int x_size;
+  int y_size;
 } MapSection;
 
+MapSection *init_map_section();
 Tile get_tile(const MapSection *map, int x, int y);
 bool is_passable_point(MapSection * map, Point p);
 bool is_opaque_point(MapSection *map, Point p);

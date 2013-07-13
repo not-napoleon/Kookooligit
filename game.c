@@ -13,7 +13,7 @@ GameState *allocate_game_state() {
   state = malloc(sizeof(GameState));
   state->config = malloc(sizeof(GameConfiguration));
   state->messages = init_message_list();
-  state->map = malloc(sizeof(MapSection));
+  state->map = init_map_section();
   state->map_graphics_state = malloc(sizeof(MapGraphicsState));
   INFO("Allocated new game state\n");
   return state;

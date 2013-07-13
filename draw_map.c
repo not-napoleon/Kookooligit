@@ -62,8 +62,8 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
         DEBUG("Drawing Cursor\n");
         map_char = _render_map_glyph("*", color_lit, cursor_bg_color);
       } else if ( (x < 0) || (y < 0)
-                      || (x >= MAP_SECTION_SIZE)
-                      || (y >= MAP_SECTION_SIZE)
+                      || (x >= map->x_size)
+                      || (y >= map->y_size)
                       || map->matrix[x][y].is_explored == 0) {
         map_char = _render_map_glyph(tile_data[OffGrid]->glyph, color_hidden, map_bg_color);
       } else {
