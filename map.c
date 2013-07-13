@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <map.h>
+
 #include <fov.h>
+#include <map.h>
+#include <seed_fill.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -50,15 +52,30 @@ int generate_map(MapSection *map) {
   int y;
   for(x = 0; x < MAP_SECTION_SIZE; x++) {
     for(y = 0; y < MAP_SECTION_SIZE; y++) {
+      // start with a blank map
+      map->matrix[x][y].type = tile_data[OffGrid];
+      map->matrix[x][y].is_explored = 0;
+    }
+  }
+  // splat terrains on with seed fill
+  splat(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE,
+      (TileTypeIndex[2]){RockCorridor, TechCorridor}, 2);
+
+
+  // For each terrain block, generate a map
+
+  // CHEAT until we get the map generating correctly
+  for(x = 0; x < MAP_SECTION_SIZE; x++) {
+    for(y = 0; y < MAP_SECTION_SIZE; y++) {
       if( ((((x/8) % 2) == 0) && (((y/8) % 2) == 0))
        || ( x == 0) || (x == 63) || (y == 0) || (y == 63) ){
         map->matrix[x][y].type = tile_data[ImpassableWall];
       } else {
         map->matrix[x][y].type = tile_data[OpenSpace];
       }
-      map->matrix[x][y].is_explored = 0;
     }
   }
+  // Mark the whole map as unlit
   dark_map(map, MAP_SECTION_SIZE, MAP_SECTION_SIZE);
   INFO("Map generated\n");
   return 0;
