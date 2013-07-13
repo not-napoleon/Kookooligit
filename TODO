@@ -1,1 +1,14 @@
-[ ] Stop passing the main SDL_Surface around
+[X] Stop passing the main SDL_Surface around
+[ ] Split map.get_visible_reigon into window centering and FOV calc
+  [ ] Don't compute FoV in look mode window border check
+[ ] Look mode should not give info on unexplored tiles
+[ ] Switch to shaded rendering
+  [ ] Render the look cursor as a background color change, like a real cursor
+[ ] Beef up the logging "framework" to actually include some log levels
+[ ] Add a SCREAM_AND_DIE macro to log.h to dump a stack trace and exit
+    - see http://stackoverflow.com/questions/105659/how-can-one-grab-a-stack-trace-in-c
+[ ] Move logging control flags to makefile
+[ ] Make reference to MAP_SECTION_SIZE in draw_map.c a parameter
+[ ] Make MAP_SECTION_SIZE internal to map.c
+[ ] Even better, put the size in the map struct
+[ ] Move look & movement code out of game.c (map.c maybe)
