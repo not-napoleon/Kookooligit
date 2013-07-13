@@ -6,6 +6,7 @@
 #include <tile.h>
 #include <graphics_wrapper.h>
 #include <init.h>
+#include <mtwist.h>
 #define LOGGING_ENABLED
 #include <log.h>
 
@@ -28,6 +29,10 @@ int get_configuration(GameConfiguration *config) {
 }
 
 void initilize(GameState *state) {
+  // init random number generator
+  int seed;
+  seed = mt_seed();
+  DEBUG("random number generator seeded with %d\n", seed);
   if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0) {
     ERROR( "Unable to init SDL: %s\n", SDL_GetError());
     exit(1);
