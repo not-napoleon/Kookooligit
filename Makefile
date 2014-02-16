@@ -1,6 +1,6 @@
 CC = gcc 
-CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.2/ `sdl-config --cflags` -g
-OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o seed_fill.o mtwist.o
+CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl-config --cflags` -g
+OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o seed_fill.o random.o
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
@@ -22,8 +22,8 @@ tile.o: tile.c tile.h $(ALL_DEP)
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h
 	$(CC) $(CFLAGS) -c -o fov.o lib/libfov-1.0.4/fov/fov.c
 
-mtwist.o: lib/mtwist-1.2/mtwist.c lib/mtwist-1.2/mtwist.h
-	$(CC) $(CFLAGS) -c -o mtwist.o lib/mtwist-1.2/mtwist.c
+random.o: random.c random.h lib/mtwist-1.5/mtwist.c lib/mtwist-1.5/mtwist.h
+	$(CC) $(CFLAGS) -c -o random.o random.c 
 
 clean:
 	rm $(OBJECTS)
