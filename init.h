@@ -3,8 +3,6 @@
 
 
 #include <game.h>
-#include <messages.h>
-#include <map.h>
 
 
 int get_configuration(GameConfiguration *config);

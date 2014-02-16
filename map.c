@@ -3,6 +3,7 @@
 
 #include <fov.h>
 #include <map.h>
+#include <random.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -49,6 +50,15 @@ void dark_map(MapSection *map, int x_dimension, int y_dimension) {
   }
 }
 
+int rand_delta() {
+  int delta;
+  delta = roll_die(4) - 1;
+  if (delta < 1) {
+    delta--;
+  }
+  return delta;
+}
+
 int generate_map(MapSection *map) {
   TRACE("Generating map\n");
   if (tiles_initilized == false) {
@@ -60,18 +70,51 @@ int generate_map(MapSection *map) {
   for(x = 0; x < map->x_size; x++) {
     for(y = 0; y < map->y_size; y++) {
       // start with a blank map
-      map->matrix[x][y].type = tile_data[OffGrid];
-      map->matrix[x][y].is_explored = 0;
+      map->matrix[x][y].type = tile_data[ImpassableWall];
+      map->matrix[x][y].is_explored = 1;
     }
   }
   // CHEAT until we get the map generating correctly
-  for(x = 0; x < map->x_size; x++) {
-    for(y = 0; y < map->y_size; y++) {
-      if( ((((x/8) % 2) == 0) && (((y/8) % 2) == 0))
-       || ( x == 0) || (x == 63) || (y == 0) || (y == 63) ){
-        map->matrix[x][y].type = tile_data[ImpassableWall];
-      } else {
-        map->matrix[x][y].type = tile_data[OpenSpace];
+  int roughness;
+  int windiness;
+  int passes;
+  int width;
+  int i;
+  roughness = 30;
+  windiness = 30;
+  passes = 3;
+  width = rand_range(3, (map->x_size / passes) - 2);
+
+  for(i = 0; i < passes; i++){
+    x = roll_die(map->x_size / passes) * (i + 1);
+    for(y = map->y_size - 2; y > 0; y--) {
+      /* Adjust track randomly */
+      if (roll_die(100) < roughness) {
+        width += rand_delta();
+      }
+      if (roll_die(100) < windiness) {
+        x += rand_delta();
+      }
+      /* Correct to keep in bounds */
+      if (width < 3) {
+        width = 3;
+      }
+      if (width > map->x_size - 2) {
+        width = map->x_size;
+      }
+      if (x > map->x_size - 5) {
+        x = map->x_size - 5;
+      }
+      if (x < 2) {
+        x = 2;
+      }
+      int tmp_x;
+      DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
+      for (tmp_x = x; tmp_x < x + width; tmp_x++) {
+        if (tmp_x >= map->x_size - 2) {
+          break;
+        }
+        map->matrix[tmp_x][y].type = tile_data[OpenSpace];
       }
     }
   }
