@@ -2,7 +2,7 @@
 #define MTWIST_H
 
 /*
- * $Id: mtwist.h,v 1.22 2012-12-30 16:24:49-08 geoff Exp $
+ * $Id: mtwist.h,v 1.24 2012-12-31 22:22:03-08 geoff Exp $
  *
  * Header file for C/C++ use of the Mersenne-Twist pseudo-RNG.  See
  * http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html for full
@@ -41,9 +41,16 @@
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * $Log: mtwist.h,v $
+ * Revision 1.24  2012-12-31 22:22:03-08  geoff
+ * Fix the out-of-bounds bug in mt_llrand and mt_ldrand that were
+ * overlooked because I assumed they used mts_*.
+ *
+ * Revision 1.23  2013-01-01 01:18:52-08  geoff
+ * Fix a lot of compiler warnings.
+ *
  * Revision 1.22  2012-12-30 16:24:49-08  geoff
- * Declare the new versions of the /dev/*random seeding functions, which
- * now return the seed chosen.
+ * Declare the new versions of the /dev/random and urandom seeding
+ * functions, which now return the seed chosen.
  *
  * Revision 1.21  2012-09-23 23:15:40-07  geoff
  * Fix an array index violation found by valgrind and reported by David
@@ -344,6 +351,14 @@ extern double		mt_ldrand(void);
 	}								\
 	while (0)
 
+/*
+ * The Mersenne Twist PRNG makes it default state available as an
+ * external variable.  This feature is undocumented, but is useful to
+ * use because it allows us to avoid implementing every randistr function
+ * twice.  (In fact, the feature was added to enable randistrs.c to be
+ * written.  It would be better to write in C++, where I could control
+ * the access to the state.)
+ */
 extern mt_state		mt_default_state;
 					/* State of the default generator */
 extern double		mt_32_to_double;
@@ -536,7 +551,7 @@ MT_EXTERN MT_INLINE double mts_ldrand(
  *
  * See mts_lrand for full commentary.
  */
-MT_EXTERN MT_INLINE uint32_t mt_lrand()
+MT_EXTERN MT_INLINE uint32_t mt_lrand(void)
     {
     register uint32_t	random_value;	/* Pseudorandom value generated */
 
@@ -556,7 +571,7 @@ MT_EXTERN MT_INLINE uint32_t mt_lrand()
  *
  * See mts_llrand for full commentary.
  */
-MT_EXTERN MT_INLINE uint64_t mt_llrand()
+MT_EXTERN MT_INLINE uint64_t mt_llrand(void)
     {
     register uint32_t	random_value_1;	/* 1st pseudorandom value generated */
     register uint32_t	random_value_2;	/* 2nd pseudorandom value generated */
@@ -582,8 +597,7 @@ MT_EXTERN MT_INLINE uint64_t mt_llrand()
 	    }
 	}
     else
-	random_value_1 =
-	  mt_default_state.statevec[--mt_default_state.stateptr];
+	random_value_1 = mt_default_state.statevec[mt_default_state.stateptr];
 
     MT_TEMPER(random_value_1);
 
@@ -600,7 +614,7 @@ MT_EXTERN MT_INLINE uint64_t mt_llrand()
  * (exclusive).  This function is optimized for speed, but it only generates
  * 32 bits of precision.  Use mt_ldrand to get 64 bits of precision.
  */
-MT_EXTERN MT_INLINE double mt_drand()
+MT_EXTERN MT_INLINE double mt_drand(void)
     {
     register uint32_t	random_value;	/* Pseudorandom value generated */
 
@@ -647,8 +661,7 @@ MT_EXTERN MT_INLINE double mt_ldrand(void)
 	    }
 	}
     else
-	random_value_1 =
-	  mt_default_state.statevec[--mt_default_state.stateptr];
+	random_value_1 = mt_default_state.statevec[mt_default_state.stateptr];
 
     MT_TEMPER(random_value_1);
 
@@ -693,12 +706,12 @@ class mt_prng
 			    if (pickSeed)
 				(void)mts_seed(&state);
 			    }
-			mt_prng(uint32_t seed)
+			mt_prng(uint32_t newseed)
 					// Construct with 32-bit seeding
 			    {
 			    state.stateptr = 0;
 			    state.initialized = 0;
-			    mts_seed32(&state, seed);
+			    mts_seed32(&state, newseed);
 			    }
 			mt_prng(uint32_t seeds[MT_STATE_SIZE])
 					// Construct with full seeding
@@ -716,15 +729,15 @@ class mt_prng
 	/*
 	 * PRNG seeding functions.
 	 */
-	void		seed32(uint32_t seed)
+	void		seed32(uint32_t newseed)
 					// Set 32-bit random seed
 			    {
-			    mts_seed32(&state, seed);
+			    mts_seed32(&state, newseed);
 			    }
-	void		seed32new(uint32_t seed)
+	void		seed32new(uint32_t newseed)
 					// Set 32-bit random seed
 			    {
-			    mts_seed32new(&state, seed);
+			    mts_seed32new(&state, newseed);
 			    }
 	void		seedfull(uint32_t seeds[MT_STATE_SIZE])
 					// Set complicated random seed

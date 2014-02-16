@@ -5,13 +5,16 @@
 #define ATTRIBUTE(attrs)
 #endif
 static char Rcs_Id[] ATTRIBUTE((used)) =
-    "$Id: mttest.c,v 1.15 2012-12-30 16:24:49-08 geoff Exp $";
+    "$Id: mttest.c,v 1.16 2013-01-05 01:18:52-08 geoff Exp $";
 #endif
 
 /*
  * Test the Mersenne Twister PRNG
  *
  * $Log: mttest.c,v $
+ * Revision 1.16  2013-01-05 01:18:52-08  geoff
+ * Fix a lot of compiler warnings.
+ *
  * Revision 1.15  2012-12-30 16:24:49-08  geoff
  * Use gcc attributes to suppress warnings on Rcs_Id.  Add tests for seed
  * functions.
@@ -75,7 +78,7 @@ static char Rcs_Id[] ATTRIBUTE((used)) =
 #include <sys/time.h>
 
 int		main(int argc, char * argv[]);
-static void	report_timing(long loops, struct rusage * then);
+static void	report_timing(unsigned long loops, struct rusage * then);
 static void	report_clock_timing(struct timeval * then);
 
 /*
@@ -1105,7 +1108,7 @@ int main(
     char *		argv[])
     {
     unsigned long	i;
-    uint32_t		(*funcptr)();
+    uint32_t		(*funcptr)(void);
     uint32_t		random_value;
     uint64_t		longlong_value;
     double		double_value;
@@ -1183,6 +1186,7 @@ int main(
     report_timing(timing_loops, &then);
 
     dummy_long = random_value;
+    (void)dummy_long;			/* Silence compiler warning */
 
     longlong_value = 0;
 
@@ -1208,6 +1212,7 @@ int main(
     report_timing(timing_loops, &then);
 
     dummy_longlong = longlong_value;
+    (void)dummy_longlong;		/* Silence compiler warning */
 
     double_value = 0.0;
 
@@ -1240,6 +1245,7 @@ int main(
     report_timing(timing_loops, &then);
 
     dummy_double = double_value;
+    (void)dummy_double;			/* Silence compiler warning */
 
     /*
      * Test seed timing.
@@ -1270,7 +1276,7 @@ int main(
     }
 
 static void report_timing(
-    long		loops,		/* Number of loops that were done */
+    unsigned long	loops,		/* Number of loops that were done */
     struct rusage *	then)		/* Time test started */
     {
     long		diff;		/* Difference in times */

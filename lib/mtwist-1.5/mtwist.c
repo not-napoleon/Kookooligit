@@ -5,7 +5,7 @@
 #define ATTRIBUTE(attrs)
 #endif
 static char Rcs_Id[] ATTRIBUTE((used)) =
-    "$Id: mtwist.c,v 1.25 2012-12-30 16:24:49-08 geoff Exp $";
+    "$Id: mtwist.c,v 1.28 2014-01-23 21:11:42-08 geoff Exp $";
 #endif
 
 /*
@@ -48,11 +48,21 @@ static char Rcs_Id[] ATTRIBUTE((used)) =
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * $Log: mtwist.c,v $
+ * Revision 1.28  2014-01-23 21:11:42-08  geoff
+ * Fix an obsolete gettimeofday call
+ *
+ * Revision 1.27  2013-06-12 23:22:03-07  geoff
+ * Validity-check state pointer when saving.
+ *
+ * Revision 1.26  2013-01-01 01:18:52-08  geoff
+ * Fix a lot of comiler warnings.  Try to fall back to /dev/random if
+ * /dev/urandom doesn't exist.
+ *
  * Revision 1.25  2012-12-30 16:24:49-08  geoff
  * Use gcc attributes to suppress warnings on Rcs_Id.  Also get rid of
  * most of the table of contents, to suppress a different gcc warning.
  * Fix mts_seed and mts_goodseed to return the 32-bit seeds they chose.
- * Fix all three /dev/*random seeding functions to use only the entropy
+ * Fix all three /dev/Xrandom seeding functions to use only the entropy
  * they need, rather than letting stdio eat far more than necessary.
  * (Thanks to Markus Armbruster for all three ideas.)
  *
@@ -524,10 +534,16 @@ static uint32_t mts_devseed(
     struct _timeb	tb;		/* Time of day (Windows mode) */
 #else /* WIN32 */
     struct timeval	tv;		/* Time of day */
-    struct timezone	tz;		/* Dummy for gettimeofday */
 #endif /* WIN32 */
 
     ranfile = fopen(seed_dev, "rb");
+    /*
+     * Some machines have /dev/random but not /dev/urandom.  On those
+     * machines, /dev/random is nonblocking, so we'll try it before we
+     * fall back to using the time.
+     */
+    if (ranfile == NULL)
+	ranfile = fopen(DEVRANDOM, "rb");
     if (ranfile != NULL)
 	{
 	setbuf(ranfile, NULL);
@@ -535,7 +551,7 @@ static uint32_t mts_devseed(
 	  nextbyte < (int)sizeof randomunion.ranbuffer;
 	  nextbyte += bytesread)
 	    {
-	    bytesread = fread(&randomunion.ranbuffer[nextbyte], 1,
+	    bytesread = fread(&randomunion.ranbuffer[nextbyte], (size_t)1,
 	      sizeof randomunion.ranbuffer - nextbyte, ranfile);
 	    if (bytesread == 0)
 		break;
@@ -556,7 +572,7 @@ static uint32_t mts_devseed(
 #ifdef WIN32
     (void) _ftime (&tb);
 #else /* WIN32 */
-    (void) gettimeofday (&tv, &tz);
+    (void) gettimeofday (&tv, NULL);
 #endif /* WIN32 */
 
     /*
@@ -598,7 +614,7 @@ void mts_bestseed(
       nextbyte < (int)sizeof state->statevec;
       nextbyte += bytesread)
 	{
-	bytesread = fread((char *)&state->statevec[0] + nextbyte, 1,
+	bytesread = fread((char *)&state->statevec[0] + nextbyte, (size_t)1,
 	  sizeof state->statevec - nextbyte, ranfile);
 	if (bytesread == 0)
 	    {
@@ -793,6 +809,17 @@ int mts_savestate(
     if (!state->initialized)
 	mts_seed32(state, DEFAULT_SEED32_OLD);
 
+    /*
+     * Ensure the state pointer is valid.
+     */
+    if (state->stateptr < 0  ||  state->stateptr > MT_STATE_SIZE)
+	{
+	fprintf(stderr,
+	  "Mtwist internal: Trying to write invalid state pointer %d\n",
+	  state->stateptr);
+	mts_refresh(state);
+	}
+
     for (i = MT_STATE_SIZE;  --i >= 0;  )
 	{
 	if (fprintf(statefile, "%" PRIu32 " ", state->statevec[i]) < 0)
@@ -879,7 +906,7 @@ void mt_seedfull(
 /*
  * Initialize the PRNG from random input.  See mts_seed.
  */
-uint32_t mt_seed()
+uint32_t mt_seed(void)
     {
     return mts_seed(&mt_default_state);
     }
@@ -887,7 +914,7 @@ uint32_t mt_seed()
 /*
  * Initialize the PRNG from random input.  See mts_goodseed.
  */
-uint32_t mt_goodseed()
+uint32_t mt_goodseed(void)
     {
     return mts_goodseed(&mt_default_state);
     }
@@ -895,7 +922,7 @@ uint32_t mt_goodseed()
 /*
  * Initialize the PRNG from random input.  See mts_bestseed.
  */
-void mt_bestseed()
+void mt_bestseed(void)
     {
     mts_bestseed(&mt_default_state);
     }
@@ -906,7 +933,7 @@ void mt_bestseed()
  * restoration.  The state should not be modified; instead, it should
  * be reused later as a parameter to one of the mts_xxx functions.
  */
-mt_state* mt_getstate()
+mt_state* mt_getstate(void)
     {
     return &mt_default_state;
     }
