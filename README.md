@@ -53,9 +53,11 @@ Toolchain
 
 **doucmentation** RST via Sphinx, probably need doxygen & possibly breathe later http://stackoverflow.com/questions/11246637/using-sphinx-apidoc-to-generate-documentation-from-c-code
 
-**unit testing** Check http://check.sourceforge.net/doc/check_html/index.html
+**other libraries** 
 
-**other libraries** SDL, SDL_ttf http://www.libsdl.org/index.php  http://www.sdltutorials.com/sdl-ttf
+  * SDL, SDL_ttf http://www.libsdl.org/index.php  http://www.sdltutorials.com/sdl-ttf
+  * lib_fov
+  * mtwist - http://www.cs.hmc.edu/~geoff/mtwist.html
 
 **compiler** gcc, make, etc
 
