@@ -3,7 +3,6 @@
 
 #include <fov.h>
 #include <map.h>
-#include <seed_fill.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -40,7 +39,7 @@ bool wrapper_is_opaque(void *map, int x, int y) {
   return res;
 }
 
-int dark_map(MapSection *map, int x_dimension, int y_dimension) {
+void dark_map(MapSection *map, int x_dimension, int y_dimension) {
   int x,y;
   TRACE("darkening map\n");
   for (x = 0; x < x_dimension; x++) {
@@ -65,13 +64,6 @@ int generate_map(MapSection *map) {
       map->matrix[x][y].is_explored = 0;
     }
   }
-  // splat terrains on with seed fill
-  splat(map, map->x_size, map->y_size,
-      (TileTypeIndex[2]){RockCorridor, TechCorridor}, 2);
-
-
-  // For each terrain block, generate a map
-
   // CHEAT until we get the map generating correctly
   for(x = 0; x < map->x_size; x++) {
     for(y = 0; y < map->y_size; y++) {
