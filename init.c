@@ -80,7 +80,7 @@ void initilize(GameState *state) {
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
   init_tile_types();
   clear_draw_cursor(state->map_graphics_state);
-  generate_map(state->map);
+  generate_initial_map(state->map);
   state->at_location.y = state->map->y_size - 2;
   for (state->at_location.x = 0; state->at_location.x < state->map->x_size; state->at_location.x++){
     DEBUG("Considering start position (%d, %d)\n", state->at_location.x, state->at_location.y);

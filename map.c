@@ -8,12 +8,32 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
+/*
+ * Map Generation Parameters
+ */
+
+const int roughness = 30;
+const int windiness = 30;
+const int passes = 3;
+
 MapSection *init_map_section() {
   MapSection *new;
   new = malloc(sizeof(MapSection));
   new->x_size = MAP_SECTION_SIZE;
   new->y_size = MAP_SECTION_SIZE;
+  new->top_x_positions = (int *)malloc(sizeof(int) * passes);
+  new->top_widths = (int *)malloc(sizeof(int) * passes);
+  new->bottom_x_positions = (int *)malloc(sizeof(int) * passes);
+  new->bottom_widths = (int *)malloc(sizeof(int) * passes);
   return new;
+}
+
+void free_map_section(MapSection *map) {
+  free(map->top_x_positions);
+  free(map->top_widths);
+  free(map->bottom_x_positions);
+  free(map->bottom_widths);
+  free(map);
 }
 
 bool is_passable_point(MapSection *map, Point p) {
@@ -59,7 +79,32 @@ int rand_delta() {
   return delta;
 }
 
-int generate_map(MapSection *map) {
+void extrude_tunnel_row(int *x, int *width, const int x_min, const int x_max,
+    const int width_min, const int width_max) {
+  /* Adjust track randomly */
+  if (roll_die(100) < roughness) {
+    *width += rand_delta();
+  }
+  if (roll_die(100) < windiness) {
+    *x += rand_delta();
+  }
+  /* Correct to keep in bounds */
+  if (*width < width_min) {
+    *width = width_min;
+  }
+  if (*width > width_max) {
+    *width = width_max;
+  }
+  if (*x > x_max) {
+    *x = x_max;
+  }
+  if (*x < x_min) {
+    *x = x_min;
+  }
+
+}
+
+int generate_map(MapSection *map, int *x_positions, int *widths) {
   TRACE("Generating map\n");
   if (tiles_initilized == false) {
     CRITICAL("Generate map called with uninitilized tile data\n");
@@ -74,53 +119,61 @@ int generate_map(MapSection *map) {
       map->matrix[x][y].is_explored = 1;
     }
   }
-  // CHEAT until we get the map generating correctly
-  int roughness;
-  int windiness;
-  int passes;
+
   int width;
   int i;
-  roughness = 30;
-  windiness = 30;
-  passes = 3;
-  width = rand_range(3, (map->x_size / passes) - 2);
 
+  const int y_max = map->y_size - 2;
+  const int y_min = 1;
   for(i = 0; i < passes; i++){
-    x = roll_die(map->x_size / passes) * (i + 1);
-    for(y = map->y_size - 2; y > 0; y--) {
-      /* Adjust track randomly */
-      if (roll_die(100) < roughness) {
-        width += rand_delta();
-      }
-      if (roll_die(100) < windiness) {
-        x += rand_delta();
-      }
-      /* Correct to keep in bounds */
-      if (width < 3) {
-        width = 3;
-      }
-      if (width > map->x_size - 2) {
-        width = map->x_size;
-      }
-      if (x > map->x_size - 5) {
-        x = map->x_size - 5;
-      }
-      if (x < 2) {
-        x = 2;
-      }
+    width = widths[i];
+    x = x_positions[i];
+    /* bottom to top loop */
+    int y_start = y_max;
+    int y_end = y_min;
+    for(y = y_start; y >= y_end; (y_start < y_end ? y++ : y--)) {
       int tmp_x;
       DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
+      extrude_tunnel_row(&x, &width,
+          2, map->x_size - 5,  /* x min & max */
+          3, map->x_size);  /* width min & max */
       for (tmp_x = x; tmp_x < x + width; tmp_x++) {
         if (tmp_x >= map->x_size - 2) {
           break;
         }
         map->matrix[tmp_x][y].type = tile_data[OpenSpace];
       }
+      if (y == y_min) {
+        map->top_x_positions[i] = x;
+        map->top_widths[i] = width;
+      }
+      if (y == y_max) {
+        map->bottom_x_positions[i] = x;
+        map->bottom_widths[i] = x;
+      }
     }
   }
   // Mark the whole map as unlit
   dark_map(map, map->x_size, map->y_size);
   INFO("Map generated\n");
+  return 0;
+}
+
+int generate_initial_map(MapSection *map) {
+  /* Generate a map section with random starting values */
+  int *x_positions;
+  int *widths;
+  int i;
+  x_positions = (int *)malloc(sizeof(int) * passes);
+  widths = (int *)malloc(sizeof(int) * passes);
+
+  for(i = 0; i < passes; i++){
+    widths[i] = rand_range(3, (map->x_size / passes) - 2);
+    x_positions[i] = roll_die(map->x_size / passes) * (i + 1);
+  }
+  generate_map(map, x_positions, widths);
+  free(x_positions);
+  free(widths);
   return 0;
 }
 

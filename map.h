@@ -21,13 +21,19 @@ typedef struct MapSection {
   Point center;
   int x_size;
   int y_size;
+  int *top_x_positions;
+  int *top_widths;
+  int *bottom_x_positions;
+  int *bottom_widths;
 } MapSection;
 
 MapSection *init_map_section();
+void free_map_section(MapSection *map);
 Tile get_tile(const MapSection *map, int x, int y);
 bool is_passable_point(MapSection * map, Point p);
 bool is_opaque_point(MapSection *map, Point p);
-int generate_map(MapSection *map);
+int generate_map(MapSection *map, int *x_positions, int *widths);
+int generate_initial_map(MapSection *map);
 int get_visible_region(MapSection *map, int at_width, int line_height,
     Point *top_left, Point *bottom_right);
 

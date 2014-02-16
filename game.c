@@ -24,7 +24,7 @@ void free_game_state(GameState *state) {
    */
   free(state->config);
   free_message_queue(state->messages);
-  free(state->map);
+  free_map_section(state->map);
   free(state->map_graphics_state);
   free(state);
 }
