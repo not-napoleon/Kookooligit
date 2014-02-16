@@ -12,5 +12,4 @@
 [ ] Make MAP_SECTION_SIZE internal to map.c
 [X] Even better, put the size in the map struct
   [ ] Stop passing map size to dark_map
-  [ ] Stop passing map size to splat
 [ ] Move look & movement code out of game.c (map.c maybe)

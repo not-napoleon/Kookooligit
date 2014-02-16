@@ -17,7 +17,13 @@ here's the initial master TODO list:
 
  - [x] 3 - "@" walking around demo, screen layout, keyboard input, message printing (Completed 2013-03-24)
 
- - [ ] 4 - Map display, wall detection, look command
+ - [x] 4 - Map display, wall detection, look command
+ 
+ - [x] 4.1 - Basic map generation
+
+ - [ ] 4.2 - Infinite (non-persistent) map
+
+ - [ ] 4.3 - Smooth map scrolling
 
  - [ ] 5 - Saving & Loading, read map from a file, config files
 
