@@ -13,7 +13,7 @@ GameState *allocate_game_state() {
   state = malloc(sizeof(GameState));
   state->config = malloc(sizeof(GameConfiguration));
   state->messages = init_message_list();
-  state->map = init_map_section();
+  state->map = init_infinite_map();
   state->map_graphics_state = malloc(sizeof(MapGraphicsState));
   INFO("Allocated new game state\n");
   return state;
@@ -24,7 +24,7 @@ void free_game_state(GameState *state) {
    */
   free(state->config);
   free_message_queue(state->messages);
-  free_map_section(state->map);
+  free_infinite_map(state->map);
   free(state->map_graphics_state);
   free(state);
 }
@@ -41,8 +41,10 @@ void process_command(GameState *state, CommandCode cmd) {
       DEBUG("Enter look mode\n");
       if (state->state == Move) {
         state->state = Look;
-        state->cursor_location.x = state->at_location.x;
-        state->cursor_location.y = state->at_location.y;
+        /* TODO: Delegate this to map; Game shouldn't poke that deeply into the
+         * map struct */
+        state->map->cursor_location.x = state->map->at_location.x;
+        state->map->cursor_location.y = state->map->at_location.y;
       }
       set_draw_cursor(state->map_graphics_state);
       state->need_to_redraw_map = 1;
@@ -94,6 +96,10 @@ void process_command(GameState *state, CommandCode cmd) {
     case Quit:
       state->is_running = 0;
       break;
+    case NoOp:
+      /* This space intentionally left blank.  I know I could just let it fall
+       * through, but it's a warning.*/
+      break;
   }
 
   // Resolve charcter or cursor movement
@@ -102,17 +108,16 @@ void process_command(GameState *state, CommandCode cmd) {
 
     Point target_point;
     if (state->state == Move) {
-      target_point = state->at_location;
+      target_point = state->map->at_location;
     } else if (state->state == Look) {
-      target_point = state->cursor_location;
+      target_point = state->map->cursor_location;
     }
 
     target_point.x = target_point.x + delta_x;
     target_point.y = target_point.y + delta_y;
 
     if (state->state == Move) {
-      if (is_passable_point(state->map, target_point) == 1) {
-        state->at_location = target_point;
+      if (attempt_move(state->map, delta_x, delta_y)) {
         state->need_to_redraw_map = 1;
       } else {
         char tmp[50] = "You can't walk through walls";
@@ -120,20 +125,20 @@ void process_command(GameState *state, CommandCode cmd) {
         state->need_to_redraw_messages = 1;
       }
       // Decide if we need to recenter the map section
-      if (abs(state->at_location.x - state->map->center.x) > 10) {
-        state->map->center.x = state->at_location.x;
-      }
-      if (abs(state->at_location.y - state->map->center.y) > 10) {
-        state->map->center.y = state->at_location.y;
-      }
-      DEBUG("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,
-          state->at_location.y, state->map->center.x, state->map->center.y);
-      calculate_visible_tiles(state->map, state->at_location);
+      /*if (abs(state->at_location.x - state->map->center.x) > 10) {*/
+        /*state->map->center.x = state->at_location.x;*/
+      /*}*/
+      /*if (abs(state->at_location.y - state->map->center.y) > 10) {*/
+        /*state->map->center.y = state->at_location.y;*/
+      /*}*/
+      /*DEBUG("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,*/
+          /*state->at_location.y, state->map->center.x, state->map->center.y);*/
+      calculate_visible_tiles(state->map, state->map->at_location);
     } else if (state->state == Look) {
       Point top_left, bottom_right;
       //TODO: Calling get_visible_region here is probably the Wrong Thing to do
-      get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,
-          state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);
+      /*get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,*/
+          /*state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);*/
       DEBUG("attempting to move cursor to %d, %d\n", target_point.x,
           target_point.y);
       DEBUG("top_left: (%d, %d)\n", top_left.x, top_left.y);
@@ -143,7 +148,7 @@ void process_command(GameState *state, CommandCode cmd) {
           && (target_point.y >= top_left.y)
           && (target_point.y <= bottom_right.y) ) {
         DEBUG("drawing cursor? maybe?\n");
-        state->cursor_location = target_point;
+        state->map->cursor_location = target_point;
         state->need_to_redraw_map = 1;
         // Get descriptor text
         Tile target_tile;

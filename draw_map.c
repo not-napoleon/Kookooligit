@@ -27,19 +27,25 @@ SDL_Surface *_render_map_glyph(const char *glyph, const Color fg, const Color bg
   return TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
 }
 
-int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
-    Point at_location, Point cursor_location){
+int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window){
 
-  DEBUG("attempting to render map\n");
+  DEBUG("attempting to render map - window size is %d x %d (line_height: %d, at_width: %d)\n",
+      mgs->map_window_x_chars, mgs->map_window_y_chars, mgs->line_height, mgs->at_width);
   SDL_Surface *screen = SDL_GetVideoSurface();
   if (screen == NULL) {
     CRITICAL("SDL_GetVideoSurface returned null!\n");
   }
 
-  Point top_left;
-  Point bottom_right;
-  get_visible_region(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
-      &top_left, &bottom_right);
+  Point at_location;
+  Point cursor_location;
+  Tile **tile_grid;
+  tile_grid = (Tile **)malloc(sizeof(Tile *) * (mgs->map_window_x_chars + 1));
+  int i;
+  for (i = 0; i <= mgs->map_window_x_chars; i++) {
+    tile_grid[i] = (Tile *)malloc(sizeof(Tile) * mgs->map_window_y_chars + 1);
+  }
+  get_tile_grid(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
+      &at_location, &cursor_location, tile_grid);
 
   // blank the screen
   // Fill rect can change the dest rect for clipping, so pass in a copy
@@ -48,35 +54,35 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
 
   SDL_Rect write_coords;
   int x, y;
-  for (x = top_left.x; x <= bottom_right.x; x++) {
-    // our x offset for writing is the top left corner of the visible window
-    // plus the width of the characters witten so far.
-    write_coords.x = map_window->x + ((x - top_left.x) * mgs->at_width);
-    for (y = top_left.y; y <= bottom_right.y; y++) {
-      write_coords.y = map_window->y + ((y - top_left.y) * mgs->line_height);
+  for (x = 0; x < mgs->map_window_x_chars; x++) {
+    /* our x offset for writing is the top left corner of the visible window
+     * plus the width of the characters witten so far.*/
+    write_coords.x = map_window->x + (x  * mgs->at_width);
+    for (y = 0; y < mgs->map_window_y_chars; y++) {
+      write_coords.y = map_window->y + (y * mgs->line_height);
+      /*DEBUG("Rendering %p from %d, %d at %d,%d\n", tile_grid[x][y].type, x , y,*/
+          /*write_coords.x, write_coords.y);*/
       SDL_Surface *map_char;
       if (x == cursor_location.x
           && y == cursor_location.y
           && mgs->draw_cursor == 1) {
         // Top priority - the cursor is always visible, if rendered at all
-        DEBUG("Drawing Cursor\n");
+        DEBUG("Rendering Cursor\n");
         map_char = _render_map_glyph("*", color_lit, cursor_bg_color);
-      } else if ( (x < 0) || (y < 0)
-                      || (x >= map->x_size)
-                      || (y >= map->y_size)
-                      || map->matrix[x][y].is_explored == 0) {
+      } else if ( tile_grid[x][y].is_explored == 0) {
         map_char = _render_map_glyph(tile_data[OffGrid]->glyph, color_hidden, map_bg_color);
       } else {
         if (x == at_location.x && y == at_location.y) {
+          DEBUG("Rendering at\n");
           map_char = _render_map_glyph("@", color_lit, cursor_bg_color);
         } else {
           Color c;
-          if (map->matrix[x][y].is_lit) {
+          if (tile_grid[x][y].is_lit) {
             c = color_lit;
           } else {
             c = color_hidden;
           }
-          map_char = _render_map_glyph(map->matrix[x][y].type->glyph, c,
+          map_char = _render_map_glyph(tile_grid[x][y].type->glyph, c,
               map_bg_color);
         }
       }
@@ -84,6 +90,9 @@ int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
     }
   }
 
+  for (i = 0; i < mgs->map_window_x_chars; i++) {
+    free(tile_grid[i]);
+  }
+  free(tile_grid);
   SDL_UpdateRect(screen, map_window->x, map_window->y, map_window->w, map_window->h);
-
 }

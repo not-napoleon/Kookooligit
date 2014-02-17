@@ -3,38 +3,27 @@
 
 #include <stdbool.h>
 #include <tile.h>
-
-typedef struct Point {
-  /*
-   * An x,y point on the map grid
-   */
-  int x;
-  int y;
-} Point;
-
+#include <map_section.h>
 
 #define VISION_RADIUS 22
-#define MAP_SECTION_SIZE 64
+#define MAP_SECTION_BUFFER 5
 
-typedef struct MapSection {
-  Tile matrix[MAP_SECTION_SIZE][MAP_SECTION_SIZE];
-  Point center;
-  int x_size;
-  int y_size;
-  int *top_x_positions;
-  int *top_widths;
-  int *bottom_x_positions;
-  int *bottom_widths;
-} MapSection;
+typedef struct InfiniteMap {
+  MapSection *section_list[MAP_SECTION_BUFFER];
+  int current_section;
+  Point at_location;
+  Point cursor_location;
+  Point camera_location;
+} InfiniteMap;
 
-MapSection *init_map_section();
-void free_map_section(MapSection *map);
-Tile get_tile(const MapSection *map, int x, int y);
-bool is_passable_point(MapSection * map, Point p);
-bool is_opaque_point(MapSection *map, Point p);
-int generate_map(MapSection *map, int *x_positions, int *widths);
-int generate_initial_map(MapSection *map);
-int get_visible_region(MapSection *map, int at_width, int line_height,
-    Point *top_left, Point *bottom_right);
+InfiniteMap *init_infinite_map();
+void free_infinite_map(InfiniteMap *map);
+Tile get_tile(const InfiniteMap *map, int x, int y);
+bool is_passable_point(InfiniteMap * map, Point p);
+bool is_opaque_point(InfiniteMap *map, Point p);
+int generate_initial_map(InfiniteMap *map);
+int get_tile_grid(InfiniteMap *map, int window_x_chars, int window_y_chars,
+    Point *at_location, Point *cursor_location, Tile **tile_grid);
+bool attempt_move(InfiniteMap *map, int dx, int dy);
 
 #endif

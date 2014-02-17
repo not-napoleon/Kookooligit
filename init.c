@@ -81,16 +81,6 @@ void initilize(GameState *state) {
   init_tile_types();
   clear_draw_cursor(state->map_graphics_state);
   generate_initial_map(state->map);
-  state->at_location.y = state->map->y_size - 2;
-  for (state->at_location.x = 0; state->at_location.x < state->map->x_size; state->at_location.x++){
-    DEBUG("Considering start position (%d, %d)\n", state->at_location.x, state->at_location.y);
-    if (is_passable_point(state->map, state->at_location)){
-      break;
-    }
-  }
-  state->cursor_location.x = state->at_location.x;
-  state->cursor_location.y = state->at_location.y;
-  state->map->center = state->at_location;
 
   state->is_running = 1;
   state->state = Move;

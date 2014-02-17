@@ -17,7 +17,6 @@ typedef struct MapGraphicsState {
 
 void set_draw_cursor(MapGraphicsState *mgs);
 void clear_draw_cursor(MapGraphicsState *mgs);
-int render_map_window(MapSection *map, MapGraphicsState *mgs, Rect *map_window,
-    Point at_location, Point cursor_location);
+int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window);
 
 #endif

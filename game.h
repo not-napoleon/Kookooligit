@@ -44,10 +44,7 @@ typedef struct GameState {
   MapGraphicsState *map_graphics_state;
 
   MessageList *messages;
-  MapSection *map;
-  Point at_location;
-
-  Point cursor_location;
+  InfiniteMap *map;
 
   States state;
 } GameState;

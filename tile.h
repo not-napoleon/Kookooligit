@@ -17,6 +17,7 @@ typedef struct TileType {
 
   /*Basic graphics data*/
   char *description;
+  char *name;
   char *glyph; /* SDL expects a null terminated string to render */
 
 } TileType;

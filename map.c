@@ -8,44 +8,44 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
-/*
- * Map Generation Parameters
- */
-
-const int roughness = 30;
-const int windiness = 30;
-const int passes = 3;
-
-MapSection *init_map_section() {
-  MapSection *new;
-  new = malloc(sizeof(MapSection));
-  new->x_size = MAP_SECTION_SIZE;
-  new->y_size = MAP_SECTION_SIZE;
-  new->top_x_positions = (int *)malloc(sizeof(int) * passes);
-  new->top_widths = (int *)malloc(sizeof(int) * passes);
-  new->bottom_x_positions = (int *)malloc(sizeof(int) * passes);
-  new->bottom_widths = (int *)malloc(sizeof(int) * passes);
+InfiniteMap *init_infinite_map() {
+  InfiniteMap *new;
+  new = (InfiniteMap *)malloc(sizeof(InfiniteMap));
+  int i;
+  for (i = 0; i < MAP_SECTION_BUFFER; i++) {
+    new->section_list[i] = init_map_section();
+  }
   return new;
 }
 
-void free_map_section(MapSection *map) {
-  free(map->top_x_positions);
-  free(map->top_widths);
-  free(map->bottom_x_positions);
-  free(map->bottom_widths);
+void free_infinite_map(InfiniteMap *map) {
+  int i;
+  for (i = 0; i < MAP_SECTION_BUFFER; i++) {
+    free_map_section(map->section_list[i]);
+  }
   free(map);
 }
 
-bool is_passable_point(MapSection *map, Point p) {
-  return map->matrix[p.x][p.y].type->is_passable == 1;
+Tile get_tile(const InfiniteMap *map, const int x, const int y) {
+  //TRACE("Getting tile (%d, %d)\n", x, y);
+  MapSection *sec = map->section_list[map->current_section];
+  if (x < 0 || y < 0 || x >= sec->x_size || y >= sec->y_size) {
+    /*
+     * Asked for an out-of-bounds tile, return OffGrid
+     */
+    //TRACE("Defaulting to offgrid tile");
+    return (Tile){0, 0, tile_data[OffGrid]};
+  } else {
+    return sec->matrix[x][y];
+  }
 }
 
-bool is_opaque_point(MapSection *map, Point p) {
-  if (map->matrix[p.x][p.y].type == NULL) {
-    CRITICAL("Got NULL tile type data for coord %d, %d\n", p.x, p.y);
-    exit(1);
-  }
-  return map->matrix[p.x][p.y].type->is_passable == 0;
+bool is_passable_point(InfiniteMap *map, Point p) {
+  return get_tile(map, p.x, p.y).type->is_passable == 1;
+}
+
+bool is_opaque_point(InfiniteMap *map, Point p) {
+  return get_tile(map, p.x, p.y).type->is_passable == 0;
 }
 
 bool wrapper_is_opaque(void *map, int x, int y) {
@@ -56,137 +56,51 @@ bool wrapper_is_opaque(void *map, int x, int y) {
   p.x = x;
   p.y = y;
   bool res;
-  res = is_opaque_point( (MapSection*)map, p);
+  res = is_opaque_point( (InfiniteMap*)map, p);
   return res;
 }
 
-void dark_map(MapSection *map, int x_dimension, int y_dimension) {
-  int x,y;
-  TRACE("darkening map\n");
-  for (x = 0; x < x_dimension; x++) {
-    for (y = 0; y < y_dimension; y++){
-      map->matrix[x][y].is_lit = 0;
-    }
-  }
-}
-
-int rand_delta() {
-  int delta;
-  delta = roll_die(4) - 1;
-  if (delta < 1) {
-    delta--;
-  }
-  return delta;
-}
-
-void extrude_tunnel_row(int *x, int *width, const int x_min, const int x_max,
-    const int width_min, const int width_max) {
-  /* Adjust track randomly */
-  if (roll_die(100) < roughness) {
-    *width += rand_delta();
-  }
-  if (roll_die(100) < windiness) {
-    *x += rand_delta();
-  }
-  /* Correct to keep in bounds */
-  if (*width < width_min) {
-    *width = width_min;
-  }
-  if (*width > width_max) {
-    *width = width_max;
-  }
-  if (*x > x_max) {
-    *x = x_max;
-  }
-  if (*x < x_min) {
-    *x = x_min;
-  }
-
-}
-
-int generate_map(MapSection *map, int *x_positions, int *widths) {
-  TRACE("Generating map\n");
-  if (tiles_initilized == false) {
-    CRITICAL("Generate map called with uninitilized tile data\n");
-    exit(1);
-  }
-  int x;
-  int y;
-  for(x = 0; x < map->x_size; x++) {
-    for(y = 0; y < map->y_size; y++) {
-      // start with a blank map
-      map->matrix[x][y].type = tile_data[ImpassableWall];
-      map->matrix[x][y].is_explored = 1;
-    }
-  }
-
-  int width;
+void dark_map(InfiniteMap *map) {
   int i;
-
-  const int y_max = map->y_size - 2;
-  const int y_min = 1;
-  for(i = 0; i < passes; i++){
-    width = widths[i];
-    x = x_positions[i];
-    /* bottom to top loop */
-    int y_start = y_max;
-    int y_end = y_min;
-    for(y = y_start; y >= y_end; (y_start < y_end ? y++ : y--)) {
-      int tmp_x;
-      DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
-      extrude_tunnel_row(&x, &width,
-          2, map->x_size - 5,  /* x min & max */
-          3, map->x_size);  /* width min & max */
-      for (tmp_x = x; tmp_x < x + width; tmp_x++) {
-        if (tmp_x >= map->x_size - 2) {
-          break;
-        }
-        map->matrix[tmp_x][y].type = tile_data[OpenSpace];
-      }
-      if (y == y_min) {
-        map->top_x_positions[i] = x;
-        map->top_widths[i] = width;
-      }
-      if (y == y_max) {
-        map->bottom_x_positions[i] = x;
-        map->bottom_widths[i] = x;
-      }
-    }
+  for (i = 0; i < MAP_SECTION_BUFFER; i++) {
+    dark_map_section(map->section_list[i]);
   }
-  // Mark the whole map as unlit
-  dark_map(map, map->x_size, map->y_size);
-  INFO("Map generated\n");
-  return 0;
 }
 
-int generate_initial_map(MapSection *map) {
-  /* Generate a map section with random starting values */
+int generate_initial_map(InfiniteMap *map) {
+  /* Start in the middle of the buffer */
+  map->current_section = 2;
+  /* Generate the first map section with random starting values */
   int *x_positions;
   int *widths;
   int i;
-  x_positions = (int *)malloc(sizeof(int) * passes);
-  widths = (int *)malloc(sizeof(int) * passes);
+  x_positions = (int *)malloc(sizeof(int) * 3);
+  widths = (int *)malloc(sizeof(int) * 3);
 
-  for(i = 0; i < passes; i++){
-    widths[i] = rand_range(3, (map->x_size / passes) - 2);
-    x_positions[i] = roll_die(map->x_size / passes) * (i + 1);
+  MapSection *sec = map->section_list[map->current_section];
+
+  for(i = 0; i < 3; i++){
+    widths[i] = rand_range(3, (sec->x_size / 3) - 2);
+    x_positions[i] = roll_die(sec->x_size / 3) * (i + 1);
   }
-  generate_map(map, x_positions, widths);
+  generate_map_section(sec, x_positions, widths);
   free(x_positions);
   free(widths);
-  return 0;
-}
 
-
-Tile get_tile(const MapSection *map, int x, int y) {
-  if (x < 0 || y < 0 || x >= map->x_size || y >= map->y_size) {
-    /*
-     * Asked for an out-of-bounds tile, return OffGrid
-     */
-    return (Tile){0, 0, tile_data[OffGrid]};
-  } else {
-    return map->matrix[x][y];
+  /* TODO: Build out the other four sections */
+  /* set cursor and at locations */
+  map->at_location.y = map->section_list[map->current_section]->y_size - 2;
+  for (map->at_location.x = 0;
+      map->at_location.x < map->section_list[map->current_section]->x_size;
+      map->at_location.x++){
+    DEBUG("Considering start position (%d, %d)\n", map->at_location.x, map->at_location.y);
+    if (is_passable_point(map, map->at_location)){
+      break;
+    }
   }
+  map->cursor_location = map->at_location;
+  map->camera_location = map->at_location;
+  return 0;
 }
 
 
@@ -194,37 +108,57 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   /*
    * callback for lib fov to light a map tile
    */
-  MapSection *map;
-  map = (MapSection*)vmap;
-  map->matrix[x][y].is_lit = 1;
-  map->matrix[x][y].is_explored = 1;
+  InfiniteMap *map;
+  map = (InfiniteMap*)vmap;
+  MapSection *sec;
+  sec = map->section_list[map->current_section];
+  sec->matrix[x][y].is_lit = 1;
+  sec->matrix[x][y].is_explored = 1;
 }
 
 
-int get_visible_region(MapSection *map, int window_x_chars, int window_y_chars,
-    Point *top_left, Point *bottom_right){
-  DEBUG("map center is (%i, %i)\n", map->center.x, map->center.y);
-  top_left->x = map->center.x - (window_x_chars / 2);
-  top_left->y = map->center.y - (window_y_chars / 2);
+int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y_chars,
+    Point *at_location, Point *cursor_location, Tile **tile_grid) {
+  /*
+   * Get a grid of tiles, and the at_location and cursor location relative to
+   * that grid, centered on the current camera location and dimensioned as
+   * window_x_characters by window_y_characters.
+   *
+   * Basically, gets the set of tiles to render.
+   */
 
-  bottom_right->x = map->center.x + (window_x_chars / 2);
-  bottom_right->y = map->center.y + (window_y_chars / 2);
+  /* TODO: Use camera location here, not at location */
+  const int x_start = map->at_location.x - (window_x_chars / 2);
+  const int x_end = map->at_location.x + (window_x_chars / 2);
+  const int y_start = map->at_location.y - (window_y_chars / 2);
+  const int y_end = map->at_location.y + (window_y_chars / 2);
 
-  DEBUG("visible region spans (%i, %i) to (%i, %i)\n",
-      top_left->x, top_left->y, bottom_right->x, bottom_right->y);
-
+  DEBUG("Selecting map tiles from (%d, %d) to (%d, %d)\n", x_start, y_start, x_end, y_end);
+  DEBUG("at_location is %d, %d\n", map->at_location.x, map->at_location.y);
+  int x, y;
+  Tile t;
+  for (x = x_start; x <= x_end; x++) {
+    for (y = y_start; y <= y_end; y++) {
+      /*DEBUG("looking for tile at (%d, %d), storing at (%d, %d)\n",*/
+          /*x, y, x - x_start, y - y_start);*/
+      t = get_tile(map, x, y);
+      tile_grid[x - x_start][y - y_start] = t;
+    }
+  }
+  at_location->x = map->at_location.x - x_start;
+  at_location->y = map->at_location.y - y_start;
+  cursor_location->x = map->cursor_location.x - x_start;
+  cursor_location->y = map->cursor_location.y - y_start;
   return 0;
 }
 
 
-int calculate_visible_tiles(MapSection *map, Point at_location) {
-  dark_map(map, map->x_size, map->y_size);
-
+int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
+  DEBUG("calculating field of vision\n");
+  dark_map(map);
   // make sure the tile the player is on is lit.  Player could land on an unlit
   // tile by, e.g., teleport.  Or game start.
   light_tile(map, at_location.x, at_location.y, 0, 0, NULL);
-
-  DEBUG("calculating field of vision\n");
   fov_settings_type *fov_settings;
   fov_settings = malloc( sizeof(fov_settings_type) );
   fov_settings_init(fov_settings);
@@ -239,5 +173,19 @@ int calculate_visible_tiles(MapSection *map, Point at_location) {
   return 0;
 }
 
+bool attempt_move(InfiniteMap *map, int dx, int dy) {
+  /* TODO: Support moving things other than the at */
+  Point target_point;
+  target_point = map->at_location;
 
+  target_point.x = target_point.x + dx;
+  target_point.y = target_point.y + dy;
 
+  if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
+    /* Move allowed */
+    map->at_location = target_point;
+    return true;
+  } else {
+    return false;
+  }
+}

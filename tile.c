@@ -13,7 +13,8 @@ bool tiles_initilized() {
   return _was_initilized;
 }
 
-TileType *_make_tile_type(const char *glyph, const char* description, bool is_passable) {
+TileType *_make_tile_type(const char *glyph, const char* name,
+    const char* description, const bool is_passable) {
   TileType *result;
   result = malloc(sizeof(TileType));
   if (result == NULL) {
@@ -32,10 +33,10 @@ TileType *_make_tile_type(const char *glyph, const char* description, bool is_pa
 
 
 void init_tile_types() {
-  tile_data[OffGrid] = _make_tile_type(" ", "Unexplored space", true);
-  tile_data[OpenSpace] = _make_tile_type(".", "An unobstructed corridor "
+  tile_data[OffGrid] = _make_tile_type(" ", "off_grid", "Unexplored space", true);
+  tile_data[OpenSpace] = _make_tile_type(".", "open", "An unobstructed corridor "
       "of some kind", true);
-  tile_data[ImpassableWall] = _make_tile_type("#", "A hardened bulkhead, "
+  tile_data[ImpassableWall] = _make_tile_type("#", "wall", "A hardened bulkhead, "
       "probably with hardened vaccuum on the other side", false);
   _was_initilized = true;
   INFO("Tile Data initilized\n");

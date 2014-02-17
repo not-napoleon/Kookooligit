@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   char msg1[] = "Welcome to Kookoolegit!";
   add_message(state->messages, msg1);
   render_messages(&state->config->message_window, state->messages);
-  calculate_visible_tiles(state->map, state->at_location);
+  calculate_visible_tiles(state->map, state->map->at_location);
   state->need_to_redraw_map = 1;
   TRACE("entering main loop\n");
   while (state->is_running) {
@@ -47,8 +47,7 @@ int main(int argc, char *argv[]) {
     }
     if (state->need_to_redraw_map == 1) {
       render_map_window(state->map, state->map_graphics_state,
-          &state->config->map_window, state->at_location,
-          state->cursor_location);
+          &state->config->map_window);
       state->need_to_redraw_map = 0;
     }
 
