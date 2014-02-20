@@ -1,10 +1,10 @@
-CC = gcc 
+CC = clang
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl-config --cflags` -g
 OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o random.o map_section.o
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
-	gcc main.c $(OBJECTS) -I. `sdl-config --cflags --libs` -lSDL_ttf -o game.out -g
+	$(CC) main.c $(OBJECTS) -I. `sdl-config --cflags --libs` -lSDL_ttf -o game.out -g -v
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h $(ALL_DEP)
 command.o: command.c command.h $(ALL_DEP)

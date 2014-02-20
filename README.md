@@ -65,6 +65,6 @@ Toolchain
   * lib_fov
   * mtwist - http://www.cs.hmc.edu/~geoff/mtwist.html
 
-**compiler** gcc, make, etc
+**compiler** clang, make, etc
 
 **task tracking** flat file for now (you're looking at it)
