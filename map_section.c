@@ -115,7 +115,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths) {
       }
       if (y == y_max) {
         map->bottom_x_positions[i] = x;
-        map->bottom_widths[i] = x;
+        map->bottom_widths[i] = width;
       }
     }
   }
