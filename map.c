@@ -40,7 +40,7 @@ Tile get_tile(const InfiniteMap *map, int x, int y) {
     //TRACE("Defaulting to offgrid tile");
     return (Tile){0, 0, tile_data[OffGrid]};
   }
-  TRACE("Getting tile (%d, %d)\n", x, y);
+  /*TRACE("Getting tile (%d, %d)\n", x, y);*/
   if (y < 0) {
     int section_index = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
     sec = map->section_list[section_index];
@@ -50,7 +50,7 @@ Tile get_tile(const InfiniteMap *map, int x, int y) {
     int section_index = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
     sec = map->section_list[section_index];
   }
-  TRACE("mapped to (%d, %d)\n", x, y);
+  /*TRACE("mapped to (%d, %d)\n", x, y);*/
   return sec->matrix[x][y];
 }
 
@@ -91,6 +91,7 @@ int generate_initial_map(InfiniteMap *map) {
 
   MapSection *sec = map->section_list[0];
 
+  DEBUG("Generating section 0\n");
   for(i = 0; i < 3; i++){
     widths[i] = rand_range(3, (sec->x_size / 3) - 2);
     x_positions[i] = roll_die(sec->x_size / 3) * (i + 1);
@@ -101,6 +102,7 @@ int generate_initial_map(InfiniteMap *map) {
 
   /* Build out the other four sections */
   for(i = 1; i < MAP_SECTION_BUFFER; i++) {
+    DEBUG("Generating section %d\n", i);
     generate_map_section(
         map->section_list[i],
         map->section_list[i-1]->top_x_positions,
@@ -131,8 +133,22 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
    */
   InfiniteMap *map;
   map = (InfiniteMap*)vmap;
-  MapSection *sec;
-  sec = map->section_list[map->current_section];
+  MapSection *sec = map->section_list[map->current_section];
+  DEBUG("Lighting tile at %d, %d\n", x, y);
+  if (y < 0) {
+    DEBUG("y < 0 case\n");
+    int section_index = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
+    sec = map->section_list[section_index];
+    y = sec->y_size + y;
+  } else if (y >= sec->y_size) {
+    DEBUG("y >= y_size case\n");
+    y = y - sec->y_size;
+    int section_index = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
+    sec = map->section_list[section_index];
+  } else {
+    DEBUG("Default case\n");
+  }
+  DEBUG("remapped to at %d, %d\n", x, y);
   sec->matrix[x][y].is_lit = 1;
   sec->matrix[x][y].is_explored = 1;
 }
@@ -204,6 +220,14 @@ bool attempt_move(InfiniteMap *map, int dx, int dy) {
 
   if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
     /* Move allowed */
+    if (target_point.y < 0) {
+      map->current_section = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
+      target_point.y += map->section_list[map->current_section]->y_size;
+    } else if (target_point.y >= map->section_list[map->current_section]->y_size) {
+      target_point.y -= map->section_list[map->current_section]->y_size;
+      map->current_section = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
+    }
+
     map->at_location = target_point;
     map->camera_location.y = map->at_location.y;
     return true;

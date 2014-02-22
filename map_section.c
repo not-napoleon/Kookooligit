@@ -89,17 +89,18 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths) {
   int width;
   int i;
 
-  const int y_max = map->y_size - 2;
-  const int y_min = 1;
+  const int y_max = map->y_size - 1;
+  const int y_min = 0;
   for(i = 0; i < passes; i++){
     width = widths[i];
     x = x_positions[i];
     /* bottom to top loop */
     int y_start = y_max;
     int y_end = y_min;
+    DEBUG("Start of pass %d, w: %d, x: %d\n", i, width, x);
     for(y = y_start; y >= y_end; (y_start < y_end ? y++ : y--)) {
       int tmp_x;
-      DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
+      /*DEBUG("y: %d, x: %d, width: %d\n", y, x, width);*/
       extrude_tunnel_row(&x, &width,
           2, map->x_size - 5,  /* x min & max */
           3, map->x_size);  /* width min & max */
@@ -110,10 +111,12 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths) {
         map->matrix[tmp_x][y].type = tile_data[OpenSpace];
       }
       if (y == y_min) {
+        DEBUG("Saving top postition for pass %d as w: %d, x: %d\n", i, width, x);
         map->top_x_positions[i] = x;
         map->top_widths[i] = width;
       }
       if (y == y_max) {
+        DEBUG("Saving bottom position for pass %d as w: %d, x: %d\n", i, width, x);
         map->bottom_x_positions[i] = x;
         map->bottom_widths[i] = width;
       }
