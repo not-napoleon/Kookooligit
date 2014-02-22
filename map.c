@@ -26,18 +26,32 @@ void free_infinite_map(InfiniteMap *map) {
   free(map);
 }
 
-Tile get_tile(const InfiniteMap *map, const int x, const int y) {
-  //TRACE("Getting tile (%d, %d)\n", x, y);
+int roto_indx(int indx, int slots) {
+  int r = indx % slots;
+  return r < 0 ? slots + r : r;
+}
+
+Tile get_tile(const InfiniteMap *map, int x, int y) {
   MapSection *sec = map->section_list[map->current_section];
-  if (x < 0 || y < 0 || x >= sec->x_size || y >= sec->y_size) {
+  if (x < 0 || x >= sec->x_size) {
     /*
      * Asked for an out-of-bounds tile, return OffGrid
      */
     //TRACE("Defaulting to offgrid tile");
     return (Tile){0, 0, tile_data[OffGrid]};
-  } else {
-    return sec->matrix[x][y];
   }
+  TRACE("Getting tile (%d, %d)\n", x, y);
+  if (y < 0) {
+    int section_index = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
+    sec = map->section_list[section_index];
+    y = sec->y_size + y;
+  } else if (y >= sec->y_size) {
+    y = y - sec->y_size;
+    int section_index = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
+    sec = map->section_list[section_index];
+  }
+  TRACE("mapped to (%d, %d)\n", x, y);
+  return sec->matrix[x][y];
 }
 
 bool is_passable_point(InfiniteMap *map, Point p) {
@@ -68,8 +82,6 @@ void dark_map(InfiniteMap *map) {
 }
 
 int generate_initial_map(InfiniteMap *map) {
-  /* Start in the middle of the buffer */
-  map->current_section = 2;
   /* Generate the first map section with random starting values */
   int *x_positions;
   int *widths;
@@ -77,7 +89,7 @@ int generate_initial_map(InfiniteMap *map) {
   x_positions = (int *)malloc(sizeof(int) * 3);
   widths = (int *)malloc(sizeof(int) * 3);
 
-  MapSection *sec = map->section_list[map->current_section];
+  MapSection *sec = map->section_list[0];
 
   for(i = 0; i < 3; i++){
     widths[i] = rand_range(3, (sec->x_size / 3) - 2);
@@ -87,8 +99,15 @@ int generate_initial_map(InfiniteMap *map) {
   free(x_positions);
   free(widths);
 
-  /* TODO: Build out the other four sections */
+  /* Build out the other four sections */
+  for(i = 1; i < MAP_SECTION_BUFFER; i++) {
+    generate_map_section(
+        map->section_list[i],
+        map->section_list[i-1]->top_x_positions,
+        map->section_list[i-1]->top_widths);
+  }
   /* set cursor and at locations */
+  map->current_section = 3;
   map->at_location.y = map->section_list[map->current_section]->y_size - 2;
   for (map->at_location.x = 0;
       map->at_location.x < map->section_list[map->current_section]->x_size;
@@ -99,7 +118,9 @@ int generate_initial_map(InfiniteMap *map) {
     }
   }
   map->cursor_location = map->at_location;
-  map->camera_location = map->at_location;
+  map->camera_location.y = map->at_location.y;
+  /* TODO: calculate this as the center of the map */
+  map->camera_location.x = 33;
   return 0;
 }
 
@@ -128,10 +149,10 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y
    */
 
   /* TODO: Use camera location here, not at location */
-  const int x_start = map->at_location.x - (window_x_chars / 2);
-  const int x_end = map->at_location.x + (window_x_chars / 2);
-  const int y_start = map->at_location.y - (window_y_chars / 2);
-  const int y_end = map->at_location.y + (window_y_chars / 2);
+  const int x_start = map->camera_location.x - (window_x_chars / 2);
+  const int x_end = map->camera_location.x + (window_x_chars / 2);
+  const int y_start = map->camera_location.y - (window_y_chars / 2);
+  const int y_end = map->camera_location.y + (window_y_chars / 2);
 
   DEBUG("Selecting map tiles from (%d, %d) to (%d, %d)\n", x_start, y_start, x_end, y_end);
   DEBUG("at_location is %d, %d\n", map->at_location.x, map->at_location.y);
@@ -184,6 +205,7 @@ bool attempt_move(InfiniteMap *map, int dx, int dy) {
   if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
     /* Move allowed */
     map->at_location = target_point;
+    map->camera_location.y = map->at_location.y;
     return true;
   } else {
     return false;
