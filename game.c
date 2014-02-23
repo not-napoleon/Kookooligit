@@ -5,7 +5,7 @@
 #include <tile.h>
 #include <look.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 GameState *allocate_game_state() {
@@ -107,17 +107,6 @@ void process_command(GameState *state, CommandCode cmd) {
   // Resolve charcter or cursor movement
   // TODO: This whole block probably belongs in map.c
   if (delta_x != 0 || delta_y != 0) {
-
-    Point target_point;
-    if (state->state == Move) {
-      target_point = state->map->at_location;
-    } else if (state->state == Look) {
-      target_point = state->map->cursor_location;
-    }
-
-    target_point.x = target_point.x + delta_x;
-    target_point.y = target_point.y + delta_y;
-
     if (state->state == Move) {
       if (attempt_move(state->map, delta_x, delta_y)) {
         state->need_to_redraw_map = 1;
@@ -128,33 +117,17 @@ void process_command(GameState *state, CommandCode cmd) {
       }
       calculate_visible_tiles(state->map, state->map->at_location);
     } else if (state->state == Look) {
-      Point top_left, bottom_right;
-      //TODO: Calling get_visible_region here is probably the Wrong Thing to do
-      /*get_visible_region(state->map, state->map_graphics_state->map_window_x_chars,*/
-          /*state->map_graphics_state->map_window_y_chars, &top_left, &bottom_right);*/
-      DEBUG("attempting to move cursor to %d, %d\n", target_point.x,
-          target_point.y);
-      DEBUG("top_left: (%d, %d)\n", top_left.x, top_left.y);
-      DEBUG("bottom_right: (%d, %d)\n", bottom_right.x, bottom_right.y);
-      if ( (target_point.x >= top_left.x)
-          && (target_point.x <= bottom_right.x)
-          && (target_point.y >= top_left.y)
-          && (target_point.y <= bottom_right.y) ) {
-        DEBUG("drawing cursor? maybe?\n");
-        state->map->cursor_location = target_point;
+      if (attempt_cursor_move(state->map, delta_x, delta_y,
+            state->map_graphics_state->map_window_x_chars,
+            state->map_graphics_state->map_window_y_chars)) {
         state->need_to_redraw_map = 1;
         // Get descriptor text
         Tile target_tile;
-        target_tile = get_tile(state->map, target_point.x, target_point.y);
+        target_tile = get_cursor_tile(state->map);
         const char* tile_desc;
         tile_desc = target_tile.type->description;
         DEBUG("got tile description %s\n", tile_desc);
         // draw look message
-        DEBUG("Dest rect x: %d, y: %d, w: %d, h: %d\n",
-            state->config->status_window.x,
-            state->config->status_window.y,
-            state->config->status_window.w,
-            state->config->status_window.h);
         if ( render_look_message(tile_desc, &state->config->status_window) == -1) {
           exit(-1);
         }
@@ -164,4 +137,3 @@ void process_command(GameState *state, CommandCode cmd) {
     }
   }
 }
-

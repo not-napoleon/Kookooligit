@@ -26,4 +26,7 @@ int get_tile_grid(InfiniteMap *map, int window_x_chars, int window_y_chars,
     Point *at_location, Point *cursor_location, Tile **tile_grid);
 bool attempt_move(InfiniteMap *map, int dx, int dy);
 int calculate_visible_tiles(InfiniteMap *map, Point at_location);
+Tile get_cursor_tile(InfiniteMap *map);
+bool attempt_cursor_move(InfiniteMap *map, int delta_x, int delta_y,
+    int x_bound, int y_bound);
 #endif

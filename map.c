@@ -6,7 +6,7 @@
 #include <map.h>
 #include <random.h>
 
-/*#define LOGGING_ENABLED*/
+#define LOGGING_ENABLED
 #include <log.h>
 
 void dump_edge_parameters(InfiniteMap *map) {
@@ -174,7 +174,6 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   sec->matrix[x][y].is_explored = 1;
 }
 
-
 int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y_chars,
     Point *at_location, Point *cursor_location, Tile **tile_grid) {
   /*
@@ -230,22 +229,26 @@ int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
   return 0;
 }
 
-bool attempt_move(InfiniteMap *map, int dx, int dy) {
+bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
   /* TODO: Support moving things other than the at */
   Point target_point;
   target_point = map->at_location;
 
-  target_point.x = target_point.x + dx;
-  target_point.y = target_point.y + dy;
+  target_point.x = target_point.x + delta_x;
+  target_point.y = target_point.y + delta_y;
 
   const int offset = MAP_SECTION_BUFFER / 2;
   if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
     /* Move allowed */
+
+    /* Rotate sections if necessary
+     * TODO: Refactor this
+     */
     if (target_point.y < 0) {
       int to_discard = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
       int edge = roto_indx((map->current_section - offset), MAP_SECTION_BUFFER);
       map->current_section = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
-      DEBUG("!!!Moving to section %d, recycling section %d, spawning new edge "
+      DEBUG("Moving to section %d, recycling section %d, spawning new edge "
           "from %d\n", map->current_section, to_discard, edge);
       DEBUG("Before section generation:\n");
       dump_edge_parameters(map);
@@ -260,7 +263,7 @@ bool attempt_move(InfiniteMap *map, int dx, int dy) {
       int edge = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
       target_point.y -= map->section_list[map->current_section]->y_size;
       map->current_section = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
-      DEBUG("!!!Moving to section %d, recycling section %d, spawning new edge "
+      DEBUG("Moving to section %d, recycling section %d, spawning new edge "
           "from %d\n", map->current_section, to_discard, edge);
       DEBUG("Before section generation:\n");
       dump_edge_parameters(map);
@@ -277,4 +280,38 @@ bool attempt_move(InfiniteMap *map, int dx, int dy) {
   } else {
     return false;
   }
+}
+
+bool attempt_cursor_move(InfiniteMap *map, int delta_x, int delta_y,
+    int x_bound, int y_bound) {
+  /* Seems like passing the x & y bounds (of the visibile window region) here
+   * is somewhat backwards.  Mind this for a possible refactor*/
+  Point target_point;
+  target_point = map->cursor_location;
+
+  target_point.x = target_point.x + delta_x;
+  target_point.y = target_point.y + delta_y;
+
+  DEBUG("attempting to move cursor to %d, %d\n", target_point.x,
+      target_point.y);
+  if (target_point.x < map->camera_location.x - (x_bound / 2)
+      || target_point.x > map->camera_location.x + (x_bound / 2)
+      || target_point.y < map->camera_location.y - (y_bound / 2)
+      || target_point.y > map->camera_location.y + (y_bound / 2)) {
+    DEBUG("Cursor move rejected\n");
+    DEBUG("Bounds are x: %d - %d, y: %d - %d\n",
+      map->camera_location.x - (x_bound / 2),
+      map->camera_location.x + (x_bound / 2),
+      map->camera_location.y - (y_bound / 2),
+      map->camera_location.y + (y_bound / 2));
+
+    return false;
+  }
+  map->cursor_location = target_point;
+  return true;
+}
+
+Tile get_cursor_tile(InfiniteMap *map) {
+  /* Return the tile under the cursor */
+  return get_tile(map, map->cursor_location.x, map->cursor_location.y);
 }
