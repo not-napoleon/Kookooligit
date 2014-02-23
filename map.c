@@ -1,12 +1,29 @@
-#include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <fov.h>
 #include <map.h>
 #include <random.h>
 
-#define LOGGING_ENABLED
+/*#define LOGGING_ENABLED*/
 #include <log.h>
+
+void dump_edge_parameters(InfiniteMap *map) {
+  int i, j;
+  MapSection *sec;
+  for(i = 0; i < MAP_SECTION_BUFFER; i++) {
+    sec = map->section_list[i];
+    DEBUG("Section %d top:    x1=%d, w1=%d;\tx2=%d, w2=%d;\tx3=%d, w3=%d\n", i,
+        sec->top_x_positions[0], sec->top_widths[0],
+        sec->top_x_positions[1], sec->top_widths[1],
+        sec->top_x_positions[2], sec->top_widths[2]);
+    DEBUG("Section %d bottom: x1=%d, w1=%d;\tx2=%d, w2=%d;\tx3=%d, w3=%d\n", i,
+        sec->bottom_x_positions[0], sec->bottom_widths[0],
+        sec->bottom_x_positions[1], sec->bottom_widths[1],
+        sec->bottom_x_positions[2], sec->bottom_widths[2]);
+  }
+}
 
 InfiniteMap *init_infinite_map() {
   InfiniteMap *new;
@@ -96,25 +113,29 @@ int generate_initial_map(InfiniteMap *map) {
     widths[i] = rand_range(3, (sec->x_size / 3) - 2);
     x_positions[i] = roll_die(sec->x_size / 3) * (i + 1);
   }
-  generate_map_section(sec, x_positions, widths);
+  generate_map_section(sec, x_positions, widths, false);
   free(x_positions);
   free(widths);
+
+  dump_edge_parameters(map);
 
   /* Build out the other four sections */
   for(i = 1; i < MAP_SECTION_BUFFER; i++) {
     DEBUG("Generating section %d\n", i);
     generate_map_section(
         map->section_list[i],
-        map->section_list[i-1]->top_x_positions,
-        map->section_list[i-1]->top_widths);
+        map->section_list[i-1]->bottom_x_positions,
+        map->section_list[i-1]->bottom_widths, false);
+    dump_edge_parameters(map);
   }
   /* set cursor and at locations */
-  map->current_section = 3;
+  map->current_section = 2;
   map->at_location.y = map->section_list[map->current_section]->y_size - 2;
   for (map->at_location.x = 0;
       map->at_location.x < map->section_list[map->current_section]->x_size;
       map->at_location.x++){
     DEBUG("Considering start position (%d, %d)\n", map->at_location.x, map->at_location.y);
+    /* TODO: Deal with not finding a start position; it's a bug, so exit*/
     if (is_passable_point(map, map->at_location)){
       break;
     }
@@ -134,21 +155,21 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   InfiniteMap *map;
   map = (InfiniteMap*)vmap;
   MapSection *sec = map->section_list[map->current_section];
-  DEBUG("Lighting tile at %d, %d\n", x, y);
+  /*DEBUG("Lighting tile at %d, %d\n", x, y);*/
   if (y < 0) {
-    DEBUG("y < 0 case\n");
+    /*DEBUG("y < 0 case\n");*/
     int section_index = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
     sec = map->section_list[section_index];
     y = sec->y_size + y;
   } else if (y >= sec->y_size) {
-    DEBUG("y >= y_size case\n");
+    /*DEBUG("y >= y_size case\n");*/
     y = y - sec->y_size;
     int section_index = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
     sec = map->section_list[section_index];
   } else {
-    DEBUG("Default case\n");
+    /*DEBUG("Default case\n");*/
   }
-  DEBUG("remapped to at %d, %d\n", x, y);
+  /*DEBUG("remapped to at %d, %d\n", x, y);*/
   sec->matrix[x][y].is_lit = 1;
   sec->matrix[x][y].is_explored = 1;
 }
@@ -164,7 +185,6 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y
    * Basically, gets the set of tiles to render.
    */
 
-  /* TODO: Use camera location here, not at location */
   const int x_start = map->camera_location.x - (window_x_chars / 2);
   const int x_end = map->camera_location.x + (window_x_chars / 2);
   const int y_start = map->camera_location.y - (window_y_chars / 2);
@@ -191,7 +211,7 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y
 
 
 int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
-  DEBUG("calculating field of vision\n");
+  /*DEBUG("calculating field of vision\n");*/
   dark_map(map);
   // make sure the tile the player is on is lit.  Player could land on an unlit
   // tile by, e.g., teleport.  Or game start.
@@ -206,7 +226,7 @@ int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
 
   fov_settings_free(fov_settings);
   free(fov_settings);
-  TRACE("Field of vision finished\n");
+  /*TRACE("Field of vision finished\n");*/
   return 0;
 }
 
@@ -218,14 +238,37 @@ bool attempt_move(InfiniteMap *map, int dx, int dy) {
   target_point.x = target_point.x + dx;
   target_point.y = target_point.y + dy;
 
+  const int offset = MAP_SECTION_BUFFER / 2;
   if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
     /* Move allowed */
     if (target_point.y < 0) {
+      int to_discard = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
+      int edge = roto_indx((map->current_section - offset), MAP_SECTION_BUFFER);
       map->current_section = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
+      DEBUG("!!!Moving to section %d, recycling section %d, spawning new edge "
+          "from %d\n", map->current_section, to_discard, edge);
+      DEBUG("Before section generation:\n");
+      dump_edge_parameters(map);
+      generate_map_section(map->section_list[to_discard],
+          map->section_list[edge]->top_x_positions,
+          map->section_list[edge]->top_widths, true);
       target_point.y += map->section_list[map->current_section]->y_size;
+      DEBUG("After section generation:\n");
+      dump_edge_parameters(map);
     } else if (target_point.y >= map->section_list[map->current_section]->y_size) {
+      int to_discard = roto_indx((map->current_section - offset), MAP_SECTION_BUFFER);
+      int edge = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
       target_point.y -= map->section_list[map->current_section]->y_size;
       map->current_section = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
+      DEBUG("!!!Moving to section %d, recycling section %d, spawning new edge "
+          "from %d\n", map->current_section, to_discard, edge);
+      DEBUG("Before section generation:\n");
+      dump_edge_parameters(map);
+      generate_map_section(map->section_list[to_discard],
+          map->section_list[edge]->bottom_x_positions,
+          map->section_list[edge]->bottom_widths, false);
+      DEBUG("After section generation:\n");
+      dump_edge_parameters(map);
     }
 
     map->at_location = target_point;

@@ -1,10 +1,11 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <map_section.h>
 #include <random.h>
 #include <tile.h>
 
-#define LOGGING_ENABLED
+/*#define LOGGING_ENABLED*/
 #include <log.h>
 /*
  * Map Generation Parameters
@@ -70,7 +71,7 @@ void extrude_tunnel_row(int *x, int *width, const int x_min, const int x_max,
 
 }
 
-int generate_map_section(MapSection *map, int *x_positions, int *widths) {
+int generate_map_section(MapSection *map, int *x_positions, int *widths, bool start_at_bottom) {
   TRACE("Generating map\n");
   if (tiles_initilized == false) {
     CRITICAL("Generate map called with uninitilized tile data\n");
@@ -95,12 +96,23 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths) {
     width = widths[i];
     x = x_positions[i];
     /* bottom to top loop */
-    int y_start = y_max;
-    int y_end = y_min;
+    int y_start, y_end;
+    if (start_at_bottom) {
+      DEBUG("Starting from bottom\n");
+      y_start = y_max;
+      y_end = y_min;
+    } else {
+      DEBUG("Starting from top\n");
+      y_start = y_min;
+      y_end = y_max;
+    }
     DEBUG("Start of pass %d, w: %d, x: %d\n", i, width, x);
-    for(y = y_start; y >= y_end; (y_start < y_end ? y++ : y--)) {
+    DEBUG("y_start: %d, y_end: %d", y_start, y_end);
+    for(y = y_start;
+        (y_start < y_end? y <= y_end : y >= y_end);
+        (y_start < y_end ? y++ : y--)) {
       int tmp_x;
-      /*DEBUG("y: %d, x: %d, width: %d\n", y, x, width);*/
+      DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
       extrude_tunnel_row(&x, &width,
           2, map->x_size - 5,  /* x min & max */
           3, map->x_size);  /* width min & max */

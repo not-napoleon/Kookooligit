@@ -3,6 +3,8 @@
 
 #define MAP_SECTION_SIZE 64
 
+#include <stdbool.h>
+
 #include <tile.h>
 
 typedef struct Point {
@@ -27,6 +29,7 @@ typedef struct MapSection {
 MapSection *init_map_section();
 void free_map_section(MapSection *map);
 void dark_map_section(MapSection *map);
-int generate_map_section(MapSection *map, int *x_positions, int *widths);
+int generate_map_section(MapSection *map, int *x_positions, int *widths,
+    bool start_at_bottom);
 
 #endif
