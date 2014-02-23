@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
   initilize(state);
 
   INFO("tile size is %li\n", sizeof(Tile));
-  char msg1[] = "Welcome to Kookoolegit!";
+  char msg1[] = "Welcome to Kookoolegit! You are in an infinitely long "
+    "non-orientable space.  Good luck!";
   add_message(state->messages, msg1);
   render_messages(&state->config->message_window, state->messages);
   calculate_visible_tiles(state->map, state->map->at_location);
