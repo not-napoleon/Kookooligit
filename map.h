@@ -5,7 +5,7 @@
 #include <tile.h>
 #include <map_section.h>
 
-#define VISION_RADIUS 22
+#define VISION_RADIUS 9
 #define MAP_SECTION_BUFFER 5
 
 typedef struct InfiniteMap {
@@ -25,5 +25,5 @@ int generate_initial_map(InfiniteMap *map);
 int get_tile_grid(InfiniteMap *map, int window_x_chars, int window_y_chars,
     Point *at_location, Point *cursor_location, Tile **tile_grid);
 bool attempt_move(InfiniteMap *map, int dx, int dy);
-
+int calculate_visible_tiles(InfiniteMap *map, Point at_location);
 #endif
