@@ -6,7 +6,7 @@
 #include <SDL_Tools.h>
 #include <tile.h>
 
-#define LOGGING_ENABLED
+/*#define LOGGING_ENABLED*/
 #include <log.h>
 
 /*
