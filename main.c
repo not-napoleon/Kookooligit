@@ -8,7 +8,7 @@
 #include <command.h>
 #include <game.h>
 
-#define LOGGING_ENABLED
+//#define LOGGING_ENABLED
 #include <log.h>
 
 /*

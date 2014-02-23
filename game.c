@@ -1,9 +1,10 @@
+#include <stdlib.h>
 #include <game.h>
 // We need tile to get the tile discriptor text for look mode.  Eventually
 // that needs to get refactored into map.c
 #include <tile.h>
 
-#define LOGGING_ENABLED
+//#define LOGGING_ENABLED
 #include <log.h>
 
 GameState *allocate_game_state() {
