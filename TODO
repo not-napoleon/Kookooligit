@@ -1,6 +1,6 @@
 [X] Stop passing the main SDL_Surface around
-[ ] Split map.get_visible_reigon into window centering and FOV calc
-  [ ] Don't compute FoV in look mode window border check
+[X] Split map.get_visible_reigon into window centering and FOV calc
+  [X] Don't compute FoV in look mode window border check
 [ ] Look mode should not give info on unexplored tiles
 [ ] Switch to shaded rendering
   [ ] Render the look cursor as a background color change, like a real cursor

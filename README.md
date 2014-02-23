@@ -21,9 +21,9 @@ here's the initial master TODO list:
  
  - [x] 4.1 - Basic map generation
 
- - [ ] 4.2 - Infinite (non-persistent) map
+ - [x] 4.2 - Infinite (non-persistent) map
 
- - [ ] 4.3 - Smooth map scrolling
+ - [x] 4.3 - Smooth map scrolling
 
  - [ ] 5 - Saving & Loading, read map from a file, config files
 

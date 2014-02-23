@@ -70,6 +70,7 @@ void initilize(GameState *state) {
   int at_width, line_height;
   state->map_graphics_state->line_height = TTF_FontLineSkip(get_map_font());
   TTF_SizeText(get_map_font(), "@", &state->map_graphics_state->at_width, NULL);
+  /* TODO: Refactor this, probably into draw map, to deal with resizing */
   state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
   state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
   INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
