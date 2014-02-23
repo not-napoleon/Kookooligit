@@ -3,6 +3,7 @@
 // We need tile to get the tile discriptor text for look mode.  Eventually
 // that needs to get refactored into map.c
 #include <tile.h>
+#include <look.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
@@ -125,15 +126,6 @@ void process_command(GameState *state, CommandCode cmd) {
         add_message(state->messages, tmp);
         state->need_to_redraw_messages = 1;
       }
-      // Decide if we need to recenter the map section
-      /*if (abs(state->at_location.x - state->map->center.x) > 10) {*/
-        /*state->map->center.x = state->at_location.x;*/
-      /*}*/
-      /*if (abs(state->at_location.y - state->map->center.y) > 10) {*/
-        /*state->map->center.y = state->at_location.y;*/
-      /*}*/
-      /*DEBUG("at_location (%i, %i), center (%i, %i)\n", state->at_location.x,*/
-          /*state->at_location.y, state->map->center.x, state->map->center.y);*/
       calculate_visible_tiles(state->map, state->map->at_location);
     } else if (state->state == Look) {
       Point top_left, bottom_right;
