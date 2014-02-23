@@ -83,7 +83,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
     for(y = 0; y < map->y_size; y++) {
       // start with a blank map
       map->matrix[x][y].type = tile_data[ImpassableWall];
-      map->matrix[x][y].is_explored = 0;
+      map->matrix[x][y].is_explored = 1;
     }
   }
 
@@ -115,7 +115,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
       DEBUG("y: %d, x: %d, width: %d\n", y, x, width);
       extrude_tunnel_row(&x, &width,
           2, map->x_size - 5,  /* x min & max */
-          3, map->x_size);  /* width min & max */
+          3, map->x_size - x);  /* width min & max */
       for (tmp_x = x; tmp_x < x + width; tmp_x++) {
         if (tmp_x >= map->x_size - 2) {
           break;
