@@ -6,7 +6,8 @@ typedef enum {
   MoveLeft, MoveRight, MoveUp, MoveDown,
   MoveUpLeft, MoveDownLeft, MoveUpRight, MoveDownRight,
   EnterLookMode, ExitLookMode,
-  Quit
+  Quit,
+  COMMAND_TYPE_COUNT
 } CommandCode;
 
 CommandCode get_command();
