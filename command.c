@@ -1,57 +1,87 @@
 #include "SDL.h"
 #include <command.h>
+#include <uthash/src/uthash.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
 
+struct KeyToCommand {
+  SDL_Keycode key;
+  /* TODO: Allow mapping multiple commands to a key
+   * specifically, this should eventually be a sub-hash based on
+   * command modes, which currently don't really exist
+   */
+  CommandCode command;
+  UT_hash_handle hh;            /* Make this hashable */
+};
+
+const int KEY_SIZE = sizeof(SDL_Keycode);
+
+/*
+ * File global key mapping hash
+ */
+struct KeyToCommand *key_mapping = NULL;
+
+int bind_command_name(CommandCode command, const char *symbol) {
+  /*
+   * Bind the given symbol to the given command code
+   */
+  return bind_command_key_code(command, SDL_GetKeyFromName(symbol));
+}
+
+int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
+  /*
+   * Bind the given key code to the given command
+   */
+
+  struct KeyToCommand *new_key_map;
+
+  /* Check if the key exists in the hash, and return an error if it does */
+
+  HASH_FIND(hh, key_mapping, &key, KEY_SIZE, new_key_map);
+  if (new_key_map == NULL) {
+    /* create key mapping instance */
+    *new_key_map = malloc(sizeof(KeyToCommand));
+    new_key_map->key = key;
+    new_key_map->command = command;
+
+    /* Add new key map to hash */
+    HASH_ADD(hh, key_mapping, key, KEY_SIZE, new_key_map);
+
+    /* TODO: Add reverse mapping command -> key */
+
+    return 0;
+  } else {
+    /* Key exists error */
+    return -1;
+  }
+}
+
+
+void free_command_mapping() {
+  /*
+   * Clean up the internal command mapping data structures
+   */
+  struct KeyToCommand *curr, *tmp;
+
+  HASH_ITER(hh, key_mapping, curr, tmp) {
+    HASH_DEL(key_mapping, curr);
+    free(curr);
+  }
+}
+
 CommandCode parse_keypress(const SDL_Event event) {
-  CommandCode ret_val;
-  switch(event.key.keysym.sym) {
-    case SDLK_h:
-    case SDLK_KP4:
-      ret_val = MoveLeft;
-      break;
-    case SDLK_j:
-    case SDLK_KP2:
-      ret_val = MoveDown;
-      break;
-    case SDLK_k:
-    case SDLK_KP8:
-      ret_val = MoveUp;
-      break;
-    case SDLK_l:
-    case SDLK_KP6:
-      ret_val = MoveRight;
-      break;
-    case SDLK_y:
-    case SDLK_KP7:
-      ret_val = MoveUpLeft;
-      break;
-    case SDLK_b:
-    case SDLK_KP1:
-      ret_val = MoveDownLeft;
-      break;
-    case SDLK_u:
-    case SDLK_KP9:
-      ret_val = MoveUpRight;
-      break;
-    case SDLK_n:
-    case SDLK_KP3:
-      ret_val = MoveDownRight;
-      break;
-    case SDLK_q:
-      ret_val = Quit;
-      break;
-    case SDLK_SEMICOLON:
-      ret_val = EnterLookMode;
-      break;
-    case SDLK_ESCAPE:
-      ret_val = ExitLookMode;
-      break;
-    default:
-      ret_val = NoOp;
-    }
-  return ret_val;
+  struct KeyToCommand *pressed;
+  HASH_FIND(hh, key_mapping, &event.key.keysym.sym, KEY_SIZE, pressed);
+  if (pressed == NULL) {
+    /*
+     * Unmapped key
+     */
+    return NoOp;
+  } else {
+    return pressed->command;
+  }
+
 }
 
 

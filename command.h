@@ -11,5 +11,7 @@ typedef enum {
 } CommandCode;
 
 CommandCode get_command();
+int bind_command_name(CommandCode command, const char *symbol);
+void free_command_mapping();
 
 #endif

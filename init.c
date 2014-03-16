@@ -2,6 +2,7 @@
 
 #include <SDL_Tools.h>
 
+#include <command.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
 #include <init.h>
@@ -28,6 +29,55 @@ int get_configuration(GameConfiguration *config) {
   config->status_window  = make_rect(768, 640, 256, 128);
 
   return 0;
+}
+
+int default_key_mapping() {
+  /*
+   * In the absense of a config file, hard code the default key mappings
+   */
+
+  bind_command_name(MoveLeft, "h");
+  bind_command_name(MoveLeft, "Keypad 4");
+    /*case SDLK_KP4:*/
+      /*ret_val = MoveLeft;*/
+      /*break;*/
+    /*case SDLK_j:*/
+    /*case SDLK_KP2:*/
+      /*ret_val = MoveDown;*/
+      /*break;*/
+    /*case SDLK_k:*/
+    /*case SDLK_KP8:*/
+      /*ret_val = MoveUp;*/
+      /*break;*/
+    /*case SDLK_l:*/
+    /*case SDLK_KP6:*/
+      /*ret_val = MoveRight;*/
+      /*break;*/
+    /*case SDLK_y:*/
+    /*case SDLK_KP7:*/
+      /*ret_val = MoveUpLeft;*/
+      /*break;*/
+    /*case SDLK_b:*/
+    /*case SDLK_KP1:*/
+      /*ret_val = MoveDownLeft;*/
+      /*break;*/
+    /*case SDLK_u:*/
+    /*case SDLK_KP9:*/
+      /*ret_val = MoveUpRight;*/
+      /*break;*/
+    /*case SDLK_n:*/
+    /*case SDLK_KP3:*/
+      /*ret_val = MoveDownRight;*/
+      /*break;*/
+    /*case SDLK_q:*/
+      /*ret_val = Quit;*/
+      /*break;*/
+    /*case SDLK_SEMICOLON:*/
+      /*ret_val = EnterLookMode;*/
+      /*break;*/
+    /*case SDLK_ESCAPE:*/
+      /*ret_val = ExitLookMode;*/
+      /*break;*/
 }
 
 void initilize(GameState *state) {
@@ -70,6 +120,12 @@ void initilize(GameState *state) {
   int at_width, line_height;
   state->map_graphics_state->line_height = TTF_FontLineSkip(get_map_font());
   TTF_SizeText(get_map_font(), "@", &state->map_graphics_state->at_width, NULL);
+  /* TODO: Load command mappings */
+  if (default_key_mapping() != 0) {
+    ERROR("Duplicate key mapping, I give up");
+    exit(1);
+  }
+
   /* TODO: Refactor this, probably into draw map, to deal with resizing */
   state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
   state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;

@@ -28,6 +28,7 @@ void free_game_state(GameState *state) {
   free_message_queue(state->messages);
   free_infinite_map(state->map);
   free(state->map_graphics_state);
+  free_command_mapping();
   free(state);
 }
 
