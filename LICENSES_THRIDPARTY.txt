@@ -1,10 +1,11 @@
-The following thrid party libraries are used, with the stated license
+The following thrid party libraries are used, with the stated license:
 
 Geoff Kuenning's Mersenne Twist implementation found at: 
 http://www.cs.hmc.edu/~geoff/mtwist.html
 
 and licensed under the LGPL.
 
+------
 
 The Simple DirectMedia Layer is found at:
 http://www.libsdl.org/
@@ -12,6 +13,12 @@ http://www.libsdl.org/
 and licensed under the LGPL.  See:
 http://www.libsdl.org/license-lgpl.php
 
+------
 
 Libfov is licensed under the MIT license, and can be found at
 https://code.google.com/p/libfov/
+
+------
+
+UTHash is Copyright (c) 2005-2014, Troy D. Hanson, licensed under the revised
+BSD license.  See more at: http://troydhanson.github.com/uthash/
