@@ -23,6 +23,7 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
   mgs->draw_cursor = 0;
 }
 
+/*TODO: This goes in tile, or possibly graphics helper, and gets some caching */
 SDL_Surface *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
   return TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
 }
@@ -49,6 +50,7 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
 
   // blank the screen
   // Fill rect can change the dest rect for clipping, so pass in a copy
+  /*TODO: graphics_wrapper should have a blank screen function*/
   SDL_Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
   SDL_FillRect(screen, &tmp, SDL_MapRGB(screen->format, 0, 0, 0));
 
@@ -63,6 +65,8 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
       /*DEBUG("Rendering %p from %d, %d at %d,%d\n", tile_grid[x][y].type, x , y,*/
           /*write_coords.x, write_coords.y);*/
       SDL_Surface *map_char;
+      /* TODO: Map should take care of this by maintaining a stack of things on
+       * a given tile, and only returning the top one for rendering.*/
       if (x == cursor_location.x
           && y == cursor_location.y
           && mgs->draw_cursor == 1) {
