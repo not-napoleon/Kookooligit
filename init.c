@@ -47,11 +47,6 @@ void initilize(GameState *state) {
   }
   atexit(TTF_Quit);
 
-  if( SDL_SetVideoMode(state->config->window_w, state->config->window_h, 16, 0) == NULL) { 
-    ERROR( "Unable to set SDL video mode: %s\n", SDL_GetError());
-    exit(1);
-  }
-
   // Load font
   set_map_font(state->config->font_path, state->config->point_size);
   set_message_font(state->config->font_path, state->config->point_size);
@@ -75,8 +70,6 @@ void initilize(GameState *state) {
   state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
   INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
       state->map_graphics_state->map_window_y_chars);
-
-  SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
   state->need_to_redraw_messages = state->need_to_redraw_map = 0;
   init_tile_types();

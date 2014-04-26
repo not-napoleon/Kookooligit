@@ -4,15 +4,23 @@
 
 #include <graphics_wrapper.h>
 
-#define LOGGING_ENABLED 
+#define LOGGING_ENABLED
 #include <log.h>
 
-SDL_Surface *get_screen() {
-  SDL_Surface *screen = SDL_GetVideoSurface();
+static SDL_Window *screen;
+
+SDL_Window *get_screen() {
   if (screen == NULL) {
-    CRITICAL("SDL_GetVideoSurface returned null!\n");
+    CRITICAL("Screen not initilized!\n");
   }
   return screen;
+}
+
+void init_graphics(int window_w, int window_h) {
+  screen = SDL_CreateWindow("Kookoolegit",
+      SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_UNDEFINED,
+      window_w, window_h, 0);
 }
 
 void clear_rect(const Rect *r) {
