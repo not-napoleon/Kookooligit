@@ -95,4 +95,5 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
   }
   free(tile_grid);
   SDL_UpdateRect(screen, map_window->x, map_window->y, map_window->w, map_window->h);
+  return 1
 }
