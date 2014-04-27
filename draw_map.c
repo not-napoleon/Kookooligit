@@ -7,7 +7,7 @@
 #include <SDL_Tools.h>
 #include <tile.h>
 
-/*#define LOGGING_ENABLED*/
+#define LOGGING_ENABLED
 #include <log.h>
 
 /*
@@ -49,12 +49,9 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
   get_tile_grid(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
       &at_location, &cursor_location, tile_grid);
 
-  // blank the screen
-  // Fill rect can change the dest rect for clipping, so pass in a copy
-  Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
-  clear_rect(&tmp);
-
   SDL_Rect write_coords;
+  write_coords.w = mgs->at_width;
+  write_coords.h = mgs->line_height;
   int x, y;
   for (x = 0; x < mgs->map_window_x_chars; x++) {
     /* our x offset for writing is the top left corner of the visible window
@@ -98,6 +95,5 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
     free(tile_grid[i]);
   }
   free(tile_grid);
-  SDL_RenderPresent(screen);
   return 1;
 }

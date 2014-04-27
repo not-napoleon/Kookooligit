@@ -75,7 +75,6 @@ int render_messages(const Rect *dstrect, MessageList *mlist) {
   TRACE("rendering messages to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
   //blank the message area, since we're going to redraw it
-  clear_rect(dstrect);
   MessageNodePtr curr;
   curr = mlist->first;
   int h = dstrect->h;
@@ -97,5 +96,4 @@ int render_messages(const Rect *dstrect, MessageList *mlist) {
     curr = curr->next;
   }
   DEBUG("all messages rendered, updateing screen\n");
-  SDL_RenderPresent(get_main_renderer());
 }

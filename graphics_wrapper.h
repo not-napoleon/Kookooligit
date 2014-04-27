@@ -17,9 +17,9 @@ typedef struct Color {
 
 SDL_Renderer *get_main_renderer();
 SDL_Window *get_screen();
-void clear_rect(const Rect *r);
+void clear();
 Rect make_rect(int16_t x, int16_t y, uint16_t w, uint16_t h);
-void draw_rect(const Rect *r);
 void free_assets();
+void flip();
 
 #endif

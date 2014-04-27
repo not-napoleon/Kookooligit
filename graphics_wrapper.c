@@ -45,14 +45,12 @@ void init_graphics(int window_w, int window_h) {
   main_renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
 }
 
-void clear_rect(const Rect *r) {
-  SDL_SetRenderDrawColor(get_main_renderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
-  int ret = SDL_RenderDrawRect(get_main_renderer(), r);
-  if (ret != 0) {
-    CRITICAL("SDL_FillRect failed with exit code %d for rect "
-       "(x:%d, y: %d, w:%d, h:%d)\n", ret, r->x, r->y, r->w, r->h);
-    exit(-1);
-  }
+void clear() {
+  SDL_RenderClear(get_main_renderer());
+}
+
+void flip() {
+  SDL_RenderPresent(get_main_renderer());
 }
 
 Rect make_rect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {

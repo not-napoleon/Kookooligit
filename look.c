@@ -13,7 +13,6 @@ int render_look_message(const char* message, const Rect *dstrect) {
   TTF_Font *font;
   font = get_status_font();
   DEBUG("rendering look message <%s>\n", message);
-  clear_rect(dstrect);
   SurfaceNodePtr rendered_message = NULL;
   if (build_word_list(message, &rendered_message, color_default_text, font) == -1) {
     return -1;
@@ -25,8 +24,6 @@ int render_look_message(const char* message, const Rect *dstrect) {
     return -1;
   }
   DEBUG("Message rendered, updating screen\n");
-  SDL_RenderPresent(get_main_renderer());
-
   return 0;
 }
 

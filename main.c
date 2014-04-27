@@ -7,8 +7,9 @@
 #include <render_text.h>
 #include <command.h>
 #include <game.h>
+#include <graphics_wrapper.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 /*
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
   add_message(state->messages, msg1);
   render_messages(&state->config->message_window, state->messages);
   calculate_visible_tiles(state->map, state->map->at_location);
-  state->need_to_redraw_map = 1;
+  state->need_to_redraw = 1;
   TRACE("entering main loop\n");
   while (state->is_running) {
     /* This blocks, waiting for the next user input */
@@ -42,16 +43,15 @@ int main(int argc, char *argv[]) {
     cmd = get_command();
     process_command(state, cmd);
     DEBUG("state is %d\n", state->state);
-    if (state->need_to_redraw_messages == 1) {
+    DEBUG("Redraw flag is %d\n", state->need_to_redraw);
+    if (state->need_to_redraw == 1) {
+      clear();
       render_messages(&state->config->message_window, state->messages);
-      state->need_to_redraw_messages = 0;
-    }
-    if (state->need_to_redraw_map == 1) {
       render_map_window(state->map, state->map_graphics_state,
           &state->config->map_window);
-      state->need_to_redraw_map = 0;
+      state->need_to_redraw = 0;
+      flip();
     }
-
   }
 
   cleanup(state);

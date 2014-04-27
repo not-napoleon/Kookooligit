@@ -63,7 +63,7 @@ void initilize(GameState *state) {
   INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
       state->map_graphics_state->map_window_y_chars);
 
-  state->need_to_redraw_messages = state->need_to_redraw_map = 0;
+  state->need_to_redraw = 0;
   init_tile_types();
   clear_draw_cursor(state->map_graphics_state);
   generate_initial_map(state->map);

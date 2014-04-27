@@ -30,9 +30,7 @@ typedef struct GameConfiguration {
 typedef struct GameState {
   //flags
   unsigned int is_running :1;
-  unsigned int need_to_redraw_messages :1;
-  unsigned int need_to_redraw_map :1;
-  unsigned int need_to_redraw_status :1;
+  unsigned int need_to_redraw :1;
 
   // Config
   GameConfiguration *config;
