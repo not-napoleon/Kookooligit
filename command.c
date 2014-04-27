@@ -7,45 +7,45 @@
 CommandCode parse_keypress(const SDL_Event event) {
   CommandCode ret_val;
   switch(event.key.keysym.sym) {
-    case SDLK_h:
-    case SDLK_KP4:
+    case SDL_SCANCODE_H:
+    case SDL_SCANCODE_KP_4:
       ret_val = MoveLeft;
       break;
-    case SDLK_j:
-    case SDLK_KP2:
+    case SDL_SCANCODE_J:
+    case SDL_SCANCODE_KP_2:
       ret_val = MoveDown;
       break;
-    case SDLK_k:
-    case SDLK_KP8:
+    case SDL_SCANCODE_K:
+    case SDL_SCANCODE_KP_8:
       ret_val = MoveUp;
       break;
-    case SDLK_l:
-    case SDLK_KP6:
+    case SDL_SCANCODE_L:
+    case SDL_SCANCODE_KP_6:
       ret_val = MoveRight;
       break;
-    case SDLK_y:
-    case SDLK_KP7:
+    case SDL_SCANCODE_Y:
+    case SDL_SCANCODE_KP_7:
       ret_val = MoveUpLeft;
       break;
-    case SDLK_b:
-    case SDLK_KP1:
+    case SDL_SCANCODE_B:
+    case SDL_SCANCODE_KP_1:
       ret_val = MoveDownLeft;
       break;
-    case SDLK_u:
-    case SDLK_KP9:
+    case SDL_SCANCODE_U:
+    case SDL_SCANCODE_KP_9:
       ret_val = MoveUpRight;
       break;
-    case SDLK_n:
-    case SDLK_KP3:
+    case SDL_SCANCODE_N:
+    case SDL_SCANCODE_KP_3:
       ret_val = MoveDownRight;
       break;
-    case SDLK_q:
+    case SDL_SCANCODE_Q:
       ret_val = Quit;
       break;
-    case SDLK_SEMICOLON:
+    case SDL_SCANCODE_SEMICOLON:
       ret_val = EnterLookMode;
       break;
-    case SDLK_ESCAPE:
+    case SDL_SCANCODE_ESCAPE:
       ret_val = ExitLookMode;
       break;
     default:
