@@ -97,5 +97,5 @@ int render_messages(const Rect *dstrect, MessageList *mlist) {
     curr = curr->next;
   }
   DEBUG("all messages rendered, updateing screen\n");
-  draw_rect(dstrect);
+  SDL_RenderPresent(get_main_renderer());
 }

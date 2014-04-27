@@ -1,3 +1,4 @@
+#include "SDL.h"
 #include "SDL_ttf.h"
 
 #include <SDL_Tools.h>
@@ -24,7 +25,7 @@ int render_look_message(const char* message, const Rect *dstrect) {
     return -1;
   }
   DEBUG("Message rendered, updating screen\n");
-  draw_rect(dstrect);
+  SDL_RenderPresent(get_main_renderer());
 
   return 0;
 }
