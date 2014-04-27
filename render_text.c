@@ -108,6 +108,8 @@ int render_message_to_window(const Rect *dstrect, SurfaceNodePtr text,
     }
     write_coords.x = r.x + line_width;
     write_coords.y = r.y + (dir * h_offset);
+    write_coords.w = curr_word->w;
+    write_coords.h = skip_line_height;
     DEBUG("writing at %i, %i\n", write_coords.x, write_coords.y);
     //DEBUG("h is %i, h_offset is %i\n", h, h_offset);
     SDL_RenderCopy(get_main_renderer(), curr_word->surface, NULL, &write_coords);
