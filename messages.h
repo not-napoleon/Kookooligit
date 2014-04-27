@@ -14,6 +14,7 @@ typedef struct Message{
 
 typedef struct MessageNode *MessageNodePtr;
 
+/*TODO: use a utlist here*/
 typedef struct MessageNode {
   // Linked list of messages
   Message *data;
