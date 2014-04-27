@@ -3,6 +3,7 @@
 
 #include <color_palette.h>
 #include <draw_map.h>
+#include <graphics_wrapper.h>
 #include <SDL_Tools.h>
 #include <tile.h>
 
@@ -24,18 +25,16 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
 }
 
 /*TODO: This goes in tile, or possibly graphics helper, and gets some caching */
-SDL_Surface *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
-  return TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
+SDL_Texture *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
+  SDL_Surface *tmp = TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
+  return SDL_CreateTextureFromSurface(get_main_renderer(), tmp);
 }
 
 int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window){
 
   DEBUG("attempting to render map - window size is %d x %d (line_height: %d, at_width: %d)\n",
       mgs->map_window_x_chars, mgs->map_window_y_chars, mgs->line_height, mgs->at_width);
-  SDL_Surface *screen = SDL_GetVideoSurface();
-  if (screen == NULL) {
-    CRITICAL("SDL_GetVideoSurface returned null!\n");
-  }
+  SDL_Renderer *screen = get_main_renderer();
 
   Point at_location;
   Point cursor_location;
@@ -50,9 +49,8 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
 
   // blank the screen
   // Fill rect can change the dest rect for clipping, so pass in a copy
-  /*TODO: graphics_wrapper should have a blank screen function*/
-  SDL_Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
-  SDL_FillRect(screen, &tmp, SDL_MapRGB(screen->format, 0, 0, 0));
+  Rect tmp = {map_window->x, map_window->y, map_window->w, map_window->h};
+  clear_rect(&tmp);
 
   SDL_Rect write_coords;
   int x, y;
@@ -64,7 +62,7 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
       write_coords.y = map_window->y + (y * mgs->line_height);
       /*DEBUG("Rendering %p from %d, %d at %d,%d\n", tile_grid[x][y].type, x , y,*/
           /*write_coords.x, write_coords.y);*/
-      SDL_Surface *map_char;
+      SDL_Texture *map_char;
       /* TODO: Map should take care of this by maintaining a stack of things on
        * a given tile, and only returning the top one for rendering.*/
       if (x == cursor_location.x
@@ -90,7 +88,7 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
               map_bg_color);
         }
       }
-      SDL_BlitSurface(map_char, NULL, screen, &write_coords);
+      SDL_RenderCopy(screen, map_char, NULL, &write_coords);
     }
   }
 
@@ -98,6 +96,6 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
     free(tile_grid[i]);
   }
   free(tile_grid);
-  SDL_UpdateRect(screen, map_window->x, map_window->y, map_window->w, map_window->h);
-  return 1
+  SDL_RenderPresent(screen);
+  return 1;
 }
