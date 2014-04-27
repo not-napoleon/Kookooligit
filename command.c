@@ -6,7 +6,8 @@
 
 CommandCode parse_keypress(const SDL_Event event) {
   CommandCode ret_val;
-  switch(event.key.keysym.sym) {
+  DEBUG("scancode is %d\n", event.key.keysym.scancode);
+  switch(event.key.keysym.scancode) {
     case SDL_SCANCODE_H:
     case SDL_SCANCODE_KP_4:
       ret_val = MoveLeft;
