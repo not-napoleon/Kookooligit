@@ -4,7 +4,7 @@ OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
-	$(CC) main.c $(OBJECTS) -I. `sdl2-config --cflags --libs` -lSDL_ttf -o game.out -g -v
+	$(CC) main.c $(OBJECTS) -I. `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h $(ALL_DEP)
 command.o: command.c command.h $(ALL_DEP)
