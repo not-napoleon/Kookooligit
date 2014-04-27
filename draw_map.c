@@ -27,7 +27,9 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
 /*TODO: This goes in tile, or possibly graphics helper, and gets some caching */
 SDL_Texture *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
   SDL_Surface *tmp = TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
-  return SDL_CreateTextureFromSurface(get_main_renderer(), tmp);
+  SDL_Texture *retval = SDL_CreateTextureFromSurface(get_main_renderer(), tmp);
+  SDL_FreeSurface(tmp);
+  return retval;
 }
 
 int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window){
