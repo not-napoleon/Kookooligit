@@ -35,17 +35,7 @@ void initilize(GameState *state) {
   int seed_value;
   seed_value = seed();
   DEBUG("random number generator seeded with %d\n", seed);
-  if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0) {
-    ERROR( "Unable to init SDL: %s\n", SDL_GetError());
-    exit(1);
-  }
-  atexit(SDL_Quit);
-
-  if (TTF_Init() < 0) {
-    ERROR( "Unable to init SDL_ttf: %s\n", SDL_GetError());
-    exit(1);
-  }
-  atexit(TTF_Quit);
+  init_graphics(state->config->window_w, state->config->window_h);
 
   // Load font
   set_map_font(state->config->font_path, state->config->point_size);
@@ -54,6 +44,8 @@ void initilize(GameState *state) {
   set_command_font(state->config->font_path, state->config->point_size);
 
   // Check for fixed with
+  /* TODO: This should go in the font setup functions.  For example, some
+   * kerning on message fonts could be nice.*/
   if (TTF_FontFaceIsFixedWidth(get_map_font()) == 0) {
     ERROR( "Font is not fixed width, chances are nothing will look right");
   }

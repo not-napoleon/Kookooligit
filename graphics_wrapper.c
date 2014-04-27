@@ -17,6 +17,18 @@ SDL_Window *get_screen() {
 }
 
 void init_graphics(int window_w, int window_h) {
+  if (SDL_Init(SDL_INIT_EVENTS|SDL_INIT_VIDEO) < 0) {
+    ERROR( "Unable to init SDL: %s\n", SDL_GetError());
+    exit(1);
+  }
+  atexit(SDL_Quit);
+
+  if (TTF_Init() < 0) {
+    ERROR( "Unable to init SDL_ttf: %s\n", SDL_GetError());
+    exit(1);
+  }
+  atexit(TTF_Quit);
+
   screen = SDL_CreateWindow("Kookoolegit",
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
