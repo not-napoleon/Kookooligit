@@ -5,15 +5,8 @@
 
 #include <stdbool.h>
 
+#include <point.h>
 #include <tile.h>
-
-typedef struct Point {
-  /*
-   * An x,y point on the map grid
-   */
-  int x;
-  int y;
-} Point;
 
 typedef struct MapSection {
   Tile matrix[MAP_SECTION_SIZE][MAP_SECTION_SIZE];
