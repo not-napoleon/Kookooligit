@@ -1,6 +1,6 @@
 CC = clang
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
-OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o random.o map_section.o
+OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o random.o map_section.o sprite.o point.o
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
@@ -16,7 +16,9 @@ look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
 map.o: map.c map.h tile.h $(ALL_DEP)
 map_section.o: map_section.c map_section.h tile.h random.h point.h $(ALL_DEP)
 messages.o: messages.c messages.h render_text.h $(ALL_DEP)
+point.o: point.h $(ALL_DEP)
 render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)
+sprite.o: sprite.c sprite.h point.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
 tile.o: tile.c tile.h $(ALL_DEP)
 
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h
