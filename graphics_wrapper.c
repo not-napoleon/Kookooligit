@@ -46,6 +46,7 @@ void init_graphics(int window_w, int window_h) {
 }
 
 void clear() {
+  SDL_SetRenderDrawColor(get_main_renderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(get_main_renderer());
 }
 
