@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include <sprite.h>
+
 typedef enum {
   OffGrid, // Space outside the map
   OpenSpace, // passable, unoccupied space
@@ -18,7 +20,7 @@ typedef struct TileType {
   /*Basic graphics data*/
   char *description;
   char *name;
-  char *glyph; /* SDL expects a null terminated string to render */
+  enum sprite_ids sprite_id;
 
 } TileType;
 

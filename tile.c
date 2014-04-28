@@ -13,7 +13,7 @@ bool tiles_initilized() {
   return _was_initilized;
 }
 
-TileType *_make_tile_type(const char *glyph, const char* name,
+TileType *_make_tile_type(enum sprite_ids sprite_id, const char* name,
     const char* description, const bool is_passable) {
   TileType *result;
   result = malloc(sizeof(TileType));
@@ -21,7 +21,7 @@ TileType *_make_tile_type(const char *glyph, const char* name,
     CRITICAL("Couldn't malloc space for a tile type\n");
     exit(1);
   }
-  result->glyph = strdup(glyph);
+  result->sprite_id = sprite_id;
   result->description = strdup(description);
   if (is_passable == true) {
     result->is_passable = 1;
@@ -33,10 +33,10 @@ TileType *_make_tile_type(const char *glyph, const char* name,
 
 
 void init_tile_types() {
-  tile_data[OffGrid] = _make_tile_type(" ", "off_grid", "Unexplored space", true);
-  tile_data[OpenSpace] = _make_tile_type(".", "open", "An unobstructed corridor "
+  tile_data[OffGrid] = _make_tile_type(OffGrid_sprite, "off_grid", "Unexplored space", true);
+  tile_data[OpenSpace] = _make_tile_type(OpenSpace_sprite, "open", "An unobstructed corridor "
       "of some kind", true);
-  tile_data[ImpassableWall] = _make_tile_type("#", "wall", "A hardened bulkhead, "
+  tile_data[ImpassableWall] = _make_tile_type(ImpassableWall_sprite, "wall", "A hardened bulkhead, "
       "probably with hardened vaccuum on the other side", false);
   _was_initilized = true;
   INFO("Tile Data initilized\n");
