@@ -9,6 +9,7 @@
 #include <messages.h>
 #include <random.h>
 #include <tile.h>
+#include <sprite.h>
 #define LOGGING_ENABLED
 #include <log.h>
 
@@ -38,30 +39,10 @@ void initilize(GameState *state) {
   init_graphics(state->config->window_w, state->config->window_h);
 
   // Load font
-  set_map_font(state->config->font_path, state->config->point_size);
+  init_sprites_from_font(state->config->font_path, state->config->point_size);
   set_message_font(state->config->font_path, state->config->point_size);
   set_status_font(state->config->font_path, state->config->point_size);
   set_command_font(state->config->font_path, state->config->point_size);
-
-  // Check for fixed with
-  /* TODO: This should go in the font setup functions.  For example, some
-   * kerning on message fonts could be nice.*/
-  if (TTF_FontFaceIsFixedWidth(get_map_font()) == 0) {
-    ERROR( "Font is not fixed width, chances are nothing will look right");
-  }
-  // Turn off kerning, since we want our characters to line up in a grid
-  if (TTF_GetFontKerning(get_map_font()) != 0) {
-    TTF_SetFontKerning(get_map_font(), 0);
-  }
-  // set font size data
-  int at_width, line_height;
-  state->map_graphics_state->line_height = TTF_FontLineSkip(get_map_font());
-  TTF_SizeText(get_map_font(), "@", &state->map_graphics_state->at_width, NULL);
-  /* TODO: Refactor this, probably into draw map, to deal with resizing */
-  state->map_graphics_state->map_window_x_chars = state->config->map_window.w / state->map_graphics_state->at_width;
-  state->map_graphics_state->map_window_y_chars = state->config->map_window.h / state->map_graphics_state->line_height;
-  INFO("map window size in characters is %i by %i\n", state->map_graphics_state->map_window_x_chars,
-      state->map_graphics_state->map_window_y_chars);
 
   state->need_to_redraw = 0;
   init_tile_types();

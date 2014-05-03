@@ -1,8 +1,8 @@
 #ifndef SPRITE_H_INCLUDED
 #define SPRITE_H_INCLUDED
 
-#include <point.h>
 #include <stdint.h>
+#include <graphics_wrapper.h>
 
 /* This is basically the master list of everything that can be drawn.  As such,
  * it's roughly the concatenation of the list of tiles, creatures and items,
@@ -27,8 +27,11 @@ struct Drawable {
   uint8_t is_explored :1; /* Don't draw if not explored */
 };
 
-void draw_sprite_at_point(struct Drawable *drawable, Point p);
-void init_sprites();
-
+void draw_sprite_at_point(const struct Drawable *drawable, const int x,
+    const int y, const Rect *window);
+void init_sprites_from_font(const char *font_path, const int point_size);
+void close_sprites();
+int get_char_width(const int pixel_width);
+int get_char_height(const int pixel_height);
 
 #endif

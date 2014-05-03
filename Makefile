@@ -17,7 +17,7 @@ map.o: map.c map.h tile.h $(ALL_DEP)
 map_section.o: map_section.c map_section.h tile.h random.h point.h $(ALL_DEP)
 messages.o: messages.c messages.h render_text.h $(ALL_DEP)
 render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)
-sprite.o: sprite.c sprite.h point.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
+sprite.o: sprite.c sprite.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
 tile.o: tile.c tile.h $(ALL_DEP)
 
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h

@@ -4,6 +4,7 @@
 // that needs to get refactored into map.c
 #include <tile.h>
 #include <look.h>
+#include <sprite.h>  /* for cleanup code */
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -28,6 +29,7 @@ void free_game_state(GameState *state) {
   free_message_queue(state->messages);
   free_infinite_map(state->map);
   free(state->map_graphics_state);
+  close_sprites();
   free(state);
 }
 

@@ -7,7 +7,7 @@
 #include <random.h>
 #include <sprite.h>
 
-//#define LOGGING_ENABLED
+#define LOGGING_ENABLED
 #include <log.h>
 
 void dump_edge_parameters(InfiniteMap *map) {
@@ -193,6 +193,8 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
 
   DEBUG("Selecting map tiles from (%d, %d) to (%d, %d)\n", x_start, y_start, x_end, y_end);
   DEBUG("at_location is %d, %d\n", map->at_location.x, map->at_location.y);
+  DEBUG("camera adjusted x range is %d to %d\n", x_start, x_end);
+  DEBUG("camera adjusted y range is %d to %d\n", y_start, y_end);
   int x, y;
   Tile t;
   struct Drawable d;
@@ -206,9 +208,10 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
       d.is_explored = t.is_explored;
 
       /* Figure out what to draw on this square */
-      if (x == map->at_location.x - x_start
-          && y == map->at_location.y - y_start) {
+      if (x == map->at_location.x 
+          && y == map->at_location.y) {
         /* Draw player case */
+        DEBUG("Drawing player at %d, %d", x, y);
         d.sprite_id = Player_sprite;
       } else {
       /* Draw Tile case */

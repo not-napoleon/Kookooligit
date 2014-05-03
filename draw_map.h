@@ -5,8 +5,6 @@
 #include <graphics_wrapper.h>
 
 typedef struct MapGraphicsState {
-  int line_height;
-  int at_width;
   int map_window_x_chars;
   int map_window_y_chars;
 
