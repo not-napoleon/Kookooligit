@@ -1,11 +1,7 @@
-#include "SDL.h"
-#include "SDL_ttf.h"
-
-#include <color_palette.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
-#include <SDL_Tools.h>
-#include <tile.h>
+#include <point.h>
+#include <sprite.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -24,35 +20,24 @@ void clear_draw_cursor(MapGraphicsState *mgs) {
   mgs->draw_cursor = 0;
 }
 
-/*TODO: This goes in tile, or possibly graphics helper, and gets some caching */
-SDL_Texture *_render_map_glyph(const char *glyph, const Color fg, const Color bg) {
-  SDL_Surface *tmp = TTF_RenderText_Solid(get_map_font(), glyph, convert_color(fg));
-  SDL_Texture *retval = SDL_CreateTextureFromSurface(get_main_renderer(), tmp);
-  SDL_FreeSurface(tmp);
-  return retval;
-}
-
 int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window){
 
   DEBUG("attempting to render map - window size is %d x %d (line_height: %d, at_width: %d)\n",
       mgs->map_window_x_chars, mgs->map_window_y_chars, mgs->line_height, mgs->at_width);
-  SDL_Renderer *screen = get_main_renderer();
 
-  Point at_location;
-  Point cursor_location;
-  Tile **tile_grid;
-  tile_grid = (Tile **)malloc(sizeof(Tile *) * (mgs->map_window_x_chars + 1));
+  struct Drawable **tile_grid;
+  /* Note to self: Why do I have dimensions + 1 tiles here? */
+  tile_grid = (struct Drawable **)malloc(sizeof(struct Drawable *)
+      * (mgs->map_window_x_chars + 1));
   int i;
   for (i = 0; i <= mgs->map_window_x_chars; i++) {
-    tile_grid[i] = (Tile *)malloc(sizeof(Tile) * mgs->map_window_y_chars + 1);
+    tile_grid[i] = (struct Drawable *)malloc(sizeof(struct Drawable)
+        * mgs->map_window_y_chars + 1);
   }
-  get_tile_grid(map, mgs->map_window_x_chars, mgs->map_window_y_chars,
-      &at_location, &cursor_location, tile_grid);
+  get_tile_grid(map, mgs->map_window_x_chars, mgs->map_window_y_chars, mgs->draw_cursor, tile_grid);
 
-  SDL_Rect write_coords;
-  write_coords.w = mgs->at_width;
-  write_coords.h = mgs->line_height;
   int x, y;
+  Point write_coords;
   for (x = 0; x < mgs->map_window_x_chars; x++) {
     /* our x offset for writing is the top left corner of the visible window
      * plus the width of the characters witten so far.*/
@@ -61,33 +46,7 @@ int render_map_window(InfiniteMap *map, MapGraphicsState *mgs, Rect *map_window)
       write_coords.y = map_window->y + (y * mgs->line_height);
       /*DEBUG("Rendering %p from %d, %d at %d,%d\n", tile_grid[x][y].type, x , y,*/
           /*write_coords.x, write_coords.y);*/
-      SDL_Texture *map_char;
-      /* TODO: Map should take care of this by maintaining a stack of things on
-       * a given tile, and only returning the top one for rendering.*/
-      if (x == cursor_location.x
-          && y == cursor_location.y
-          && mgs->draw_cursor == 1) {
-        // Top priority - the cursor is always visible, if rendered at all
-        DEBUG("Rendering Cursor\n");
-        map_char = _render_map_glyph("*", color_lit, cursor_bg_color);
-      } else if ( tile_grid[x][y].is_explored == 0) {
-        map_char = _render_map_glyph(tile_data[OffGrid]->glyph, color_hidden, map_bg_color);
-      } else {
-        if (x == at_location.x && y == at_location.y) {
-          DEBUG("Rendering at\n");
-          map_char = _render_map_glyph("@", color_lit, cursor_bg_color);
-        } else {
-          Color c;
-          if (tile_grid[x][y].is_lit) {
-            c = color_lit;
-          } else {
-            c = color_hidden;
-          }
-          map_char = _render_map_glyph(tile_grid[x][y].type->glyph, c,
-              map_bg_color);
-        }
-      }
-      SDL_RenderCopy(screen, map_char, NULL, &write_coords);
+      draw_sprite_at_point(&tile_grid[x][y], write_coords);
     }
   }
 

@@ -13,18 +13,33 @@
 static bool _was_initilized = false;
 SDL_Texture *sprite_cache[SPRITE_TYPE_COUNT];
 
-void draw_sprite_at_point(enum sprite_ids sprite_id, Point p,
-    bool show_cursor, bool darken) {
+void draw_sprite_at_point(struct Drawable *drawable, Point p) {
   if (!_was_initilized) {
     CRITICAL("Tried to draw an uninitilized sprite\n");
     exit(1);
   }
-  SDL_Texture *glyph = sprite_cache[sprite_id];
-  if (darken) {
+  /* TODO: Draw cursor if applicable */
+
+  /* If the tile is unexplored, nothing left to do, leave it blank and go
+   * home. */
+  if (drawable->is_explored == 0) {
+    return;
+  }
+  SDL_Texture *glyph = sprite_cache[drawable->sprite_id];
+  /* Darken (which is to say make transparent) if the tile is unlit. */
+  if (drawable->is_lit == 0) {
     SDL_SetTextureAlphaMod(glyph, 128);
   } else {
     SDL_SetTextureAlphaMod(glyph, 255);
   }
+
+  /* TODO: Stage the texture for drawing */
+  SDL_Rect write_coords;
+  write_coords.x = p.x;
+  write_coords.y = p.y;
+  /* TODO: Get at_width and line height here */
+  SDL_RenderCopy(get_main_renderer(), sprite_cache[drawable->sprite_id],
+      NULL, &write_coords);
 
 }
 

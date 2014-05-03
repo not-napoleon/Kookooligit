@@ -22,8 +22,9 @@ Tile get_tile(const InfiniteMap *map, int x, int y);
 bool is_passable_point(InfiniteMap * map, Point p);
 bool is_opaque_point(InfiniteMap *map, Point p);
 int generate_initial_map(InfiniteMap *map);
-int get_tile_grid(InfiniteMap *map, int window_x_chars, int window_y_chars,
-    Point *at_location, Point *cursor_location, Tile **tile_grid);
+int get_tile_grid(InfiniteMap *map, const int window_x_chars,
+    const int window_y_chars, const bool draw_cursor,
+    struct Drawable **tile_grid);
 bool attempt_move(InfiniteMap *map, int dx, int dy);
 int calculate_visible_tiles(InfiniteMap *map, Point at_location);
 Tile get_cursor_tile(InfiniteMap *map);

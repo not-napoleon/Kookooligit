@@ -5,6 +5,7 @@
 #include <fov.h>
 #include <map.h>
 #include <random.h>
+#include <sprite.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
@@ -174,8 +175,9 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
   sec->matrix[x][y].is_explored = 1;
 }
 
-int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y_chars,
-    Point *at_location, Point *cursor_location, Tile **tile_grid) {
+int get_tile_grid(InfiniteMap *map, const int window_x_chars,
+    const int window_y_chars, const bool draw_cursor,
+    struct Drawable **tile_grid) {
   /*
    * Get a grid of tiles, and the at_location and cursor location relative to
    * that grid, centered on the current camera location and dimensioned as
@@ -193,18 +195,37 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y
   DEBUG("at_location is %d, %d\n", map->at_location.x, map->at_location.y);
   int x, y;
   Tile t;
+  struct Drawable d;
   for (x = x_start; x <= x_end; x++) {
     for (y = y_start; y <= y_end; y++) {
       /*DEBUG("looking for tile at (%d, %d), storing at (%d, %d)\n",*/
           /*x, y, x - x_start, y - y_start);*/
+      /* we always need the tile to get lighting info */
       t = get_tile(map, x, y);
-      tile_grid[x - x_start][y - y_start] = t;
+      d.is_lit = t.is_lit;
+      d.is_explored = t.is_explored;
+
+      /* Figure out what to draw on this square */
+      if (x == map->at_location.x - x_start
+          && y == map->at_location.y - y_start) {
+        /* Draw player case */
+        d.sprite_id = Player_sprite;
+      } else {
+      /* Draw Tile case */
+        d.sprite_id = t.type->sprite_id;
+      }
+
+      /* Decide if we should show the cursor */
+      if (draw_cursor
+          && x == map->cursor_location.x - x_start
+          && y == map->cursor_location.y - y_start) {
+        d.draw_cursor = 1;
+      } else {
+        d.draw_cursor = 0;
+      }
+      tile_grid[x - x_start][y - y_start] = d;
     }
   }
-  at_location->x = map->at_location.x - x_start;
-  at_location->y = map->at_location.y - y_start;
-  cursor_location->x = map->cursor_location.x - x_start;
-  cursor_location->y = map->cursor_location.y - y_start;
   return 0;
 }
 
@@ -212,8 +233,8 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars, const int window_y
 int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
   /*DEBUG("calculating field of vision\n");*/
   dark_map(map);
-  // make sure the tile the player is on is lit.  Player could land on an unlit
-  // tile by, e.g., teleport.  Or game start.
+  /* make sure the tile the player is on is lit.  Player could land on an unlit
+   * tile by, e.g., teleport.  Or game start. */
   light_tile(map, at_location.x, at_location.y, 0, 0, NULL);
   fov_settings_type *fov_settings;
   fov_settings = malloc( sizeof(fov_settings_type) );
