@@ -211,7 +211,7 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
       if (x == map->at_location.x 
           && y == map->at_location.y) {
         /* Draw player case */
-        DEBUG("Drawing player at %d, %d", x, y);
+        DEBUG("Drawing player at %d, %d\n", x, y);
         d.sprite_id = Player_sprite;
       } else {
       /* Draw Tile case */
@@ -220,8 +220,9 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
 
       /* Decide if we should show the cursor */
       if (draw_cursor
-          && x == map->cursor_location.x - x_start
-          && y == map->cursor_location.y - y_start) {
+          && x == map->cursor_location.x
+          && y == map->cursor_location.y) {
+        DEBUG("Drawing cursor at %d, %d\n", x, y);
         d.draw_cursor = 1;
       } else {
         d.draw_cursor = 0;
