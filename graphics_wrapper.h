@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+/* TODO: Kill get_screen and get_main_renderer so I can get SDL out of this
+ * header. */
+#include "SDL.h"
+
 typedef struct Rect {
   int16_t x, y;
   uint16_t w, h;
@@ -14,9 +18,10 @@ typedef struct Color {
   uint8_t b;
 } Color;
 
-void clear_rect(const Rect *r);
+SDL_Renderer *get_main_renderer();
+SDL_Window *get_screen();
+void clear();
 Rect make_rect(int16_t x, int16_t y, uint16_t w, uint16_t h);
-void draw_rect(const Rect *r);
-void free_assets();
+void flip();
 
 #endif

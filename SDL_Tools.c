@@ -12,18 +12,10 @@ SDL_Color convert_color(Color c) {
   return sc;
 }
 
-TTF_Font *map_font = NULL;
 TTF_Font *message_font = NULL;
 TTF_Font *status_font = NULL;
 TTF_Font *command_font = NULL;
 
-void set_map_font(const char *font_path, const int point_size) {
-  map_font = TTF_OpenFont(font_path, point_size);
-  if (map_font == NULL) {
-    ERROR( "Unable to load font %s: %s\n", font_path, SDL_GetError());
-    exit(1);
-  }
-}
 void set_message_font(const char *font_path, const int point_size) {
   message_font = TTF_OpenFont(font_path, point_size);
   if (message_font == NULL) {
@@ -49,15 +41,11 @@ void set_command_font(const char *font_path, const int point_size) {
 }
 
 
-TTF_Font* get_map_font() { return map_font; }
 TTF_Font* get_message_font() { return message_font; }
 TTF_Font* get_status_font() { return status_font; }
 TTF_Font* get_command_font() { return command_font; }
 
 void close_fonts() {
-  if (map_font != NULL) {
-    TTF_CloseFont(map_font);
-  }
   if (message_font != NULL) {
     TTF_CloseFont(message_font);
   }

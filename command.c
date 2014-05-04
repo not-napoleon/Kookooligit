@@ -81,7 +81,6 @@ CommandCode parse_keypress(const SDL_Event event) {
   } else {
     return pressed->command;
   }
-
 }
 
 

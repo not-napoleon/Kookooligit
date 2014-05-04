@@ -18,6 +18,7 @@
 
 # vim stuff
 *.swp
+tags
 
 # Debugging stuff
 *.dSYM

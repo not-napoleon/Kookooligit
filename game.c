@@ -4,6 +4,7 @@
 // that needs to get refactored into map.c
 #include <tile.h>
 #include <look.h>
+#include <sprite.h>  /* for cleanup code */
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -29,6 +30,7 @@ void free_game_state(GameState *state) {
   free_infinite_map(state->map);
   free(state->map_graphics_state);
   free_command_mapping();
+  close_sprites();
   free(state);
 }
 
@@ -50,7 +52,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->map->cursor_location.y = state->map->at_location.y;
       }
       set_draw_cursor(state->map_graphics_state);
-      state->need_to_redraw_map = 1;
+      state->need_to_redraw = 1;
       break;
     case ExitLookMode:
       DEBUG("Exiting look mode\n");
@@ -58,7 +60,7 @@ void process_command(GameState *state, CommandCode cmd) {
         state->state = Move;
       }
       clear_draw_cursor(state->map_graphics_state);
-      state->need_to_redraw_map = 1;
+      state->need_to_redraw = 1;
       break;
     case MoveLeft:
       delta_x -= 1;
@@ -110,30 +112,26 @@ void process_command(GameState *state, CommandCode cmd) {
   if (delta_x != 0 || delta_y != 0) {
     if (state->state == Move) {
       if (attempt_move(state->map, delta_x, delta_y)) {
-        state->need_to_redraw_map = 1;
+        state->need_to_redraw = 1;
       } else {
         char tmp[50] = "You can't walk through walls";
         add_message(state->messages, tmp);
-        state->need_to_redraw_messages = 1;
+        state->need_to_redraw = 1;
       }
       calculate_visible_tiles(state->map, state->map->at_location);
     } else if (state->state == Look) {
       if (attempt_cursor_move(state->map, delta_x, delta_y,
-            state->map_graphics_state->map_window_x_chars,
-            state->map_graphics_state->map_window_y_chars)) {
-        state->need_to_redraw_map = 1;
+            get_char_width(state->config->map_window.w),
+            get_char_height(state->config->map_window.h))) {
+        state->need_to_redraw = 1;
         // Get descriptor text
         Tile target_tile;
         target_tile = get_cursor_tile(state->map);
-        const char* tile_desc;
-        tile_desc = target_tile.type->description;
-        DEBUG("got tile description %s\n", tile_desc);
+        state->status_message = target_tile.type->description;
+        DEBUG("got tile description %s\n", state->status_message);
         // draw look message
-        if ( render_look_message(tile_desc, &state->config->status_window) == -1) {
-          exit(-1);
-        }
         // flag status window to redraw
-        state->need_to_redraw_status = 1;
+        state->need_to_redraw = 1;
       }
     }
   }
