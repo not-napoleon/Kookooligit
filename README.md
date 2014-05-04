@@ -29,7 +29,7 @@ here's the initial master TODO list:
 
    - [x] 5.1 - Convert to SDL 2
 
-   - [ ] 5.2 - Sprite system
+   - [x] 5.2 - Sprite system
 
    - [ ] 5.3 - Read key mappings from a file
 
