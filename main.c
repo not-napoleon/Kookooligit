@@ -8,6 +8,7 @@
 #include <command.h>
 #include <game.h>
 #include <graphics_wrapper.h>
+#include <look.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) {
       render_messages(&state->config->message_window, state->messages);
       render_map_window(state->map, state->map_graphics_state,
           &state->config->map_window);
+      render_look_message(state->status_message, &state->config->status_window);
       state->need_to_redraw = 0;
       flip();
     }

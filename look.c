@@ -10,6 +10,10 @@
 #include <log.h>
 
 int render_look_message(const char* message, const Rect *dstrect) {
+  if (message == NULL) {
+    WARN("Ignoring NULL look message\n");
+    return 0;
+  }
   TTF_Font *font;
   font = get_status_font();
   DEBUG("rendering look message <%s>\n", message);
@@ -21,6 +25,7 @@ int render_look_message(const char* message, const Rect *dstrect) {
   int rows;
   rows = get_message_height(rendered_message, dstrect->w);
   if (render_message_to_window(dstrect, rendered_message, TTF_FontLineSkip(font), rows, scroll_down) == -1) {
+    ERROR("Failed to render look message to window!\n");
     return -1;
   }
   DEBUG("Message rendered, updating screen\n");

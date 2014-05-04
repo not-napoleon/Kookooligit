@@ -120,19 +120,15 @@ void process_command(GameState *state, CommandCode cmd) {
       calculate_visible_tiles(state->map, state->map->at_location);
     } else if (state->state == Look) {
       if (attempt_cursor_move(state->map, delta_x, delta_y,
-            state->map_graphics_state->map_window_x_chars,
-            state->map_graphics_state->map_window_y_chars)) {
+            get_char_width(state->config->map_window.w),
+            get_char_height(state->config->map_window.h))) {
         state->need_to_redraw = 1;
         // Get descriptor text
         Tile target_tile;
         target_tile = get_cursor_tile(state->map);
-        const char* tile_desc;
-        tile_desc = target_tile.type->description;
-        DEBUG("got tile description %s\n", tile_desc);
+        state->status_message = target_tile.type->description;
+        DEBUG("got tile description %s\n", state->status_message);
         // draw look message
-        if ( render_look_message(tile_desc, &state->config->status_window) == -1) {
-          exit(-1);
-        }
         // flag status window to redraw
         state->need_to_redraw = 1;
       }
