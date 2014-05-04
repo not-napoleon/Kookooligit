@@ -9,7 +9,7 @@
 #include <sprite.h>
 #include <SDL_tools.h>
 
-/*#define LOGGING_ENABLED*/
+#define LOGGING_ENABLED
 #include <log.h>
 
 static bool _was_initilized = false;
@@ -20,12 +20,25 @@ static int line_height;
 
 void draw_sprite_at_point(const struct Drawable *drawable, const int x, const int y, const Rect *window) {
   /* x and y coordinates are given in tiles; the conversion to pixels happens here.*/
-  DEBUG("Attempting to draw sprite at %d, %d", x, y);
   if (!_was_initilized) {
     CRITICAL("Tried to draw an uninitilized sprite\n");
     exit(1);
   }
+  SDL_Rect write_coords;
+  /* our x offset for writing is the top left corner of the visible window
+   * plus the width of the characters witten so far.*/
+  write_coords.x = window->x + (x * at_width);
+  write_coords.y = window->y + (y * line_height);
+  write_coords.h = line_height;
+  write_coords.w = at_width;
+
   /* TODO: Draw cursor if applicable */
+  if (drawable->draw_cursor == 1) {
+    DEBUG("Attempting to draw cursor\n");
+    SDL_SetRenderDrawColor(get_main_renderer(), cursor_bg_color.r, cursor_bg_color.g, cursor_bg_color.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(get_main_renderer(), &write_coords);
+    SDL_SetRenderDrawColor(get_main_renderer(), map_bg_color.r, map_bg_color.g, map_bg_color.b, SDL_ALPHA_OPAQUE);
+  }
 
   /* If the tile is unexplored, nothing left to do, leave it blank and go
    * home. */
@@ -40,15 +53,7 @@ void draw_sprite_at_point(const struct Drawable *drawable, const int x, const in
     SDL_SetTextureAlphaMod(glyph, 255);
   }
 
-  /* TODO: Stage the texture for drawing */
-  SDL_Rect write_coords;
-  /* our x offset for writing is the top left corner of the visible window
-   * plus the width of the characters witten so far.*/
-  write_coords.x = window->x + (x * at_width);
-  write_coords.y = window->y + (y * line_height);
-  write_coords.h = line_height;
-  write_coords.w = at_width;
-  /* TODO: Get at_width and line height here */
+  /* Stage the texture for drawing */
   SDL_RenderCopy(get_main_renderer(), sprite_cache[drawable->sprite_id],
       NULL, &write_coords);
 
