@@ -18,6 +18,7 @@ GameState *allocate_game_state() {
   state->messages = init_message_list();
   state->map = init_infinite_map();
   state->map_graphics_state = malloc(sizeof(MapGraphicsState));
+  state->status_message = NULL;
   INFO("Allocated new game state\n");
   return state;
 }
