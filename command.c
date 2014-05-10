@@ -1,6 +1,6 @@
 #include "SDL.h"
 #include <command.h>
-#include <uthash/src/uthash.h>
+#include <lib/uthash/src/uthash.h>
 
 //#define LOGGING_ENABLED
 #include <log.h>
@@ -22,13 +22,6 @@ const int KEY_SIZE = sizeof(SDL_Keycode);
  */
 struct KeyToCommand *key_mapping = NULL;
 
-int bind_command_name(CommandCode command, const char *symbol) {
-  /*
-   * Bind the given symbol to the given command code
-   */
-  return bind_command_key_code(command, SDL_GetKeyFromName(symbol));
-}
-
 int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
   /*
    * Bind the given key code to the given command
@@ -41,7 +34,7 @@ int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
   HASH_FIND(hh, key_mapping, &key, KEY_SIZE, new_key_map);
   if (new_key_map == NULL) {
     /* create key mapping instance */
-    *new_key_map = malloc(sizeof(KeyToCommand));
+    new_key_map = (struct KeyToCommand*)malloc(sizeof(struct KeyToCommand));
     new_key_map->key = key;
     new_key_map->command = command;
 
@@ -55,6 +48,13 @@ int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
     /* Key exists error */
     return -1;
   }
+}
+
+int bind_command_name(CommandCode command, const char *symbol) {
+  /*
+   * Bind the given symbol to the given command code
+   */
+  return bind_command_key_code(command, SDL_GetKeyFromName(symbol));
 }
 
 

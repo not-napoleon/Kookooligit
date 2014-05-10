@@ -7,7 +7,7 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 	$(CC) main.c $(OBJECTS) -I. `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h $(ALL_DEP)
-command.o: command.c command.h uthash/src/uthash.h $(ALL_DEP)
+command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
 draw_map.o: draw_map.c draw_map.h graphics_wrapper.h map.h sprite.h $(ALL_DEP)
 game.o: game.c game.h messages.h map.h command.h tile.h look.h $(ALL_DEP)
 graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h $(ALL_DEP)
