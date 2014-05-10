@@ -39,46 +39,23 @@ int default_key_mapping() {
 
   bind_command_name(MoveLeft, "h");
   bind_command_name(MoveLeft, "Keypad 4");
-    /*case SDLK_KP4:*/
-      /*ret_val = MoveLeft;*/
-      /*break;*/
-    /*case SDLK_j:*/
-    /*case SDLK_KP2:*/
-      /*ret_val = MoveDown;*/
-      /*break;*/
-    /*case SDLK_k:*/
-    /*case SDLK_KP8:*/
-      /*ret_val = MoveUp;*/
-      /*break;*/
-    /*case SDLK_l:*/
-    /*case SDLK_KP6:*/
-      /*ret_val = MoveRight;*/
-      /*break;*/
-    /*case SDLK_y:*/
-    /*case SDLK_KP7:*/
-      /*ret_val = MoveUpLeft;*/
-      /*break;*/
-    /*case SDLK_b:*/
-    /*case SDLK_KP1:*/
-      /*ret_val = MoveDownLeft;*/
-      /*break;*/
-    /*case SDLK_u:*/
-    /*case SDLK_KP9:*/
-      /*ret_val = MoveUpRight;*/
-      /*break;*/
-    /*case SDLK_n:*/
-    /*case SDLK_KP3:*/
-      /*ret_val = MoveDownRight;*/
-      /*break;*/
-    /*case SDLK_q:*/
-      /*ret_val = Quit;*/
-      /*break;*/
-    /*case SDLK_SEMICOLON:*/
-      /*ret_val = EnterLookMode;*/
-      /*break;*/
-    /*case SDLK_ESCAPE:*/
-      /*ret_val = ExitLookMode;*/
-      /*break;*/
+  bind_command_name(MoveDown, "j");
+  bind_command_name(MoveDown, "Keypad 2");
+  bind_command_name(MoveUp, "k");
+  bind_command_name(MoveUp, "Keypad 8");
+  bind_command_name(MoveRight, "l");
+  bind_command_name(MoveRight, "Keypad 6");
+  bind_command_name(MoveUpLeft, "y");
+  bind_command_name(MoveUpLeft, "Keypad 7");
+  bind_command_name(MoveDownLeft, "b");
+  bind_command_name(MoveDownLeft, "Keypad 1");
+  bind_command_name(MoveUpRight, "u");
+  bind_command_name(MoveUpRight, "Keypad 9");
+  bind_command_name(MoveDownRight, "n");
+  bind_command_name(MoveDownRight, "Keypad 3");
+  bind_command_name(Quit, "q");
+  bind_command_name(EnterLookMode, ";");
+  bind_command_name(ExitLookMode, "esc");
 }
 
 void initilize(GameState *state) {
