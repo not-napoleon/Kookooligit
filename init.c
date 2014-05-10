@@ -64,6 +64,7 @@ void initilize(GameState *state) {
   seed_value = seed();
   DEBUG("random number generator seeded with %d\n", seed);
   init_graphics(state->config->window_w, state->config->window_h);
+  default_key_mapping();
 
   // Load font
   init_sprites_from_font(state->config->font_path, state->config->point_size);
