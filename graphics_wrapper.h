@@ -22,6 +22,7 @@ SDL_Renderer *get_main_renderer();
 SDL_Window *get_screen();
 void clear();
 Rect make_rect(int16_t x, int16_t y, uint16_t w, uint16_t h);
+void init_graphics(int window_w, int window_h);
 void flip();
 
 #endif
