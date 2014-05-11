@@ -1,5 +1,6 @@
 #include "SDL.h"
 #include <command.h>
+#include <command_list.h>
 #include <lib/uthash/src/uthash.h>
 
 //#define LOGGING_ENABLED
@@ -11,7 +12,7 @@ struct KeyToCommand {
    * specifically, this should eventually be a sub-hash based on
    * command modes, which currently don't really exist
    */
-  CommandCode command;
+  enum CommandCode command;
   UT_hash_handle hh;            /* Make this hashable */
 };
 
@@ -22,7 +23,7 @@ const int KEY_SIZE = sizeof(SDL_Keycode);
  */
 struct KeyToCommand *key_mapping = NULL;
 
-int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
+int bind_command_key_code(enum CommandCode command, const SDL_Keycode key) {
   /*
    * Bind the given key code to the given command
    */
@@ -50,7 +51,7 @@ int bind_command_key_code(CommandCode command, const SDL_Keycode key) {
   }
 }
 
-int bind_command_name(CommandCode command, const char *symbol) {
+int bind_command_name(enum CommandCode command, const char *symbol) {
   /*
    * Bind the given symbol to the given command code
    */
@@ -70,7 +71,7 @@ void free_command_mapping() {
   }
 }
 
-CommandCode parse_keypress(const SDL_Event event) {
+enum CommandCode parse_keypress(const SDL_Event event) {
   struct KeyToCommand *pressed;
   HASH_FIND(hh, key_mapping, &event.key.keysym.sym, KEY_SIZE, pressed);
   if (pressed == NULL) {
@@ -84,12 +85,12 @@ CommandCode parse_keypress(const SDL_Event event) {
 }
 
 
-CommandCode get_command() {
+enum CommandCode get_command() {
   /* Just call parse keypress if it's a keypress, and ignore it otherwise
    */
   SDL_Event event;
   SDL_WaitEvent(&event);
-  CommandCode cmd;
+  enum CommandCode cmd;
   switch (event.type) {
     case SDL_KEYDOWN:
       TRACE("got keypress event\n");

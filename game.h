@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <command.h>
+#include <command_list.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
 #include <map.h>
@@ -49,7 +50,7 @@ typedef struct GameState {
 } GameState;
 
 
-void process_command(GameState *state, CommandCode cmd);
+void process_command(GameState *state, enum CommandCode cmd);
 void free_game_state(GameState *state);
 GameState *allocate_game_state();
 

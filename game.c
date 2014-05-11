@@ -5,6 +5,8 @@
 #include <tile.h>
 #include <look.h>
 #include <sprite.h>  /* for cleanup code */
+#include <command_list.h>
+#include <command.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -35,7 +37,7 @@ void free_game_state(GameState *state) {
   free(state);
 }
 
-void process_command(GameState *state, CommandCode cmd) {
+void process_command(GameState *state, enum CommandCode cmd) {
   TRACE("Processing Command %d - state is %d\n", cmd, state->state);
   if (cmd == NoOp) {
     return;
@@ -57,9 +59,8 @@ void process_command(GameState *state, CommandCode cmd) {
       break;
     case ExitLookMode:
       DEBUG("Exiting look mode\n");
-      if (state->state == Look) {
-        state->state = Move;
-      }
+      state->state = Move;
+      state->status_message = NULL;
       clear_draw_cursor(state->map_graphics_state);
       state->need_to_redraw = 1;
       break;
