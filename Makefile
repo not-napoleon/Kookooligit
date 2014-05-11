@@ -1,6 +1,8 @@
 CC = clang
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
-OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o random.o map_section.o sprite.o
+PYTHON = /usr/bin/env python
+OBJECTS = messages.o init.o map.o draw_map.o fov.o command.o game.o render_text.o look.o tile.o graphics_wrapper.o SDL_Tools.o random.o map_section.o sprite.o command_list.o
+GENERATED_CODE_DIR = ./generated/
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
@@ -8,8 +10,10 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h $(ALL_DEP)
 command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
+command_list.o: $(GENERATED_CODE_PATH)command_list.c command_list.h $(ALL_DEP)
+	$(CC) $(CFLAGS) -c -o command_list.o $(GENERATED_CODE_DIR)command_list.c
 draw_map.o: draw_map.c draw_map.h graphics_wrapper.h map.h sprite.h $(ALL_DEP)
-game.o: game.c game.h messages.h map.h command.h tile.h look.h $(ALL_DEP)
+game.o: game.c game.h messages.h map.h command.h command_list.h tile.h look.h $(ALL_DEP)
 graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h $(ALL_DEP)
 init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper.h sprite.h command.h random.h SDL_Tools.h $(ALL_DEP)
 look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
@@ -20,6 +24,9 @@ render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)
 sprite.o: sprite.c sprite.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
 tile.o: tile.c tile.h $(ALL_DEP)
 
+$(GENERATED_CODE_PATH)command_list.c: command_list.h build_tools/string_to_enum.py $(ALL_DEP)
+	$(PYTHON) build_tools/string_to_enum.py command_list.h string_to_command_code $(GENERATED_CODE_DIR)
+
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h
 	$(CC) $(CFLAGS) -c -o fov.o lib/libfov-1.0.4/fov/fov.c
 
@@ -28,4 +35,5 @@ random.o: random.c random.h lib/mtwist-1.5/mtwist.c lib/mtwist-1.5/mtwist.h
 
 clean:
 	rm $(OBJECTS)
+	rm -r $(GENERATED_CODE_DIR)
 	rm game.out

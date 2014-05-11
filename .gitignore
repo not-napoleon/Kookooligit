@@ -22,3 +22,6 @@ tags
 
 # Debugging stuff
 *.dSYM
+
+# Generated code
+generated/*
