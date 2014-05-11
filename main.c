@@ -6,6 +6,7 @@
 #include <draw_map.h>
 #include <render_text.h>
 #include <command.h>
+#include <command_list.h>
 #include <game.h>
 #include <graphics_wrapper.h>
 #include <look.h>
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
     /* This blocks, waiting for the next user input */
     DEBUG("******************************\n");
     DEBUG("Getting command\n");
-    CommandCode cmd;
+    enum CommandCode cmd;
     cmd = get_command();
     process_command(state, cmd);
     DEBUG("state is %d\n", state->state);
