@@ -3,6 +3,7 @@
 #include <SDL_Tools.h>
 
 #include <command.h>
+#include <command_list.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
 #include <init.h>
@@ -55,7 +56,7 @@ int default_key_mapping() {
   bind_command_name(MoveDownRight, "Keypad 3");
   bind_command_name(Quit, "q");
   bind_command_name(EnterLookMode, ";");
-  bind_command_name(ExitLookMode, "esc");
+  bind_command_name(ExitLookMode, "Escape");
 }
 
 void initilize(GameState *state) {
