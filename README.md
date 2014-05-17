@@ -31,7 +31,7 @@ here's the initial master TODO list:
 
    - [x] 5.2 - Sprite system
 
-   - [ ] 5.3 - Read key mappings from a file
+   - [x] 5.3 - Read key mappings from a file
 
    - [ ] 5.4 - Show commands for current mode
 
