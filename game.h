@@ -14,8 +14,6 @@ typedef enum {
 } States;
 
 typedef struct GameConfiguration {
-  char *font_path;
-  int point_size;
   //Main window
   int window_w;
   int window_h;

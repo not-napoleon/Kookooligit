@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "SDL_ttf.h"
 
 #include <SDL_Tools.h>
@@ -15,12 +17,41 @@
 #define LOGGING_ENABLED
 #include <log.h>
 
+void load_commands_from_file(const char *filename) {
+  FILE *fp;
+  fp = fopen(filename, "r");
+  char line[256];
+  while (fgets(line, 255, fp)) {
+    char arg1[256];
+    char arg2[256];
+    int point_size;
+    if (line[0] == '#') {
+      DEBUG("Skipping comment line");
+    } else if (sscanf(line, "[BIND_COMMAND_NAME:%[^][:]:%[^][:]]", &arg1, &arg2)) {
+      DEBUG("Read command binding %s => %s\n", arg1, arg2);
+      bind_command_name(string_to_command_code(arg1), arg2);
+    } else if (sscanf(line, "[SET_MAP_FONT:%[^][:]:%d]", &arg1, &point_size)) {
+      DEBUG("Read map font path %s, size %d\n", arg1, point_size);
+      init_sprites_from_font(arg1, point_size);
+    } else if (sscanf(line, "[SET_MESSAGE_FONT:%[^][:]:%d]", &arg1, &point_size)) {
+      DEBUG("Read message font path %s, size %d\n", arg1, point_size);
+      set_message_font(arg1, point_size);
+    } else if (sscanf(line, "[SET_STATUS_FONT:%[^][:]:%d]", &arg1, &point_size)) {
+      DEBUG("Read status font path %s, size %d\n", arg1, point_size);
+      set_status_font(arg1, point_size);
+    } else if (sscanf(line, "[SET_COMMAND_FONT:%[^][:]:%d]", &arg1, &point_size)) {
+      DEBUG("Read command font path %s, size %d\n", arg1, point_size);
+      set_command_font(arg1, point_size);
+    } else {
+      ERROR("Unknown configuration line %s\n", line);
+    }
+  }
+}
+
 
 int get_configuration(GameConfiguration *config) {
   /* Load game configuration data into the caller provided struct
    */
-  config->font_path = "/Library/Fonts/Courier New.ttf";
-  config->point_size = 16;
   config->window_w = 1024;
   config->window_h = 768;
 
@@ -65,13 +96,7 @@ void initilize(GameState *state) {
   seed_value = seed();
   DEBUG("random number generator seeded with %d\n", seed);
   init_graphics(state->config->window_w, state->config->window_h);
-  default_key_mapping();
-
-  // Load font
-  init_sprites_from_font(state->config->font_path, state->config->point_size);
-  set_message_font(state->config->font_path, state->config->point_size);
-  set_status_font(state->config->font_path, state->config->point_size);
-  set_command_font(state->config->font_path, state->config->point_size);
+  load_commands_from_file("config.txt");
 
   state->need_to_redraw = 0;
   init_tile_types();
