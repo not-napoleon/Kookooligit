@@ -46,6 +46,7 @@ void load_commands_from_file(const char *filename) {
       ERROR("Unknown configuration line %s\n", line);
     }
   }
+  fclose(fp);
 }
 
 
