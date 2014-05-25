@@ -37,9 +37,9 @@ here's the initial master TODO list:
 
    - [ ] 5.5 - Clean up message list stuff (cap size, use utlist)
 
-   - [ ] 5.6 - Basic player object - Turn counter & distance counter
+   - [x] 5.6 - Basic player object - Turn counter & distance counter
 
-   - [ ] 5.7 - Show something in the status window in normal mode
+   - [x] 5.7 - Show something in the status window in normal mode
 
    - [ ] 5.8 - Isolate SDL logic - basically, there should be no .h files that import it
 
