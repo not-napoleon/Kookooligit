@@ -11,9 +11,11 @@
 #include <init.h>
 #include <map.h>
 #include <messages.h>
+#include <player.h>
 #include <random.h>
-#include <tile.h>
 #include <sprite.h>
+#include <tile.h>
+
 #define LOGGING_ENABLED
 #include <log.h>
 
@@ -98,6 +100,7 @@ void initilize(GameState *state) {
   DEBUG("random number generator seeded with %d\n", seed);
   init_graphics(state->config->window_w, state->config->window_h);
   load_commands_from_file("config.txt");
+  init_player();
 
   state->need_to_redraw = 0;
   init_tile_types();

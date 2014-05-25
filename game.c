@@ -7,6 +7,7 @@
 #include <sprite.h>  /* for cleanup code */
 #include <command_list.h>
 #include <command.h>
+#include <player.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -34,6 +35,7 @@ void free_game_state(GameState *state) {
   free(state->map_graphics_state);
   free_command_mapping();
   close_sprites();
+  free_player();
   free(state);
 }
 
@@ -114,13 +116,16 @@ void process_command(GameState *state, enum CommandCode cmd) {
   if (delta_x != 0 || delta_y != 0) {
     if (state->state == Move) {
       if (attempt_move(state->map, delta_x, delta_y)) {
-        state->need_to_redraw = 1;
+        if (delta_y != 0) {
+          incr_distance(delta_y > 0);
+        }
       } else {
         char tmp[50] = "You can't walk through walls";
         add_message(state->messages, tmp);
-        state->need_to_redraw = 1;
       }
+      state->need_to_redraw = 1;
       calculate_visible_tiles(state->map, state->map->at_location);
+      state->status_message = get_player_status();
     } else if (state->state == Look) {
       if (attempt_cursor_move(state->map, delta_x, delta_y,
             get_char_width(state->config->map_window.w),

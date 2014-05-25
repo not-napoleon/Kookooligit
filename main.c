@@ -1,15 +1,16 @@
 #include <stdlib.h>
 
-#include <messages.h>
-#include <init.h>
-#include <map.h>
-#include <draw_map.h>
-#include <render_text.h>
 #include <command.h>
 #include <command_list.h>
+#include <draw_map.h>
 #include <game.h>
 #include <graphics_wrapper.h>
+#include <init.h>
 #include <look.h>
+#include <map.h>
+#include <messages.h>
+#include <player.h>
+#include <render_text.h>
 
 #define LOGGING_ENABLED
 #include <log.h>
@@ -35,6 +36,7 @@ int main(int argc, char *argv[]) {
   add_message(state->messages, msg1);
   render_messages(&state->config->message_window, state->messages);
   calculate_visible_tiles(state->map, state->map->at_location);
+  state->status_message = get_player_status();
   state->need_to_redraw = 1;
   TRACE("entering main loop\n");
   while (state->is_running) {
