@@ -83,7 +83,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
     for(y = 0; y < map->y_size; y++) {
       // start with a blank map
       map->matrix[x][y].type = tile_data[ImpassableWall];
-      map->matrix[x][y].is_explored = 1;
+      map->matrix[x][y].is_explored = 0;
     }
   }
 
