@@ -1,23 +1,26 @@
 CC = clang
 CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
 PYTHON = /usr/bin/env python
-OBJECTS = messages.o\
-				 	init.o\
-				 	map.o\
+OBJECTS = \
+					creature.o\
+					messages.o\
+				 	SDL_Tools.o\
+				 	command.o\
+				 	command_list.o\
 				 	draw_map.o\
 				 	fov.o\
-				 	command.o\
 				 	game.o\
-				 	render_text.o\
-				 	look.o\
-				 	tile.o\
 				 	graphics_wrapper.o\
-				 	SDL_Tools.o\
-				 	random.o\
+				 	init.o\
+				 	look.o\
+				 	map.o\
 				 	map_section.o\
+				 	player.o\
+				 	random.o\
+				 	render_text.o\
 				 	sprite.o\
-				 	command_list.o\
-				 	player.o
+				 	tile.o\
+
 GENERATED_CODE_DIR = ./generated/
 ALL_DEP = log.h
 
@@ -26,6 +29,7 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h graphics_wrapper.h $(ALL_DEP)
 command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
+creature.o: creature.c creature.h $(ALL_DEP)
 draw_map.o: draw_map.c draw_map.h graphics_wrapper.h map.h sprite.h $(ALL_DEP)
 game.o: game.c game.h messages.h map.h command.h command_list.h tile.h look.h player.h $(ALL_DEP)
 graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h SDL_Tools.h $(ALL_DEP)
