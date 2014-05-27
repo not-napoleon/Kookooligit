@@ -13,6 +13,7 @@ enum sprite_ids {
   OffGrid_sprite,
   OpenSpace_sprite,
   ImpassableWall_sprite,
+  BattleBot_sprite,
   SPRITE_TYPE_COUNT
 };
 

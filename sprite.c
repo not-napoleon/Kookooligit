@@ -87,6 +87,7 @@ void init_sprites_from_font(const char *font_path, const int point_size) {
   sprite_cache[OffGrid_sprite] = load_sprite_from_font(" ", color_lit);
   sprite_cache[OpenSpace_sprite] = load_sprite_from_font(".", color_lit);
   sprite_cache[ImpassableWall_sprite] = load_sprite_from_font("#", color_lit);
+  sprite_cache[BattleBot_sprite] = load_sprite_from_font("&", color_lit);
   _was_initilized = true;
   DEBUG("Sprite graphics initilzed from front %s\n", font_path);
 }
