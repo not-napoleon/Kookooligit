@@ -87,9 +87,7 @@ bool wrapper_is_opaque(void *map, int x, int y) {
   Point p;
   p.x = x;
   p.y = y;
-  bool res;
-  res = is_opaque_point( (InfiniteMap*)map, p);
-  return res;
+  return is_opaque_point( (InfiniteMap*)map, p);
 }
 
 void dark_map(InfiniteMap *map) {
