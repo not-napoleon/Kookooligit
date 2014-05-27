@@ -21,7 +21,7 @@ const int KEY_SIZE = sizeof(SDL_Keycode);
 /*
  * File global key mapping hash
  */
-struct KeyToCommand *key_mapping = NULL;
+static struct KeyToCommand *key_mapping = NULL;
 
 int bind_command_key_code(enum CommandCode command, const SDL_Keycode key) {
   /*
