@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <creature.h>
 #include <map_section.h>
 #include <random.h>
 #include <tile.h>
@@ -84,6 +85,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
       // start with a blank map
       map->matrix[x][y].type = tile_data[ImpassableWall];
       map->matrix[x][y].is_explored = 0;
+      map->matrix[x][y].creature_id = NO_CREATURE;
     }
   }
 

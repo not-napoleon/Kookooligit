@@ -56,7 +56,8 @@ Tile get_tile(const InfiniteMap *map, int x, int y) {
      * Asked for an out-of-bounds tile, return OffGrid
      */
     //TRACE("Defaulting to offgrid tile");
-    return (Tile){0, 0, tile_data[OffGrid]};
+    /* TODO: DON'T FUCKING DO THIS HERE! */
+    return (Tile){0, 0, 0, tile_data[OffGrid]};
   }
   /*TRACE("Getting tile (%d, %d)\n", x, y);*/
   if (y < 0) {
@@ -198,8 +199,8 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
   struct Drawable d;
   for (x = x_start; x <= x_end; x++) {
     for (y = y_start; y <= y_end; y++) {
-      /*DEBUG("looking for tile at (%d, %d), storing at (%d, %d)\n",*/
-          /*x, y, x - x_start, y - y_start);*/
+      DEBUG("looking for tile at (%d, %d), storing at (%d, %d)\n",
+          x, y, x - x_start, y - y_start);
       /* we always need the tile to get lighting info */
       t = get_tile(map, x, y);
       d.is_lit = t.is_lit;
