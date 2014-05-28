@@ -6,6 +6,6 @@
 struct Creature;
 
 int spawn(const struct CreatureType *type);
-struct Creature *get_creature_by_id(int creature_id)
+struct Creature *get_creature_by_id(int creature_id);
 
 #endif
