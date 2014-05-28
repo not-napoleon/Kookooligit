@@ -22,7 +22,7 @@ static unsigned int next_id = 0;
 int spawn(const struct CreatureType *type) {
   struct Creature *new_creature;
   new_creature = (struct Creature *)malloc(sizeof(struct Creature));
-  new_creature->creature_id = next_id++;
+  new_creature->creature_id = ++next_id;
   new_creature->type = type;
   new_creature->ticks = 0;
 }

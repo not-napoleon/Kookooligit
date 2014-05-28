@@ -8,4 +8,7 @@ struct Creature;
 int spawn(const struct CreatureType *type);
 struct Creature *get_creature_by_id(int creature_id);
 
+/* define NULL for creature hash lookpus */
+static const int NO_CREATURE = 0;
+
 #endif
