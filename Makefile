@@ -3,6 +3,7 @@ CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
 PYTHON = /usr/bin/env python
 OBJECTS = \
 					creature.o\
+					creature_type.o\
 					messages.o\
 				 	SDL_Tools.o\
 				 	command.o\
@@ -29,11 +30,12 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h graphics_wrapper.h $(ALL_DEP)
 command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
-creature.o: creature.c creature.h $(ALL_DEP)
+creature.o: creature.c creature.h creature_type.h $(ALL_DEP)
+creature_type.o: creature_type.c creature_type.h $(ALL_DEP)
 draw_map.o: draw_map.c draw_map.h graphics_wrapper.h map.h sprite.h $(ALL_DEP)
 game.o: game.c game.h messages.h map.h command.h command_list.h tile.h look.h player.h $(ALL_DEP)
 graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h SDL_Tools.h $(ALL_DEP)
-init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper.h sprite.h command.h random.h SDL_Tools.h $(ALL_DEP)
+init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper.h sprite.h command.h random.h SDL_Tools.h creature_type.h $(ALL_DEP)
 look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
 map.o: map.c map.h tile.h $(ALL_DEP)
 map_section.o: map_section.c map_section.h tile.h random.h point.h $(ALL_DEP)
