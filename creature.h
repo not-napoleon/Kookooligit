@@ -1,15 +1,11 @@
 #ifndef CREATURE_H_INCLUDED
 #define CREATURE_H_INCLUDED
 
+#include <creature_type.h>
 
+struct Creature;
 
-struct CreatureType;
-
-struct Creature {
-  struct CreatureType *type;
-};
-
-void init_creature_types();
-
+int spawn(const struct CreatureType *type);
+struct Creature *get_creature_by_id(int creature_id)
 
 #endif

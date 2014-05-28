@@ -4,40 +4,28 @@
 #include <lib/uthash/src/uthash.h>
 
 #include <creature.h>
-#include <sprite.h>
 
-
-struct CreatureType {
-  enum sprite_ids sprite_id;
-  const char *creature_type_id;  /* Unique id for this creature type */
-  const char *description;
-  const char *name;
-
+struct Creature {
+  unsigned int creature_id;
+  const struct CreatureType *type;
+  unsigned short int ticks;
 
   UT_hash_handle hh;
 };
 
-static struct CreatureType *creature_list;
+static struct Creature *creatures = NULL;
+static unsigned int next_id = 0;
 
-int register_creature_type(const char* id, const char* name, const char* desc, enum sprite_ids sprite_id) {
-  struct CreatureType *new_type;
-
-  HASH_FIND(hh, creature_list, id, strlen(id), new_type);
-  if (new_type == NULL) {
-    new_type = (struct CreatureType*)malloc(sizeof(struct CreatureType));
-    new_type->creature_type_id = id;
-    new_type->description = desc;
-    new_type->name = name;
-    new_type->sprite_id = sprite_id;
-
-    HASH_ADD(hh, creature_list, creature_type_id, strlen(id), new_type);
-  } else {
-    return -1;
-  }
+int spawn(const struct CreatureType *type) {
+  struct Creature *new_creature;
+  new_creature = (struct Creature *)malloc(sizeof(struct Creature));
+  new_creature->creature_id = next_id++;
+  new_creature->type = type;
+  new_creature->ticks = 0;
 }
 
-void init_creature_types() {
-  /* Load some hard coded creature types */
-  register_creature_type("DAMAGED_BATTLE_BOT_0_00", "Damaged Battle Bot",
-      "An alien battle droid, damaged in a previous battle and left behind");
+struct Creature *get_creature_by_id(int creature_id){
+  struct Creature *target;
+  HASH_FIND_INT(creatures, &creature_id, target);
+  return target;
 }
