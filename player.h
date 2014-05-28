@@ -9,6 +9,7 @@ struct Player {
   int curr_y;
   unsigned int turns;
   char* status;
+  short int ticks;
   unsigned int stale_status :1;
 };
 
