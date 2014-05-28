@@ -6,6 +6,7 @@
 
 #include <command.h>
 #include <command_list.h>
+#include <creature_type.h>
 #include <draw_map.h>
 #include <graphics_wrapper.h>
 #include <init.h>
@@ -100,6 +101,7 @@ void initilize(GameState *state) {
   DEBUG("random number generator seeded with %d\n", seed);
   init_graphics(state->config->window_w, state->config->window_h);
   load_commands_from_file("config.txt");
+  init_creature_types();
   init_player();
 
   state->need_to_redraw = 0;
