@@ -22,6 +22,7 @@ typedef struct TileType {
   char *name;
   enum sprite_ids sprite_id;
 
+
 } TileType;
 
 
@@ -33,6 +34,10 @@ typedef struct Tile {
   unsigned int is_explored :1;
   unsigned int is_lit :1;
 
+  /* I feel weird about putting an ID reference here without importing
+   * creature.h.
+   */
+  int creature_id;
   TileType *type;
 } Tile;
 
