@@ -22,7 +22,8 @@ TileType *_make_tile_type(enum sprite_ids sprite_id, const char* name,
     exit(1);
   }
   result->sprite_id = sprite_id;
-  result->description = strdup(description);
+  result->description = malloc(sizeof(char) * (strlen(description) + 1));
+  result->description = strcpy(result->description, description);
   if (is_passable == true) {
     result->is_passable = 1;
   } else {
