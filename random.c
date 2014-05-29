@@ -1,18 +1,22 @@
+#include <time.h>
+
+#include "lib/mt19937ar.c"
+
 #include "random.h"
-#include "mtwist.h"
-#include "mtwist.c"
 
-uint32_t seed() {
-  return mt_seed();
+unsigned long int seed() {
+  unsigned long int seed_value = time(NULL);
+  init_genrand(seed_value);
+  return seed_value;
 }
 
 
-uint32_t roll_die(uint32_t max) {
-  return mt_lrand() % max;
+unsigned int roll_die(unsigned int max) {
+  return genrand_int32() % max;
 }
 
-uint32_t rand_range(uint32_t min, uint32_t max) {
-  return (mt_lrand() % (max - min)) + min;
+unsigned int rand_range(unsigned int min, unsigned int max) {
+  return (genrand_int32() % (max - min)) + min;
 }
 
 int32_t rand_delta() {

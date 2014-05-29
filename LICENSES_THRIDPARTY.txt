@@ -1,9 +1,13 @@
 The following thrid party libraries are used, with the stated license:
 
-Geoff Kuenning's Mersenne Twist implementation found at: 
-http://www.cs.hmc.edu/~geoff/mtwist.html
+Mersenne Twister implementation is Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
+and is used under the BSD license.  See:
 
-and licensed under the LGPL.
+http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/emt19937ar.html
+
+and also lib/readme-mt.txt
+
+I have made some modifications, which are clearly marked in the source.
 
 ------
 

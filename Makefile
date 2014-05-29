@@ -44,6 +44,7 @@ player.o: player.c player.h $(ALL_DEP)
 render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)
 sprite.o: sprite.c sprite.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
 tile.o: tile.c tile.h $(ALL_DEP)
+random.o: random.c random.h lib/mt19937ar.c $(ALL_DEP)
 
 $(GENERATED_CODE_DIR):
 	echo "Trying to make dir for generated code"
@@ -58,8 +59,6 @@ $(GENERATED_CODE_PATH)command_list.c: $(GENERATED_CODE_DIR) command_list.h build
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h
 	$(CC) $(CFLAGS) -c -o fov.o lib/libfov-1.0.4/fov/fov.c
 
-random.o: random.c random.h lib/mtwist-1.5/mtwist.c lib/mtwist-1.5/mtwist.h
-	$(CC) $(CFLAGS) -c -o random.o random.c
 
 clean:
 	rm $(OBJECTS)
