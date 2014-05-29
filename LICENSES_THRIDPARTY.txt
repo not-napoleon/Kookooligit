@@ -10,8 +10,8 @@ and licensed under the LGPL.
 The Simple DirectMedia Layer is found at:
 http://www.libsdl.org/
 
-and licensed under the LGPL.  See:
-http://www.libsdl.org/license-lgpl.php
+and licensed under the zlib license.  See:
+http://www.libsdl.org/license.php
 
 ------
 
