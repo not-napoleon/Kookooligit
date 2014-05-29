@@ -21,8 +21,27 @@
 #include "log.h"
 
 void load_commands_from_file(const char *filename) {
+
+  /* TODO: As soon as we need to open files in more than one place, move this
+   * to a wrapper library.
+   */
   FILE *fp;
-  fp = fopen(filename, "r");
+  /*
+   * Microsoft has apparently decided fopen is insecure and wants people to
+   * use their fopen_s tool.  The following is adapted from this Stack Overflow
+   * answer to deal with that issue:
+   * http://stackoverflow.com/a/14966637/529459
+   */
+#ifdef WIN32
+  errno_t err;
+  if( (err  = fopen_s( &fp, filename, "r" )) !=0 ) {
+#else
+  if ((fp = fopen(filename, "r")) == NULL) {
+#endif
+    CRITICAL("Cannot open config file %s!\n", filename);
+    exit(-1);
+  }
+
   char line[256];
   while (fgets(line, 255, fp)) {
     char arg1[256];
