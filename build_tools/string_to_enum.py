@@ -47,7 +47,7 @@ if __name__ == "__main__":
  * (also, do not add to git)
  */
 #include <string.h>
-#include "%(header_file)s"
+#include "../%(header_file)s"
 
 %(return_type)s %(func_name)s (const char *input_string) {
 %(if_block)s
