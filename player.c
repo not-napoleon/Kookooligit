@@ -4,7 +4,7 @@
 #include "player.h"
 #define MAX_STATUS_LEN 127
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 /*
  * There can only be one player, by definition.

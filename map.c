@@ -7,7 +7,7 @@
 #include "random.h"
 #include "sprite.h"
 
-/*#define LOGGING_ENABLED*/
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 void dump_edge_parameters(InfiniteMap *map) {

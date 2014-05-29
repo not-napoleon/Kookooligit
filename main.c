@@ -12,7 +12,7 @@
 #include "player.h"
 #include "render_text.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_INFO
 #include "log.h"
 
 /*
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   get_configuration(state->config);
   initilize(state);
 
-  INFO("tile size is %li\n", sizeof(Tile));
+  DEBUG("tile size is %li\n", sizeof(Tile));
   char msg1[] = "Welcome to Kookoolegit! You are in an infinitely long "
     "non-orientable space.  Good luck!";
   add_message(state->messages, msg1);
@@ -38,10 +38,10 @@ int main(int argc, char *argv[]) {
   calculate_visible_tiles(state->map, state->map->at_location);
   state->status_message = get_player_status();
   state->need_to_redraw = 1;
-  TRACE("entering main loop\n");
+  INFO("entering main loop\n");
   while (state->is_running) {
     /* This blocks, waiting for the next user input */
-    DEBUG("******************************\n");
+    INFO("******************************\n");
     DEBUG("Getting command\n");
     enum CommandCode cmd;
     cmd = get_command();

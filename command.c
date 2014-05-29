@@ -3,7 +3,7 @@
 #include "command_list.h"
 #include "lib/uthash/src/uthash.h"
 
-//#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 struct KeyToCommand {

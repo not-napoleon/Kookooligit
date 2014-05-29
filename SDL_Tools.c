@@ -1,6 +1,6 @@
 #include "SDL_Tools.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 SDL_Color convert_color(Color c) {

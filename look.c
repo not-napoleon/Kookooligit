@@ -6,7 +6,7 @@
 #include "look.h"
 #include "render_text.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 int render_look_message(const char* message, const Rect *dstrect) {

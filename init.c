@@ -17,7 +17,7 @@
 #include "sprite.h"
 #include "tile.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_INFO
 #include "log.h"
 
 void load_commands_from_file(const char *filename) {

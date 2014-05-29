@@ -10,7 +10,7 @@
 #include "command.h"
 #include "player.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 GameState *allocate_game_state() {

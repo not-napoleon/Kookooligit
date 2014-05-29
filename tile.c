@@ -3,7 +3,7 @@
 
 #include "tile.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 
 

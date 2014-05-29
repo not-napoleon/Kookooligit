@@ -6,7 +6,7 @@
 #include "point.h"
 #include "creature.h"
 
-#define LOGGING_ENABLED
+#define LOG_LEVEL LOG_DEBUG
 #include "log.h"
 
 struct Creature {

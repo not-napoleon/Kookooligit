@@ -6,7 +6,7 @@
 #include "random.h"
 #include "tile.h"
 
-/*#define LOGGING_ENABLED*/
+#define LOG_LEVEL LOG_ERROR
 #include "log.h"
 /*
  * Map Generation Parameters
@@ -123,6 +123,11 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
           break;
         }
         map->matrix[tmp_x][y].type = tile_data[OpenSpace];
+        /* Decide if we should spawn a creature */
+        if (roll_die(100) == 42) {
+          /* TODO: Figure out what type of creature to spawn */
+          //map->matrix[tmp_x][y].creature_id = spawn("DAMAGED_BATTLE_BOT_0_00");
+        }
       }
       if (y == y_min) {
         DEBUG("Saving top postition for pass %d as w: %d, x: %d\n", i, width, x);
