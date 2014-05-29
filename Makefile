@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -I. -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
+CFLAGS = -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
 PYTHON = /usr/bin/env python
 OBJECTS = \
 					creature.o\
