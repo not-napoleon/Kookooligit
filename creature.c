@@ -6,6 +6,9 @@
 #include <point.h>
 #include <creature.h>
 
+#define LOGGING_ENABLED
+#include <log.h>
+
 struct Creature {
   unsigned int creature_id;
   const struct CreatureType *type;
@@ -20,6 +23,7 @@ static struct Creature *creatures = NULL;
 static unsigned int next_id = 0;
 
 int spawn(const struct CreatureType *type) {
+  DEBUG("Spawning new creature\n");
   struct Creature *new_creature;
   new_creature = (struct Creature *)malloc(sizeof(struct Creature));
   new_creature->creature_id = ++next_id;
@@ -31,4 +35,8 @@ struct Creature *get_creature_by_id(int creature_id){
   struct Creature *target;
   HASH_FIND_INT(creatures, &creature_id, target);
   return target;
+}
+
+int creature_count() {
+  return HASH_COUNT(creatures);
 }
