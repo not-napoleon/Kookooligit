@@ -2,7 +2,8 @@
 #define SPRITE_H_INCLUDED
 
 #include <stdint.h>
-#include <graphics_wrapper.h>
+
+#include "graphics_wrapper.h"
 
 /* This is basically the master list of everything that can be drawn.  As such,
  * it's roughly the concatenation of the list of tiles, creatures and items,

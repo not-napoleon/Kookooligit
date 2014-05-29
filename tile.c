@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <tile.h>
+#include "tile.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 
 static bool _was_initilized = false;

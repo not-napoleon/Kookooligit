@@ -2,7 +2,7 @@
 #define INIT_H_INCLUDED
 
 
-#include <game.h>
+#include "game.h"
 
 
 int get_configuration(GameConfiguration *config);

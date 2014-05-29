@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <lib/uthash/src/uthash.h>
+#include "lib/uthash/src/uthash.h"
 
-#include <creature_type.h>
-#include <sprite.h>
+#include "creature_type.h"
+#include "sprite.h"
 
 struct CreatureType {
   enum sprite_ids sprite_id;

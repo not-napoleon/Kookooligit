@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <fov.h>
-#include <map.h>
-#include <random.h>
-#include <sprite.h>
+#include "fov.h"
+#include "map.h"
+#include "random.h"
+#include "sprite.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 void dump_edge_parameters(InfiniteMap *map) {
   int i, j;

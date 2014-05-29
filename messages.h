@@ -1,8 +1,8 @@
 #ifndef MESSAGES_H_INCLUDED
 #define MESSAGES_H_INCLUDED
 
-#include <graphics_wrapper.h>
-#include <render_text.h>
+#include "graphics_wrapper.h"
+#include "render_text.h"
 
 typedef struct Message{
   char *text; // the raw text

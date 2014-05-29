@@ -5,8 +5,8 @@
 
 #include <stdbool.h>
 
-#include <point.h>
-#include <tile.h>
+#include "point.h"
+#include "tile.h"
 
 typedef struct MapSection {
   Tile matrix[MAP_SECTION_SIZE][MAP_SECTION_SIZE];

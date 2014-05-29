@@ -1,10 +1,10 @@
 #include "SDL.h"
-#include <command.h>
-#include <command_list.h>
-#include <lib/uthash/src/uthash.h>
+#include "command.h"
+#include "command_list.h"
+#include "lib/uthash/src/uthash.h"
 
 //#define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 struct KeyToCommand {
   SDL_Keycode key;

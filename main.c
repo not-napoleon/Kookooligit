@@ -1,19 +1,19 @@
 #include <stdlib.h>
 
-#include <command.h>
-#include <command_list.h>
-#include <draw_map.h>
-#include <game.h>
-#include <graphics_wrapper.h>
-#include <init.h>
-#include <look.h>
-#include <map.h>
-#include <messages.h>
-#include <player.h>
-#include <render_text.h>
+#include "command.h"
+#include "command_list.h"
+#include "draw_map.h"
+#include "game.h"
+#include "graphics_wrapper.h"
+#include "init.h"
+#include "look.h"
+#include "map.h"
+#include "messages.h"
+#include "player.h"
+#include "render_text.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 /*
  * Game logic here

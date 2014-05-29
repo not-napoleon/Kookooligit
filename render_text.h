@@ -3,7 +3,7 @@
 
 #include "SDL_ttf.h"
 
-#include <graphics_wrapper.h>
+#include "graphics_wrapper.h"
 
 /* TODO: Rename this to like RenderedWordList or some shit */
 typedef struct SurfaceNode *SurfaceNodePtr;

@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <creature.h>
-#include <map_section.h>
-#include <random.h>
-#include <tile.h>
+#include "creature.h"
+#include "map_section.h"
+#include "random.h"
+#include "tile.h"
 
 /*#define LOGGING_ENABLED*/
-#include <log.h>
+#include "log.h"
 /*
  * Map Generation Parameters
  */

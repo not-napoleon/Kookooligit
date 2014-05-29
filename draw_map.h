@@ -1,8 +1,8 @@
 #ifndef DRAW_MAP_H_INCLUDED
 #define DRAW_MAP_H_INCLUDED
 
-#include <map.h>
-#include <graphics_wrapper.h>
+#include "map.h"
+#include "graphics_wrapper.h"
 
 typedef struct MapGraphicsState {
   int map_window_x_chars;

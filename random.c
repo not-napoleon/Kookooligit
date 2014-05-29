@@ -1,6 +1,6 @@
-#include <random.h>
-#include <mtwist.h>
-#include <mtwist.c>
+#include "random.h"
+#include "mtwist.h"
+#include "mtwist.c"
 
 uint32_t seed() {
   return mt_seed();

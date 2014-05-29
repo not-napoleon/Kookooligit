@@ -8,7 +8,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-#include <graphics_wrapper.h>
+#include "graphics_wrapper.h"
 
 SDL_Renderer *get_main_renderer();
 SDL_Window *get_screen();

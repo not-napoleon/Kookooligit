@@ -1,7 +1,7 @@
-#include <SDL_Tools.h>
+#include "SDL_Tools.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 SDL_Color convert_color(Color c) {
   SDL_Color sc;

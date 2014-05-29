@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <player.h>
+#include "player.h"
 #define MAX_STATUS_LEN 127
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 /*
  * There can only be one player, by definition.
  */

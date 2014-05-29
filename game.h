@@ -1,12 +1,12 @@
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
 
-#include <command.h>
-#include <command_list.h>
-#include <draw_map.h>
-#include <graphics_wrapper.h>
-#include <map.h>
-#include <messages.h>
+#include "command.h"
+#include "command_list.h"
+#include "draw_map.h"
+#include "graphics_wrapper.h"
+#include "map.h"
+#include "messages.h"
 
 typedef enum {
   Move,

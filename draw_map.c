@@ -1,12 +1,12 @@
 #include <stdlib.h>
 
-#include <draw_map.h>
-#include <graphics_wrapper.h>
-#include <point.h>
-#include <sprite.h>
+#include "draw_map.h"
+#include "graphics_wrapper.h"
+#include "point.h"
+#include "sprite.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 /*
  * File global to store the rendered map graphics

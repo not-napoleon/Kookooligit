@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include <sprite.h>
+#include "sprite.h"
 
 typedef enum {
   OffGrid, // Space outside the map

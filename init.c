@@ -2,23 +2,23 @@
 
 #include "SDL_ttf.h"
 
-#include <SDL_Tools.h>
+#include "SDL_Tools.h"
 
-#include <command.h>
-#include <command_list.h>
-#include <creature_type.h>
-#include <draw_map.h>
-#include <graphics_wrapper.h>
-#include <init.h>
-#include <map.h>
-#include <messages.h>
-#include <player.h>
-#include <random.h>
-#include <sprite.h>
-#include <tile.h>
+#include "command.h"
+#include "command_list.h"
+#include "creature_type.h"
+#include "draw_map.h"
+#include "graphics_wrapper.h"
+#include "init.h"
+#include "map.h"
+#include "messages.h"
+#include "player.h"
+#include "random.h"
+#include "sprite.h"
+#include "tile.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 void load_commands_from_file(const char *filename) {
   FILE *fp;

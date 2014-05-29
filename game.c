@@ -1,16 +1,17 @@
 #include <stdlib.h>
-#include <game.h>
+
+#include "game.h"
 // We need tile to get the tile discriptor text for look mode.  Eventually
 // that needs to get refactored into map.c
-#include <tile.h>
-#include <look.h>
-#include <sprite.h>  /* for cleanup code */
-#include <command_list.h>
-#include <command.h>
-#include <player.h>
+#include "tile.h"
+#include "look.h"
+#include "sprite.h"  /* for cleanup code */
+#include "command_list.h"
+#include "command.h"
+#include "player.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 GameState *allocate_game_state() {
   /*Allocate a new game state struct

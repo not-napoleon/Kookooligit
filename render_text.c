@@ -1,10 +1,10 @@
 #include "SDL.h"
 
-#include <render_text.h>
-#include <SDL_Tools.h>
+#include "render_text.h"
+#include "SDL_Tools.h"
 
 /*#define LOGGING_ENABLED*/
-#include <log.h>
+#include "log.h"
 /*
  * Screen list
  */

@@ -3,8 +3,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-#include <SDL_Tools.h>
-#include <graphics_wrapper.h>
+#include "SDL_Tools.h"
+#include "graphics_wrapper.h"
 
 void init_graphics(int window_w, int window_h) {
   init_SDL(window_w, window_h);

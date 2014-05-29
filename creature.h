@@ -1,7 +1,7 @@
 #ifndef CREATURE_H_INCLUDED
 #define CREATURE_H_INCLUDED
 
-#include <creature_type.h>
+#include "creature_type.h"
 
 struct Creature;
 

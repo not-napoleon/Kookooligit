@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <lib/uthash/src/uthash.h>
+#include "lib/uthash/src/uthash.h"
 
-#include <point.h>
-#include <creature.h>
+#include "point.h"
+#include "creature.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 struct Creature {
   unsigned int creature_id;

@@ -4,13 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <color_palette.h>
-#include <graphics_wrapper.h>
-#include <sprite.h>
-#include <SDL_tools.h>
+#include "color_palette.h"
+#include "graphics_wrapper.h"
+#include "sprite.h"
+#include "SDL_tools.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 static bool _was_initilized = false;
 static SDL_Texture *sprite_cache[SPRITE_TYPE_COUNT];

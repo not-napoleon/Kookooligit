@@ -2,8 +2,9 @@
 #define MAP_H_INCLUDED
 
 #include <stdbool.h>
-#include <tile.h>
-#include <map_section.h>
+
+#include "tile.h"
+#include "map_section.h"
 
 #define VISION_RADIUS 9
 #define MAP_SECTION_BUFFER 5

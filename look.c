@@ -1,13 +1,13 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 
-#include <SDL_Tools.h>
-#include <color_palette.h>
-#include <look.h>
-#include <render_text.h>
+#include "SDL_Tools.h"
+#include "color_palette.h"
+#include "look.h"
+#include "render_text.h"
 
 #define LOGGING_ENABLED
-#include <log.h>
+#include "log.h"
 
 int render_look_message(const char* message, const Rect *dstrect) {
   if (message == NULL) {
