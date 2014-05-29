@@ -5,7 +5,7 @@
 
 struct Creature;
 
-int spawn(const struct CreatureType *type);
+int spawn(const char *creature_type_id);
 struct Creature *get_creature_by_id(int creature_id);
 int creature_count();
 

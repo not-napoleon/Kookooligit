@@ -4,5 +4,6 @@
 struct CreatureType;
 
 void init_creature_types();
+struct CreatureType *get_creature_type_by_id(const char *id);
 
 #endif

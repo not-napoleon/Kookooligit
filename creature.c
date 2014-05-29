@@ -22,7 +22,13 @@ struct Creature {
 static struct Creature *creatures = NULL;
 static unsigned int next_id = 0;
 
-int spawn(const struct CreatureType *type) {
+int spawn(const char *creature_type_id) {
+  const struct CreatureType *type;
+  type = get_creature_type_by_id(creature_type_id);
+  if (type == NULL) {
+    ERROR("NULL creature type for id %s, perhaps you forgot to initalize types?\n", creature_type_id);
+    exit(-1);
+  }
   DEBUG("Spawning new creature\n");
   struct Creature *new_creature;
   new_creature = (struct Creature *)malloc(sizeof(struct Creature));

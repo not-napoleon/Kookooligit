@@ -35,6 +35,13 @@ int register_creature_type(const char* id, const char* name, const char* desc, e
   }
 }
 
+struct CreatureType *get_creature_type_by_id(const char *id) {
+  struct CreatureType *type;
+  HASH_FIND(hh, creature_list, id, strlen(id), type);
+  return type;
+}
+
+
 void init_creature_types() {
   /* Load some hard coded creature types */
   register_creature_type("DAMAGED_BATTLE_BOT_0_00", "Damaged Battle Bot",
