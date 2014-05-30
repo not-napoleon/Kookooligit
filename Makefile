@@ -26,7 +26,7 @@ GENERATED_CODE_DIR = ./generated/
 ALL_DEP = log.h
 
 game.out: main.c $(OBJECTS) $(ALL_DEP)
-	$(CC) main.c $(OBJECTS) -I. `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
+	$(CC) main.c $(OBJECTS) `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h graphics_wrapper.h $(ALL_DEP)
 command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
