@@ -126,7 +126,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths, bool st
         /* Decide if we should spawn a creature */
         if (roll_die(100) == 42) {
           /* TODO: Figure out what type of creature to spawn */
-          //map->matrix[tmp_x][y].creature_id = spawn("DAMAGED_BATTLE_BOT_0_00");
+          map->matrix[tmp_x][y].creature_id = spawn("DAMAGED_BATTLE_BOT_0_00");
         }
       }
       if (y == y_min) {

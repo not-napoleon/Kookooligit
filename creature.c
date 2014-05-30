@@ -1,23 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/uthash/src/uthash.h"
-
-#include "point.h"
 #include "creature.h"
 
 #define LOG_LEVEL LOG_DEBUG
 #include "log.h"
-
-struct Creature {
-  unsigned int creature_id;
-  const struct CreatureType *type;
-  unsigned short int ticks;
-  Point current_location;
-  int is_onscreen :1;
-
-  UT_hash_handle hh;
-};
 
 static struct Creature *creatures = NULL;
 static unsigned int next_id = 0;
@@ -35,6 +22,8 @@ int spawn(const char *creature_type_id) {
   new_creature->creature_id = ++next_id;
   new_creature->type = type;
   new_creature->ticks = 0;
+
+  HASH_ADD_INT(creatures, creature_id, new_creature);
 }
 
 struct Creature *get_creature_by_id(int creature_id){

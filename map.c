@@ -6,8 +6,9 @@
 #include "map.h"
 #include "random.h"
 #include "sprite.h"
+#include "creature.h"
 
-#define LOG_LEVEL LOG_ERROR
+#define LOG_LEVEL LOG_DEBUG
 #include "log.h"
 
 void dump_edge_parameters(InfiniteMap *map) {
@@ -212,6 +213,11 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
         /* Draw player case */
         DEBUG("Drawing player at %d, %d\n", x, y);
         d.sprite_id = Player_sprite;
+      } else if (t.creature_id != NO_CREATURE) {
+        DEBUG("Attmpting to get creature with id %d\n", t.creature_id);
+        struct Creature *creature_in_tile;
+        creature_in_tile = get_creature_by_id(t.creature_id);
+        d.sprite_id = creature_in_tile->type->sprite_id;
       } else {
       /* Draw Tile case */
         d.sprite_id = t.type->sprite_id;

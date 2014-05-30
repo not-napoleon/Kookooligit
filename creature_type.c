@@ -1,41 +1,38 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/uthash/src/uthash.h"
 
 #include "creature_type.h"
-#include "sprite.h"
 
-struct CreatureType {
-  enum sprite_ids sprite_id;
-  const char *creature_type_id;  /* Unique id for this creature type */
-  const char *description;
-  const char *name;
+#define LOG_LEVEL LOG_DEBUG
+#include "log.h"
 
-
-  UT_hash_handle hh;
-};
 
 static struct CreatureType *creature_list;
 
 int register_creature_type(const char* id, const char* name, const char* desc, enum sprite_ids sprite_id) {
   struct CreatureType *new_type;
 
+
   HASH_FIND(hh, creature_list, id, strlen(id), new_type);
   if (new_type == NULL) {
+    DEBUG("registering new creature type with id %s\n", id);
     new_type = (struct CreatureType*)malloc(sizeof(struct CreatureType));
-    new_type->creature_type_id = id;
-    new_type->description = desc;
-    new_type->name = name;
+    new_type->creature_type_id = strdup(id);
+    new_type->description = strdup(desc);
+    new_type->name = strdup(name);
     new_type->sprite_id = sprite_id;
 
-    HASH_ADD(hh, creature_list, creature_type_id, strlen(id), new_type);
+    HASH_ADD_KEYPTR(hh, creature_list, id, strlen(id), new_type);
   } else {
+    ERROR("Attempted to register duplicate creature type %s\n", id);
     return -1;
   }
+  return 0;
 }
 
 struct CreatureType *get_creature_type_by_id(const char *id) {
+  DEBUG("Getting creature type by ID %s\n", id);
   struct CreatureType *type;
   HASH_FIND(hh, creature_list, id, strlen(id), type);
   return type;

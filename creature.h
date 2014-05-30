@@ -1,9 +1,20 @@
 #ifndef CREATURE_H_INCLUDED
 #define CREATURE_H_INCLUDED
 
-#include "creature_type.h"
+#include "lib/uthash/src/uthash.h"
 
-struct Creature;
+#include "creature_type.h"
+#include "point.h"
+
+struct Creature {
+  unsigned int creature_id;
+  const struct CreatureType *type;
+  unsigned short int ticks;
+  Point current_location;
+  int is_onscreen :1;
+
+  UT_hash_handle hh;
+};
 
 int spawn(const char *creature_type_id);
 struct Creature *get_creature_by_id(int creature_id);

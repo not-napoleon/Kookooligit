@@ -47,13 +47,15 @@ here's the initial master TODO list:
 
  - [ ] 6 - Monsters & Time, one monster moving around, dumb AI, turns, time
 
-    - [ ] 6.1 - Creature type model
+    - [x] 6.1 - Creature type model
 
-    - [ ] 6.2 - Creature instance model
+    - [x] 6.2 - Creature instance model
 
-    - [ ] 6.3 - Creatures showing up on the map
+    - [x] 6.3 - Creatures showing up on the map
 
-    - [ ] 6.4 - Creatures moving around
+    - [ ] 6.4 - Player can't walk through creatures, combat hooks, etc
+
+    - [ ] 6.5 - Creatures move
 
  - [ ] 7 - Interaction, stats, basic combat, Pac-man level AI (move towards the player)
 

@@ -120,11 +120,15 @@ void initilize(GameState *state) {
   DEBUG("random number generator seeded with %d\n", seed);
   init_graphics(state->config->window_w, state->config->window_h);
   load_commands_from_file("config.txt");
+  DEBUG("Commands loaded\n");
   init_creature_types();
+  DEBUG("Creatures initialized\n");
   init_player();
+  DEBUG("Player initialized\n");
 
   state->need_to_redraw = 0;
   init_tile_types();
+  DEBUG("Tiles initialized\n");
   clear_draw_cursor(state->map_graphics_state);
   generate_initial_map(state->map);
 
