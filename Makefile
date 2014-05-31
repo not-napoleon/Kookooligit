@@ -2,9 +2,11 @@ CC = clang
 CFLAGS = -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
 PYTHON = /usr/bin/env python
 OBJECTS = \
+					combat.o\
 					creature.o\
 					creature_type.o\
 					messages.o\
+					move.o\
 				 	SDL_Tools.o\
 				 	command.o\
 				 	command_list.o\
@@ -16,7 +18,6 @@ OBJECTS = \
 				 	look.o\
 				 	map.o\
 				 	map_section.o\
-					move.o\
 				 	player.o\
 				 	random.o\
 				 	render_text.o\
@@ -30,6 +31,7 @@ game.out: main.c $(OBJECTS) $(ALL_DEP)
 	$(CC) main.c $(OBJECTS) `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
 
 SDL_Tools.o: SDL_Tools.c SDL_Tools.h graphics_wrapper.h $(ALL_DEP)
+combat.o: combat.c combat.h creature.h messages.h $(ALL_DEP)
 command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
 creature.o: creature.c creature.h creature_type.h $(ALL_DEP)
 creature_type.o: creature_type.c creature_type.h $(ALL_DEP)
@@ -40,7 +42,7 @@ init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper
 look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
 map.o: map.c map.h tile.h $(ALL_DEP)
 map_section.o: map_section.c map_section.h tile.h random.h point.h creature.h $(ALL_DEP)
-move.o: move.c move.h map.h $(ALL_DEP)
+move.o: move.c move.h combat.h creature.h messages.h map.h player.h tile.h $(ALL_DEP)
 messages.o: messages.c messages.h render_text.h $(ALL_DEP)
 player.o: player.c player.h $(ALL_DEP)
 render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)

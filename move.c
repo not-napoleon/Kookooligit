@@ -1,3 +1,5 @@
+#include "combat.h"
+#include "creature.h"
 #include "messages.h"
 #include "move.h"
 #include "map.h"
@@ -13,7 +15,15 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
   target_point.y = target_point.y + delta_y;
   Tile *target_tile = get_tile(map, target_point.x, target_point.y);
 
-  if (target_tile->type->is_passable == 1) {
+  if (target_tile->type->is_passable != 1) {
+    char tmp[50] = "You can't walk through walls";
+    add_message(tmp);
+    return false;
+  } else if (target_tile->creature_id != NO_CREATURE) {
+    /* Initiate melee combat */
+    melee(target_tile->creature_id);
+    return false;
+  } else {
     /* Move allowed */
 
     /* Rotate sections if necessary
@@ -32,9 +42,5 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
       incr_distance(delta_y > 0);
     }
     return true;
-  } else {
-    char tmp[50] = "You can't walk through walls";
-    add_message(tmp);
-    return false;
   }
 }

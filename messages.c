@@ -35,6 +35,11 @@ void free_message_queue() {
   free(queue);
 }
 
+int add_combat_message(char *text) {
+  /* Stub for eventually highlighting combat messages */
+  return add_message(text);
+}
+
 int add_message(char *text) {
   TTF_Font *font;
   font = get_message_font();
