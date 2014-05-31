@@ -8,7 +8,7 @@
 
 
 static bool _was_initilized = false;
-
+static Tile default_tile; 
 bool tiles_initilized() {
   return _was_initilized;
 }
@@ -39,8 +39,13 @@ void init_tile_types() {
       "of some kind", true);
   tile_data[ImpassableWall] = _make_tile_type(ImpassableWall_sprite, "wall", "A hardened bulkhead, "
       "probably with hardened vaccuum on the other side", false);
+  default_tile = (Tile){0, 0, 0, tile_data[OffGrid]};
   _was_initilized = true;
   INFO("Tile Data initilized\n");
+}
+
+Tile *get_default_tile(){
+  return &default_tile;
 }
 
 void free_tile_types() {

@@ -134,9 +134,9 @@ void process_command(GameState *state, enum CommandCode cmd) {
             get_char_height(state->config->map_window.h))) {
         state->need_to_redraw = 1;
         // Get descriptor text
-        Tile target_tile;
+        Tile *target_tile;
         target_tile = get_cursor_tile(state->map);
-        state->status_message = target_tile.type->description;
+        state->status_message = target_tile->type->description;
         DEBUG("got tile description %s\n", state->status_message);
         // draw look message
         // flag status window to redraw

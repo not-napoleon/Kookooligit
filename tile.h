@@ -44,6 +44,7 @@ typedef struct Tile {
 TileType *tile_data[TILE_TYPE_COUNT];
 
 const char* get_tile_description(TileType);
+Tile *get_default_tile();
 void init_tile_types();
 void free_tile_types();
 bool tiles_initilized();

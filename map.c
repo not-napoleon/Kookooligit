@@ -50,15 +50,14 @@ int roto_indx(int indx, int slots) {
   return r < 0 ? slots + r : r;
 }
 
-Tile get_tile(const InfiniteMap *map, int x, int y) {
+Tile *get_tile(const InfiniteMap *map, int x, int y) {
   MapSection *sec = map->section_list[map->current_section];
   if (x < 0 || x >= sec->x_size) {
     /*
      * Asked for an out-of-bounds tile, return OffGrid
      */
     //TRACE("Defaulting to offgrid tile");
-    /* TODO: DON'T FUCKING DO THIS HERE! */
-    return (Tile){0, 0, 0, tile_data[OffGrid]};
+    return get_default_tile();
   }
   /*TRACE("Getting tile (%d, %d)\n", x, y);*/
   if (y < 0) {
@@ -71,15 +70,15 @@ Tile get_tile(const InfiniteMap *map, int x, int y) {
     sec = map->section_list[section_index];
   }
   /*TRACE("mapped to (%d, %d)\n", x, y);*/
-  return sec->matrix[x][y];
+  return &sec->matrix[x][y];
 }
 
 bool is_passable_point(InfiniteMap *map, Point p) {
-  return get_tile(map, p.x, p.y).type->is_passable == 1;
+  return get_tile(map, p.x, p.y)->type->is_passable == 1;
 }
 
 bool is_opaque_point(InfiniteMap *map, Point p) {
-  return get_tile(map, p.x, p.y).type->is_passable == 0;
+  return get_tile(map, p.x, p.y)->type->is_passable == 0;
 }
 
 bool wrapper_is_opaque(void *map, int x, int y) {
@@ -196,7 +195,7 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
   DEBUG("camera adjusted x range is %d to %d\n", x_start, x_end);
   DEBUG("camera adjusted y range is %d to %d\n", y_start, y_end);
   int x, y;
-  Tile t;
+  Tile *t;
   struct Drawable d;
   for (x = x_start; x <= x_end; x++) {
     for (y = y_start; y <= y_end; y++) {
@@ -204,8 +203,8 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
           x, y, x - x_start, y - y_start);
       /* we always need the tile to get lighting info */
       t = get_tile(map, x, y);
-      d.is_lit = t.is_lit;
-      d.is_explored = t.is_explored;
+      d.is_lit = t->is_lit;
+      d.is_explored = t->is_explored;
 
       /* Figure out what to draw on this square */
       if (x == map->at_location.x 
@@ -213,15 +212,15 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
         /* Draw player case */
         DEBUG("Drawing player at %d, %d\n", x, y);
         d.sprite_id = Player_sprite;
-      } else if (t.creature_id != NO_CREATURE) {
+      } else if (t->creature_id != NO_CREATURE) {
         DEBUG("Attmpting to get creature with id %d tile (%d, %d)\n",
-            t.creature_id, x, y);
+            t->creature_id, x, y);
         struct Creature *creature_in_tile;
-        creature_in_tile = get_creature_by_id(t.creature_id);
+        creature_in_tile = get_creature_by_id(t->creature_id);
         d.sprite_id = creature_in_tile->type->sprite_id;
       } else {
       /* Draw Tile case */
-        d.sprite_id = t.type->sprite_id;
+        d.sprite_id = t->type->sprite_id;
       }
 
       /* Decide if we should show the cursor */
@@ -318,7 +317,7 @@ bool attempt_cursor_move(InfiniteMap *map, int delta_x, int delta_y,
   return true;
 }
 
-Tile get_cursor_tile(InfiniteMap *map) {
+Tile *get_cursor_tile(InfiniteMap *map) {
   /* Return the tile under the cursor */
   return get_tile(map, map->cursor_location.x, map->cursor_location.y);
 }

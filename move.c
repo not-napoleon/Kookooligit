@@ -1,5 +1,6 @@
 #include "move.h"
 #include "map.h"
+#include "tile.h"
 
 bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
   /* TODO: Support moving things other than the at */
@@ -8,12 +9,12 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
 
   target_point.x = target_point.x + delta_x;
   target_point.y = target_point.y + delta_y;
+  Tile *target_tile = get_tile(map, target_point.x, target_point.y);
 
-  if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
+  if (target_tile->type->is_passable == 1) {
     /* Move allowed */
 
     /* Rotate sections if necessary
-     * TODO: Refactor this
      */
     if (target_point.y < 0) {
       rotate_buffers(map, false);
