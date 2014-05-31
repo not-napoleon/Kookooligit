@@ -16,14 +16,15 @@ int spawn(const char *creature_type_id) {
     ERROR("NULL creature type for id %s, perhaps you forgot to initalize types?\n", creature_type_id);
     exit(-1);
   }
-  DEBUG("Spawning new creature\n");
   struct Creature *new_creature;
   new_creature = (struct Creature *)malloc(sizeof(struct Creature));
   new_creature->creature_id = ++next_id;
   new_creature->type = type;
   new_creature->ticks = 0;
+  DEBUG("Spawning new creature with id %d\n", new_creature->creature_id);
 
   HASH_ADD_INT(creatures, creature_id, new_creature);
+  return new_creature->creature_id;
 }
 
 struct Creature *get_creature_by_id(int creature_id){
