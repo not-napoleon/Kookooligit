@@ -118,6 +118,7 @@ void initilize(GameState *state) {
   int seed_value;
   seed_value = seed();
   DEBUG("random number generator seeded with %d\n", seed);
+  init_message_list();
   init_graphics(state->config->window_w, state->config->window_h);
   load_commands_from_file("config.txt");
   DEBUG("Commands loaded\n");

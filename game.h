@@ -40,7 +40,6 @@ typedef struct GameState {
   // Map Data
   MapGraphicsState *map_graphics_state;
 
-  MessageList *messages;
   char *status_message;
   InfiniteMap *map;
 

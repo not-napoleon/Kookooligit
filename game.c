@@ -20,7 +20,6 @@ GameState *allocate_game_state() {
   GameState *state;
   state = malloc(sizeof(GameState));
   state->config = malloc(sizeof(GameConfiguration));
-  state->messages = init_message_list();
   state->map = init_infinite_map();
   state->map_graphics_state = malloc(sizeof(MapGraphicsState));
   state->status_message = NULL;
@@ -32,7 +31,7 @@ void free_game_state(GameState *state) {
   /* Recursively free GameState struct
    */
   free(state->config);
-  free_message_queue(state->messages);
+  free_message_queue();
   free_infinite_map(state->map);
   free(state->map_graphics_state);
   free_command_mapping();
