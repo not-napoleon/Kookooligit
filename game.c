@@ -116,14 +116,7 @@ void process_command(GameState *state, enum CommandCode cmd) {
   // TODO: This whole block probably belongs in map.c
   if (delta_x != 0 || delta_y != 0) {
     if (state->state == Move) {
-      if (attempt_move(state->map, delta_x, delta_y)) {
-        if (delta_y != 0) {
-          incr_distance(delta_y > 0);
-        }
-      } else {
-        char tmp[50] = "You can't walk through walls";
-        add_message(tmp);
-      }
+      attempt_move(state->map, delta_x, delta_y);
       state->need_to_redraw = 1;
       calculate_visible_tiles(state->map, state->map->at_location);
       state->status_message = get_player_status();

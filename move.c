@@ -1,5 +1,7 @@
+#include "messages.h"
 #include "move.h"
 #include "map.h"
+#include "player.h"
 #include "tile.h"
 
 bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
@@ -26,8 +28,13 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
 
     map->at_location = target_point;
     map->camera_location.y = map->at_location.y;
+    if (delta_y != 0) {
+      incr_distance(delta_y > 0);
+    }
     return true;
   } else {
+    char tmp[50] = "You can't walk through walls";
+    add_message(tmp);
     return false;
   }
 }
