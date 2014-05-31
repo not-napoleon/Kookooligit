@@ -9,6 +9,7 @@
 #include "command_list.h"
 #include "command.h"
 #include "player.h"
+#include "move.h"
 
 #define LOG_LEVEL LOG_ERROR
 #include "log.h"

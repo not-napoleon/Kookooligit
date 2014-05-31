@@ -16,6 +16,7 @@ OBJECTS = \
 				 	look.o\
 				 	map.o\
 				 	map_section.o\
+					move.o\
 				 	player.o\
 				 	random.o\
 				 	render_text.o\
@@ -39,6 +40,7 @@ init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper
 look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
 map.o: map.c map.h tile.h $(ALL_DEP)
 map_section.o: map_section.c map_section.h tile.h random.h point.h creature.h $(ALL_DEP)
+move.o: move.c move.h map.h $(ALL_DEP)
 messages.o: messages.c messages.h render_text.h $(ALL_DEP)
 player.o: player.c player.h $(ALL_DEP)
 render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)

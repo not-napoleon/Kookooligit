@@ -4,7 +4,7 @@
 
 #include "creature_type.h"
 
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_INFO
 #include "log.h"
 
 

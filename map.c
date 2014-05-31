@@ -200,7 +200,7 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
   struct Drawable d;
   for (x = x_start; x <= x_end; x++) {
     for (y = y_start; y <= y_end; y++) {
-      DEBUG("looking for tile at (%d, %d), storing at (%d, %d)\n",
+      TRACE("looking for tile at (%d, %d), storing at (%d, %d)\n",
           x, y, x - x_start, y - y_start);
       /* we always need the tile to get lighting info */
       t = get_tile(map, x, y);
@@ -214,7 +214,8 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
         DEBUG("Drawing player at %d, %d\n", x, y);
         d.sprite_id = Player_sprite;
       } else if (t.creature_id != NO_CREATURE) {
-        DEBUG("Attmpting to get creature with id %d\n", t.creature_id);
+        DEBUG("Attmpting to get creature with id %d tile (%d, %d)\n",
+            t.creature_id, x, y);
         struct Creature *creature_in_tile;
         creature_in_tile = get_creature_by_id(t.creature_id);
         d.sprite_id = creature_in_tile->type->sprite_id;
@@ -259,57 +260,33 @@ int calculate_visible_tiles(InfiniteMap *map, Point at_location) {
   return 0;
 }
 
-bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
-  /* TODO: Support moving things other than the at */
-  Point target_point;
-  target_point = map->at_location;
-
-  target_point.x = target_point.x + delta_x;
-  target_point.y = target_point.y + delta_y;
-
+void rotate_buffers(InfiniteMap *map, bool pos_y_dir) {
   const int offset = MAP_SECTION_BUFFER / 2;
-  if (get_tile(map, target_point.x, target_point.y).type->is_passable == 1) {
-    /* Move allowed */
-
-    /* Rotate sections if necessary
-     * TODO: Refactor this
-     */
-    if (target_point.y < 0) {
-      int to_discard = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
-      int edge = roto_indx((map->current_section - offset), MAP_SECTION_BUFFER);
-      map->current_section = roto_indx((map->current_section - 1), MAP_SECTION_BUFFER);
+    if (!pos_y_dir) {
+      int to_discard = roto_indx(
+          (map->current_section + offset), MAP_SECTION_BUFFER);
+      int edge = roto_indx(
+          (map->current_section - offset), MAP_SECTION_BUFFER);
+      map->current_section = roto_indx(
+          (map->current_section - 1), MAP_SECTION_BUFFER);
       DEBUG("Moving to section %d, recycling section %d, spawning new edge "
           "from %d\n", map->current_section, to_discard, edge);
-      DEBUG("Before section generation:\n");
-      dump_edge_parameters(map);
       generate_map_section(map->section_list[to_discard],
           map->section_list[edge]->top_x_positions,
           map->section_list[edge]->top_widths, true);
-      target_point.y += map->section_list[map->current_section]->y_size;
-      DEBUG("After section generation:\n");
-      dump_edge_parameters(map);
-    } else if (target_point.y >= map->section_list[map->current_section]->y_size) {
-      int to_discard = roto_indx((map->current_section - offset), MAP_SECTION_BUFFER);
-      int edge = roto_indx((map->current_section + offset), MAP_SECTION_BUFFER);
-      target_point.y -= map->section_list[map->current_section]->y_size;
-      map->current_section = roto_indx((map->current_section + 1), MAP_SECTION_BUFFER);
+    } else {
+      int to_discard = roto_indx(
+          (map->current_section - offset), MAP_SECTION_BUFFER);
+      int edge = roto_indx(
+          (map->current_section + offset), MAP_SECTION_BUFFER);
+      map->current_section = roto_indx(
+          (map->current_section + 1), MAP_SECTION_BUFFER);
       DEBUG("Moving to section %d, recycling section %d, spawning new edge "
           "from %d\n", map->current_section, to_discard, edge);
-      DEBUG("Before section generation:\n");
-      dump_edge_parameters(map);
       generate_map_section(map->section_list[to_discard],
           map->section_list[edge]->bottom_x_positions,
           map->section_list[edge]->bottom_widths, false);
-      DEBUG("After section generation:\n");
-      dump_edge_parameters(map);
     }
-
-    map->at_location = target_point;
-    map->camera_location.y = map->at_location.y;
-    return true;
-  } else {
-    return false;
-  }
 }
 
 bool attempt_cursor_move(InfiniteMap *map, int delta_x, int delta_y,

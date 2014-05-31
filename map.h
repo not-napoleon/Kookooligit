@@ -26,7 +26,7 @@ int generate_initial_map(InfiniteMap *map);
 int get_tile_grid(InfiniteMap *map, const int window_x_chars,
     const int window_y_chars, const bool draw_cursor,
     struct Drawable **tile_grid);
-bool attempt_move(InfiniteMap *map, int dx, int dy);
+void rotate_buffers(InfiniteMap *map, bool pos_y_dir);
 int calculate_visible_tiles(InfiniteMap *map, Point at_location);
 Tile get_cursor_tile(InfiniteMap *map);
 bool attempt_cursor_move(InfiniteMap *map, int delta_x, int delta_y,
