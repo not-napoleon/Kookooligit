@@ -123,7 +123,7 @@ void process_command(GameState *state, enum CommandCode cmd) {
         }
       } else {
         char tmp[50] = "You can't walk through walls";
-        add_message(state->messages, tmp);
+        add_message(tmp);
       }
       state->need_to_redraw = 1;
       calculate_visible_tiles(state->map, state->map->at_location);

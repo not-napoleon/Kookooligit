@@ -8,29 +8,15 @@
 
 #define LOG_LEVEL LOG_ERROR
 #include "log.h"
-/*
- * Message logic here
- */
 
+static MessageList *queue;
 
-MessageList *init_message_list() {
-  MessageList *mlist;
-  mlist = malloc( sizeof(MessageList) );
-  mlist->first = NULL;
-  mlist->last = NULL;
-  mlist->length = 0;
+void *init_message_list() {
+  queue = malloc( sizeof(MessageList) );
+  queue->first = NULL;
+  queue->last = NULL;
+  queue->length = 0;
   INFO("message list initilized\n");
-  return mlist;
-}
-
-
-void free_message_queue(MessageList *queue) {
-  while (queue->first != NULL) {
-    MessageNodePtr temp = queue->first;
-    queue->first = queue->first->next;
-    free(temp);
-  }
-  free(queue);
 }
 
 void free_message(Message *message) {
@@ -38,7 +24,18 @@ void free_message(Message *message) {
   free(message);
 }
 
-int add_message(MessageList *mlist, char *text) {
+
+void free_message_queue() {
+  while (queue->first != NULL) {
+    MessageNodePtr temp = queue->first;
+    queue->first = queue->first->next;
+    free_message(temp->data);
+    free(temp);
+  }
+  free(queue);
+}
+
+int add_message(char *text) {
   TTF_Font *font;
   font = get_message_font();
   DEBUG(" adding message with text <%s>\n", text);
@@ -60,23 +57,23 @@ int add_message(MessageList *mlist, char *text) {
   new_node->data = msg;
 
   // Attach the message node to the message list
-  new_node->next = mlist->first;
-  if (mlist->first != NULL) {
-    mlist->first->prev = new_node;
+  new_node->next = queue->first;
+  if (queue->first != NULL) {
+    queue->first->prev = new_node;
   }
-  mlist->first = new_node;
-  mlist->length++;
+  queue->first = new_node;
+  queue->length++;
 
   // TODO: trim to max length
 
 }
 
-int render_messages(const Rect *dstrect, MessageList *mlist) {
+int render_messages(const Rect *dstrect) {
   TRACE("rendering messages to x: %d, y: %d at w: %d and h: %d\n", dstrect->x,
       dstrect->y, dstrect->w, dstrect->h);
   //blank the message area, since we're going to redraw it
   MessageNodePtr curr;
-  curr = mlist->first;
+  curr = queue->first;
   int h = dstrect->h;
   // While messages left & space left
   while (curr != NULL && h >= curr->data->skip_line_height) {

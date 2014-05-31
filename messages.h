@@ -29,10 +29,9 @@ typedef struct MessageList {
 } MessageList;
 
 
-MessageList *init_message_list();
-int add_message(MessageList *mlist, char *text);
-void free_message_queue(MessageList *queue);
-void free_message(Message *message);
-int render_messages(const Rect *dstrect, MessageList *mlist);
+void *init_message_list();
+int add_message(char *text);
+void free_message_queue();
+int render_messages(const Rect *dstrect);
 
 #endif
