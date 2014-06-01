@@ -21,7 +21,8 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
     return false;
   } else if (target_tile->creature_id != NO_CREATURE) {
     /* Initiate melee combat */
-    melee(target_tile->creature_id);
+    struct Creature *enemy = get_creature_by_id(target_tile->creature_id);
+    melee(get_player_creature(), enemy);
     return false;
   } else {
     /* Move allowed */
