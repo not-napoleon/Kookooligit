@@ -18,5 +18,6 @@ void free_player();
 void incr_distance(bool forward);
 void incr_turns();
 char* get_player_status();
+struct Creature *get_player_creature();
 
 #endif

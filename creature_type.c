@@ -41,6 +41,7 @@ struct CreatureType *get_creature_type_by_id(const char *id) {
 
 void init_creature_types() {
   /* Load some hard coded creature types */
+  register_creature_type("HUMAN_0_00", "Human", "A race of improbable ape-like creatures fond of exploration and explosions", Player_sprite);
   register_creature_type("DAMAGED_BATTLE_BOT_0_00", "Damaged Battle Bot",
       "An alien battle droid, damaged in a previous battle and left behind", BattleBot_sprite);
 }
