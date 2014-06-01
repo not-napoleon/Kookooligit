@@ -36,3 +36,20 @@ struct Creature *get_creature_by_id(int creature_id){
 int creature_count() {
   return HASH_COUNT(creatures);
 }
+
+void free_creature_by_id(int creature_id) {
+  struct Creature *target = get_creature_by_id(creature_id);
+  if (target == NULL) {
+    return;
+  }
+  HASH_DEL(creatures, target);
+  free(target);
+}
+
+void free_creatures() {
+  struct Creature *item, *tmp;
+  HASH_ITER(hh, creatures, item, tmp) {
+    HASH_DEL(creatures, item);
+    free(item);
+  }
+}

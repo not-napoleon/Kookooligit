@@ -19,6 +19,8 @@ struct Creature {
 int spawn(const char *creature_type_id);
 struct Creature *get_creature_by_id(int creature_id);
 int creature_count();
+void free_creature_by_id(int creature_id);
+void free_creatures();
 
 /* define NULL for creature hash lookpus */
 static const int NO_CREATURE = 0;
