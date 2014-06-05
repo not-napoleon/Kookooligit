@@ -12,6 +12,7 @@ struct Creature {
   unsigned short int ticks;
   Point current_location;
   int is_onscreen :1;
+  int is_alive :1;
 
   UT_hash_handle hh;
 };

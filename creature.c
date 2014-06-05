@@ -21,6 +21,7 @@ int spawn(const char *creature_type_id) {
   new_creature->creature_id = ++next_id;
   new_creature->type = type;
   new_creature->ticks = 0;
+  new_creature->is_alive = 1;
   DEBUG("Spawning new creature with id %d\n", new_creature->creature_id);
 
   HASH_ADD_INT(creatures, creature_id, new_creature);
