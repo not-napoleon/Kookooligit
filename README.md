@@ -41,7 +41,7 @@ here's the initial master TODO list:
 
    - [x] 5.7 - Show something in the status window in normal mode
 
-   - [ ] 5.8 - Isolate SDL logic - basically, there should be no .h files that import it
+   - [x] 5.8 - Isolate SDL logic - basically, there should be no .h files that import it
 
    - [ ] 5.9 - Save file.  For now, just save the player object (turns & distance)
 
@@ -53,9 +53,17 @@ here's the initial master TODO list:
 
     - [x] 6.3 - Creatures showing up on the map
 
-    - [ ] 6.4 - Player can't walk through creatures, combat hooks, etc
+    - [x] 6.4 - Player can't walk through creatures, combat hooks, etc
 
-    - [ ] 6.5 - Creatures move
+    - [ ] 6.5 - Placeholder for combat, death handlers for creatures
+
+    - [ ] 6.6 - Death handler for player, multiple game exit routes (save, quit, die)
+
+    - [ ] 6.7 - Deal with cleaning up unreachable (off dead map sections) creatures
+
+    - [ ] 6.8 - Creature info shows up on look mode (and not tile info)
+
+    - [ ] 6.9 - Creatures move
 
  - [ ] 7 - Interaction, stats, basic combat, Pac-man level AI (move towards the player)
 
