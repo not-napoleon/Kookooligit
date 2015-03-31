@@ -2,11 +2,6 @@
 #define LOG_H_INCLUDED
 #include <stdio.h>
 
-/*
- * For now, logging is a boolean, but by creating level macros now, I can turn
- * it into leveled logging later without having to tweak the log message senders
- */
-
 #define LOG_TRACE    6
 #define LOG_DEBUG    5
 #define LOG_INFO     4
