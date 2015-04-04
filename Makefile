@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ `sdl2-config --cflags` -g
+CFLAGS = -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ -I./include/ `sdl2-config --cflags` -g
 PYTHON = /usr/bin/env python
 OBJECTS = \
 					combat.o\
@@ -25,40 +25,61 @@ OBJECTS = \
 				 	tile.o\
 
 GENERATED_CODE_DIR = ./generated/
-ALL_DEP = log.h
+SRC = ./src/
+INC = ./include/
+ALL_DEP = $(INC)log.h
 
-game.out: main.c $(OBJECTS) $(ALL_DEP)
-	$(CC) main.c $(OBJECTS) `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
+game.out: $(SRC)main.c $(OBJECTS) $(ALL_DEP)
+	$(CC) -I$(INC) $(SRC)main.c $(OBJECTS) `sdl2-config --cflags --libs` -lSDL2_ttf -o game.out -g -v
 
-SDL_Tools.o: SDL_Tools.c SDL_Tools.h graphics_wrapper.h $(ALL_DEP)
-combat.o: combat.c combat.h creature.h messages.h $(ALL_DEP)
-command.o: command.c command.h lib/uthash/src/uthash.h $(ALL_DEP)
-creature.o: creature.c creature.h creature_type.h $(ALL_DEP)
-creature_type.o: creature_type.c creature_type.h $(ALL_DEP)
-draw_map.o: draw_map.c draw_map.h graphics_wrapper.h map.h sprite.h $(ALL_DEP)
-game.o: game.c game.h messages.h map.h command.h command_list.h tile.h look.h player.h $(ALL_DEP)
-graphics_wrapper.o: graphics_wrapper.c graphics_wrapper.h SDL_Tools.h $(ALL_DEP)
-init.o: init.c init.h messages.h map.h game.h draw_map.h tile.h graphics_wrapper.h sprite.h command.h random.h SDL_Tools.h creature_type.h $(ALL_DEP)
-look.o: look.c look.h render_text.h color_palette.h $(ALL_DEP)
-map.o: map.c map.h tile.h $(ALL_DEP)
-map_section.o: map_section.c map_section.h tile.h random.h point.h creature.h $(ALL_DEP)
-move.o: move.c move.h combat.h creature.h messages.h map.h player.h tile.h $(ALL_DEP)
-messages.o: messages.c messages.h render_text.h $(ALL_DEP)
-player.o: player.c player.h $(ALL_DEP)
-render_text.o: render_text.c render_text.h messages.h $(ALL_DEP)
-sprite.o: sprite.c sprite.h color_palette.h graphics_wrapper.h SDL_tools.h $(ALL_DEP)
-tile.o: tile.c tile.h $(ALL_DEP)
-random.o: random.c random.h lib/mt19937ar.c $(ALL_DEP)
+SDL_Tools.o: $(SRC)SDL_Tools.c $(INC)SDL_Tools.h $(INC)graphics_wrapper.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+combat.o: $(SRC)combat.c $(INC)combat.h $(INC)creature.h $(INC)messages.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+command.o: $(SRC)command.c $(INC)command.h lib/uthash/src/uthash.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+creature.o: $(SRC)creature.c $(INC)creature.h $(INC)creature_type.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+creature_type.o: $(SRC)creature_type.c $(INC)creature_type.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+draw_map.o: $(SRC)draw_map.c $(INC)draw_map.h $(INC)graphics_wrapper.h $(INC)map.h $(INC)sprite.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+game.o: $(SRC)game.c $(INC)game.h $(INC)messages.h $(INC)map.h $(INC)command.h $(INC)command_list.h $(INC)tile.h $(INC)look.h $(INC)player.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+graphics_wrapper.o: $(SRC)graphics_wrapper.c $(INC)graphics_wrapper.h $(INC)SDL_Tools.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+init.o: $(SRC)init.c $(INC)init.h $(INC)messages.h $(INC)map.h $(INC)game.h $(INC)draw_map.h $(INC)tile.h $(INC)graphics_wrapper.h $(INC)sprite.h $(INC)command.h $(INC)random.h $(INC)SDL_Tools.h $(INC)creature_type.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+look.o: $(SRC)look.c $(INC)look.h $(INC)render_text.h $(INC)color_palette.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+map.o: $(SRC)map.c $(INC)map.h $(INC)tile.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+map_section.o: $(SRC)map_section.c $(INC)map_section.h $(INC)tile.h $(INC)random.h $(INC)point.h $(INC)creature.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+move.o: $(SRC)move.c $(INC)move.h $(INC)combat.h $(INC)creature.h $(INC)messages.h $(INC)map.h $(INC)player.h $(INC)tile.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+messages.o: $(SRC)messages.c $(INC)messages.h $(INC)render_text.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+player.o: $(SRC)player.c $(INC)player.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+render_text.o: $(SRC)render_text.c $(INC)render_text.h $(INC)messages.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+sprite.o: $(SRC)sprite.c $(INC)sprite.h $(INC)color_palette.h $(INC)graphics_wrapper.h $(INC)SDL_tools.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+tile.o: $(SRC)tile.c $(INC)tile.h $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
+random.o: $(SRC)random.c $(INC)random.h lib/mt19937ar.c $(ALL_DEP)
+	$(CC) -I. $(CFLAGS) -c $< -o $@
 
 $(GENERATED_CODE_DIR):
 	echo "Trying to make dir for generated code"
 	mkdir $(GENERATED_CODE_DIR)
 
-command_list.o: $(GENERATED_CODE_PATH)command_list.c command_list.h $(ALL_DEP)
+command_list.o: $(GENERATED_CODE_PATH)command_list.c $(INC)command_list.h $(ALL_DEP)
 	$(CC) $(CFLAGS) -c -o command_list.o $(GENERATED_CODE_DIR)command_list.c
 
-$(GENERATED_CODE_PATH)command_list.c: $(GENERATED_CODE_DIR) command_list.h build_tools/string_to_enum.py $(ALL_DEP)
-	$(PYTHON) build_tools/string_to_enum.py command_list.h string_to_command_code $(GENERATED_CODE_DIR)
+$(GENERATED_CODE_PATH)command_list.c: $(GENERATED_CODE_DIR) $(INC)command_list.h build_tools/string_to_enum.py $(ALL_DEP)
+	$(PYTHON) build_tools/string_to_enum.py $(INC)command_list.h string_to_command_code $(GENERATED_CODE_DIR)
 
 fov.o: lib/libfov-1.0.4/fov/fov.c lib/libfov-1.0.4/fov/fov.h
 	$(CC) $(CFLAGS) -c -o fov.o lib/libfov-1.0.4/fov/fov.c

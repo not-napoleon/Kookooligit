@@ -11,7 +11,7 @@ if __name__ == "__main__":
     exit(1)
   _, header_file, func_name, target_dir = sys.argv
 
-  c_file = header_file[:-1] + "c"
+  c_file = header_file.split('/')[-1][:-1] + "c"
   c_file = os.path.join(target_dir, c_file)
   print "Generating string to enum lookup from %s into file %s" % (header_file,
       c_file)
