@@ -1,9 +1,9 @@
 Look Mode
 [ ] Look mode should not give info on unexplored tiles
-[ ] Render the look cursor as a background color change, like a real cursor
+[X] Render the look cursor as a background color change, like a real cursor
 
 Logging
-[ ] Beef up the logging "framework" to actually include some log levels
+[X] Beef up the logging "framework" to actually include some log levels
 [ ] Add a SCREAM_AND_DIE macro to log.h to dump a stack trace and exit
     - see http://stackoverflow.com/questions/105659/how-can-one-grab-a-stack-trace-in-c
 [ ] Move logging control flags to makefile
