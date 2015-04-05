@@ -6,12 +6,20 @@
 #include "sprite.h"
 
 struct CreatureType {
-  enum sprite_ids sprite_id;
+  /*
+   * Note about creature ids:
+   * Creature ids have the form of NAME_MAJOR_MINOR, where major and minor are
+   * version numbers.  This is to make it easier to manage cross-version
+   * save file compatibility.
+   */
   const char *creature_type_id;  /* Unique id for this creature type */
   const char *description;
   const char *name;
+  enum sprite_ids sprite_id;
 
-
+  /* TODO: Hide the hash in the implementation file - just add a wrapper
+   * struct with a pointer to the actual creature type and the hash handle
+   */
   UT_hash_handle hh;
 };
 
