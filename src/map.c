@@ -12,6 +12,9 @@
 #include "log.h"
 
 void dump_edge_parameters(InfiniteMap *map) {
+  /*
+   * Debugging function
+   */
   int i, j;
   MapSection *sec;
   for(i = 0; i < MAP_SECTION_BUFFER; i++) {
@@ -207,7 +210,7 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
       d.is_explored = t->is_explored;
 
       /* Figure out what to draw on this square */
-      if (x == map->at_location.x 
+      if (x == map->at_location.x
           && y == map->at_location.y) {
         /* Draw player case */
         DEBUG("Drawing player at %d, %d\n", x, y);

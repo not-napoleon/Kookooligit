@@ -11,6 +11,7 @@ Logging
 Map cleanup
 [ ] Stop passing map size to dark_map
 [ ] Move look & movement code out of game.c (map.c maybe) (started)
+[ ] Clean up lost creatures from recycled map sections
 
 General cleanup
 [ ] Stop using typedefs for structs, enums
