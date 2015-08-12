@@ -3,5 +3,5 @@
 
 #include "graphics_wrapper.h"
 
-int render_look_message(const char* message, const Rect *dstrect);
+int render_look_message(const char *message, const Rect *dstrect);
 #endif

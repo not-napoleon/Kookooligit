@@ -3,16 +3,15 @@
 
 #include <stdint.h>
 
-
 typedef struct Rect {
-  int16_t x, y;
-  uint16_t w, h;
+    int16_t x, y;
+    uint16_t w, h;
 } Rect;
 
 typedef struct Color {
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 } Color;
 
 void clear();

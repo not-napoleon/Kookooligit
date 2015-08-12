@@ -7,14 +7,14 @@
 #include "point.h"
 
 struct Creature {
-  unsigned int creature_id;
-  const struct CreatureType *type;
-  unsigned short int ticks;
-  Point current_location;
-  int is_onscreen :1;
-  int is_alive :1;
+    unsigned int creature_id;
+    const struct CreatureType *type;
+    unsigned short int ticks;
+    Point current_location;
+    int is_onscreen : 1;
+    int is_alive : 1;
 
-  UT_hash_handle hh;
+    UT_hash_handle hh;
 };
 
 int spawn(const char *creature_type_id);

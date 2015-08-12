@@ -8,44 +8,40 @@
 #include "map.h"
 #include "messages.h"
 
-typedef enum {
-  Move,
-  Look
-} States;
+typedef enum { Move, Look } States;
 
 typedef struct GameConfiguration {
-  //Main window
-  int window_w;
-  int window_h;
+    // Main window
+    int window_w;
+    int window_h;
 
-  //Layout Dimensions
-  Rect message_window;
-  Rect map_window;
-  Rect status_window;
-  Rect command_window;
+    // Layout Dimensions
+    Rect message_window;
+    Rect map_window;
+    Rect status_window;
+    Rect command_window;
 
 } GameConfiguration;
 
 typedef struct GameState {
-  //flags
-  unsigned int is_running :1;
-  unsigned int need_to_redraw :1;
+    // flags
+    unsigned int is_running : 1;
+    unsigned int need_to_redraw : 1;
 
-  // Config
-  GameConfiguration *config;
+    // Config
+    GameConfiguration *config;
 
-  // Graphics
+    // Graphics
 
-  // TODO: different message & map fonts
-  // Map Data
-  MapGraphicsState *map_graphics_state;
+    // TODO: different message & map fonts
+    // Map Data
+    MapGraphicsState *map_graphics_state;
 
-  char *status_message;
-  InfiniteMap *map;
+    char *status_message;
+    InfiniteMap *map;
 
-  States state;
+    States state;
 } GameState;
-
 
 void process_command(GameState *state, enum CommandCode cmd);
 void free_game_state(GameState *state);
