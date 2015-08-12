@@ -13,8 +13,36 @@ Map cleanup
 [ ] Move look & movement code out of game.c (map.c maybe) (started)
 [ ] Clean up lost creatures from recycled map sections
 
+Levels & Map generation
+[ ] Map file format
+[ ] Load full map frames from file
+  [ ] How to connect to rest of the map?
+[ ] Load partial map frames/features from file
+
+Messages
+[ ] Limit size of old messages
+
+Saves
+[ ] Save player info
+[ ] Save Spawned creatures?
+[ ] Save current map section?
+
+Combat - Basics
+[ ] Creature death routine
+[ ] Player death routine
+[ ] Creature movement - random (legal) moves
+[ ] Creature spawning
+
 General cleanup
 [ ] Stop using typedefs for structs, enums
+[ ] Centeralize text rendering (line wrap, words, etc)
+[ ] Makefile/command to toggle show everything mode
+[ ] bigger indents!
+    [ ] Local indent config and/or get clang-formatter working right
+[ ] Move file open to a util module
+
+Testing
+[ ] Write any tests - prove we can run tests
 
 DONE!
 [X] Stop passing the main SDL_Surface around
