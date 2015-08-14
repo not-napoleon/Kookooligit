@@ -49,28 +49,28 @@ void load_commands_from_file(const char *filename) {
         int point_size;
         if (line[0] == '#') {
             DEBUG("Skipping comment line");
-        } else if (sscanf(line, "[BIND_COMMAND_NAME:%[^][:]:%[^][:]]", &arg1,
+        } else if (sscanf(line, "[BIND_COMMAND_NAME:%255[^][:]:%255[^][:]]", &arg1,
                           &arg2)) {
-            DEBUG("Read command binding %s => %s\n", arg1, arg2);
+            DEBUG("Read command binding %255s => %255s\n", arg1, arg2);
             bind_command_name(string_to_command_code(arg1), arg2);
-        } else if (sscanf(line, "[SET_MAP_FONT:%[^][:]:%d]", &arg1,
+        } else if (sscanf(line, "[SET_MAP_FONT:%255[^][:]:%d]", &arg1,
                           &point_size)) {
-            DEBUG("Read map font path %s, size %d\n", arg1, point_size);
+            DEBUG("Read map font path %255s, size %d\n", arg1, point_size);
             init_sprites_from_font(arg1, point_size);
-        } else if (sscanf(line, "[SET_MESSAGE_FONT:%[^][:]:%d]", &arg1,
+        } else if (sscanf(line, "[SET_MESSAGE_FONT:%255[^][:]:%d]", &arg1,
                           &point_size)) {
-            DEBUG("Read message font path %s, size %d\n", arg1, point_size);
+            DEBUG("Read message font path %255s, size %d\n", arg1, point_size);
             set_message_font(arg1, point_size);
-        } else if (sscanf(line, "[SET_STATUS_FONT:%[^][:]:%d]", &arg1,
+        } else if (sscanf(line, "[SET_STATUS_FONT:%255[^][:]:%d]", &arg1,
                           &point_size)) {
-            DEBUG("Read status font path %s, size %d\n", arg1, point_size);
+            DEBUG("Read status font path %255s, size %d\n", arg1, point_size);
             set_status_font(arg1, point_size);
-        } else if (sscanf(line, "[SET_COMMAND_FONT:%[^][:]:%d]", &arg1,
+        } else if (sscanf(line, "[SET_COMMAND_FONT:%255[^][:]:%d]", &arg1,
                           &point_size)) {
-            DEBUG("Read command font path %s, size %d\n", arg1, point_size);
+            DEBUG("Read command font path %255s, size %d\n", arg1, point_size);
             set_command_font(arg1, point_size);
         } else {
-            ERROR("Unknown configuration line %s\n", line);
+            ERROR("Unknown configuration line %255s\n", line);
         }
     }
     fclose(fp);

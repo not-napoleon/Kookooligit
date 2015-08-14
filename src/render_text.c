@@ -66,6 +66,7 @@ int build_word_list(const char *text, SurfaceNodePtr *dest, Color color,
         prev_surface = curr_surface;
         curr_word = strtok(NULL, " ");
     } while (curr_word != NULL);
+    return 1;
 }
 
 int get_message_height(SurfaceNodePtr msg, int w) {
@@ -117,4 +118,5 @@ int render_message_to_window(const Rect *dstrect, SurfaceNodePtr text,
         line_width += curr_word->w;
         curr_word = curr_word->next;
     }
+    return 1;
 }

@@ -73,7 +73,7 @@ void extrude_tunnel_row(int *x, int *width, const int x_min, const int x_max,
 int generate_map_section(MapSection *map, int *x_positions, int *widths,
                          bool start_at_bottom) {
     TRACE("Generating map\n");
-    if (tiles_initilized == false) {
+    if (tiles_initilized() == false) {
         CRITICAL("Generate map called with uninitilized tile data\n");
         exit(1);
     }

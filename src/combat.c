@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "creature.h"
 #include "combat.h"
 #include "messages.h"
 #include "random.h"

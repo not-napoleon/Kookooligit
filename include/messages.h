@@ -29,7 +29,7 @@ typedef struct MessageList {
     int length;
 } MessageList;
 
-void *init_message_list();
+void init_message_list();
 int add_message(char *text);
 int add_combat_message(char *text);
 void free_message_queue();

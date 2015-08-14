@@ -11,7 +11,10 @@
 
 static MessageList *queue;
 
-void *init_message_list() {
+/*
+ * TODO: Use utlist here
+ */
+void init_message_list() {
     queue = malloc(sizeof(MessageList));
     queue->first = NULL;
     queue->last = NULL;
@@ -69,6 +72,7 @@ int add_message(char *text) {
     queue->length++;
 
     // TODO: trim to max length
+    return 1;
 }
 
 int render_messages(const Rect *dstrect) {
@@ -96,4 +100,5 @@ int render_messages(const Rect *dstrect) {
         curr = curr->next;
     }
     DEBUG("all messages rendered, updateing screen\n");
+    return 1;
 }
