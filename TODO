@@ -1,9 +1,7 @@
 Look Mode
 [ ] Look mode should not give info on unexplored tiles
-[X] Render the look cursor as a background color change, like a real cursor
 
 Logging
-[X] Beef up the logging "framework" to actually include some log levels
 [ ] Add a SCREAM_AND_DIE macro to log.h to dump a stack trace and exit
     - see http://stackoverflow.com/questions/105659/how-can-one-grab-a-stack-trace-in-c
 [ ] Move logging control flags to makefile
@@ -37,9 +35,9 @@ General cleanup
 [ ] Stop using typedefs for structs, enums
 [ ] Centeralize text rendering (line wrap, words, etc)
 [ ] Makefile/command to toggle show everything mode
-[ ] bigger indents!
-    [ ] Local indent config and/or get clang-formatter working right
 [ ] Move file open to a util module
+[ ] C99 types
+[ ] Pragma once
 
 Testing
 [ ] Write any tests - prove we can run tests
@@ -51,3 +49,8 @@ DONE!
 
 [X] Make reference to MAP_SECTION_SIZE in draw_map.c a parameter
 [X] Even better, put the size in the map struct
+[X] Render the look cursor as a background color change, like a real cursor
+[X] Beef up the logging "framework" to actually include some log levels
+
+[X] bigger indents!
+    [X] Local indent config and/or get clang-formatter working right
