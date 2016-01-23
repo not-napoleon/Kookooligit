@@ -218,12 +218,11 @@ int get_tile_grid(InfiniteMap *map, const int window_x_chars,
                 /* Draw player case */
                 DEBUG("Drawing player at %d, %d\n", x, y);
                 d.sprite_id = Player_sprite;
-            } else if (t->creature_id != NO_CREATURE) {
-                DEBUG("Attmpting to get creature with id %d tile (%d, %d)\n",
-                      t->creature_id, x, y);
+            } else if (t->creature != NULL) {
+                DEBUG("Attmpting to get creature with type %s tile (%d, %d)\n",
+                      t->creature->type->name, x, y);
                 struct Creature *creature_in_tile;
-                creature_in_tile = get_creature_by_id(t->creature_id);
-                d.sprite_id = creature_in_tile->type->sprite_id;
+                d.sprite_id = t->creature->type->sprite_id;
             } else {
                 /* Draw Tile case */
                 d.sprite_id = t->type->sprite_id;

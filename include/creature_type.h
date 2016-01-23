@@ -1,7 +1,7 @@
 #ifndef CREATURE_TYPE_H_INCLUDED
 #define CREATURE_TYPE_H_INCLUDED
 
-#include "lib/uthash/src/uthash.h"
+#include "../lib/uthash/src/uthash.h"
 
 #include "sprite.h"
 

@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "player.h"
-#include "creature.h"
 #define MAX_STATUS_LEN 127
 
 #define LOG_LEVEL LOG_ERROR
@@ -11,7 +10,7 @@
  * There can only be one player, by definition.
  */
 
-static int player_creature_id;
+static struct Creature *player_creature;
 static struct Player *player;
 
 void init_player() {
@@ -25,11 +24,11 @@ void init_player() {
     player->status = malloc(sizeof(char) * MAX_STATUS_LEN);
     player->stale_status = 1;
 
-    player_creature_id = spawn("HUMAN_0_00");
+    player_creature = spawn("HUMAN_0_00");
 }
 
 struct Creature *get_player_creature() {
-    return get_creature_by_id(player_creature_id);
+    return player_creature;
 }
 
 void free_player() {
@@ -43,7 +42,7 @@ void free_player() {
      * This is probably redundant, since if we're freeing the player,
      * we're probably freeing eveything else too, but why not be complete?
      */
-    free_creature_by_id(player_creature_id);
+    free_creature(player_creature);
     free(player);
 }
 

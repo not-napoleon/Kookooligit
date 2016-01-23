@@ -19,9 +19,9 @@ bool attempt_move(InfiniteMap *map, int delta_x, int delta_y) {
         char tmp[50] = "You can't walk through walls";
         add_message(tmp);
         return false;
-    } else if (target_tile->creature_id != NO_CREATURE) {
+    } else if (target_tile->creature != NULL) {
         /* Initiate melee combat */
-        struct Creature *enemy = get_creature_by_id(target_tile->creature_id);
+        struct Creature *enemy = target_tile->creature;
         melee(get_player_creature(), enemy);
         return false;
     } else {

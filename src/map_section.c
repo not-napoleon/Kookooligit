@@ -84,7 +84,7 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths,
             // start with a blank map
             map->matrix[x][y].type = tile_data[ImpassableWall];
             map->matrix[x][y].is_explored = 1;
-            map->matrix[x][y].creature_id = NO_CREATURE;
+            map->matrix[x][y].creature = NULL;
         }
     }
 
@@ -123,10 +123,9 @@ int generate_map_section(MapSection *map, int *x_positions, int *widths,
                 /* Decide if we should spawn a creature */
                 if (roll_die(100) == 42) {
                     /* TODO: Figure out what type of creature to spawn */
-                    map->matrix[tmp_x][y].creature_id =
+                    map->matrix[tmp_x][y].creature =
                         spawn("DAMAGED_BATTLE_BOT_0_00");
-                    DEBUG("Spawning creature id %d to tile (%d, %d)\n",
-                          map->matrix[tmp_x][y].creature_id, tmp_x, y);
+                    DEBUG("Spawning creature to tile (%d, %d)\n", tmp_x, y);
                 }
             }
             if (y == y_min) {

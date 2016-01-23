@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "sprite.h"
+#include "creature.h"
 
 typedef enum {
     OffGrid,         // Space outside the map
@@ -32,10 +33,7 @@ typedef struct Tile {
     unsigned int is_explored : 1;
     unsigned int is_lit : 1;
 
-    /* I feel weird about putting an ID reference here without importing
-     * creature.h.
-     */
-    int creature_id;
+    struct Creature *creature;
     TileType *type;
 } Tile;
 

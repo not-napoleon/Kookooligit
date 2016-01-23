@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "creature.h"
+
 struct Player {
     unsigned int max_y;
     int curr_y;
