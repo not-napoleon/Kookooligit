@@ -38,6 +38,7 @@ General cleanup
 [ ] Move file open to a util module
 [ ] C99 types
 [ ] Pragma once
+[ ] Include path mess
 
 Testing
 [ ] Write any tests - prove we can run tests
