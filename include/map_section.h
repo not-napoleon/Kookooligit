@@ -5,10 +5,11 @@
 
 #include <stdbool.h>
 
+#include "creature.h"
 #include "point.h"
 #include "tile.h"
 
-typedef struct MapSection {
+struct MapSection {
     Tile matrix[MAP_SECTION_SIZE][MAP_SECTION_SIZE];
     Point center;
     int x_size;
@@ -17,12 +18,14 @@ typedef struct MapSection {
     int *top_widths;
     int *bottom_x_positions;
     int *bottom_widths;
-} MapSection;
 
-MapSection *init_map_section();
-void free_map_section(MapSection *map);
-void dark_map_section(MapSection *map);
-int generate_map_section(MapSection *map, int *x_positions, int *widths,
+    struct CreatureList *creatures_in_tile;
+};
+
+struct MapSection *init_map_section();
+void free_map_section(struct MapSection *map);
+void dark_map_section(struct MapSection *map);
+int generate_map_section(struct MapSection *map, int *x_positions, int *widths,
                          bool start_at_bottom);
 
 #endif

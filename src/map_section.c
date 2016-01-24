@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "creature.h"
+#include "../lib/uthash/src/utlist.h"
+
 #include "map_section.h"
 #include "random.h"
 #include "tile.h"
@@ -16,27 +17,37 @@ const int roughness = 30;
 const int windiness = 30;
 const int passes = 3;
 
-MapSection *init_map_section() {
-    MapSection *new;
-    new = malloc(sizeof(MapSection));
+struct MapSection *init_map_section() {
+    struct MapSection *new;
+    new = malloc(sizeof(struct MapSection));
     new->x_size = MAP_SECTION_SIZE;
     new->y_size = MAP_SECTION_SIZE;
     new->top_x_positions = (int *)malloc(sizeof(int) * passes);
     new->top_widths = (int *)malloc(sizeof(int) * passes);
     new->bottom_x_positions = (int *)malloc(sizeof(int) * passes);
     new->bottom_widths = (int *)malloc(sizeof(int) * passes);
+    new->creatures_in_tile = NULL;
     return new;
 }
 
-void free_map_section(MapSection *map) {
+void free_creatures_in_section(struct MapSection *map) {
+    struct CreatureList *to_delete, *tmp;
+    LL_FOREACH_SAFE(map->creatures_in_tile, to_delete, tmp) {
+        LL_DELETE(map->creatures_in_tile, to_delete);
+        free_creature(to_delete->creature);
+    }
+}
+
+void free_map_section(struct MapSection *map) {
     free(map->top_x_positions);
     free(map->top_widths);
     free(map->bottom_x_positions);
     free(map->bottom_widths);
+    free_creatures_in_section(map);
     free(map);
 }
 
-void dark_map_section(MapSection *map) {
+void dark_map_section(struct MapSection *map) {
     int x, y;
     TRACE("darkening map section\n");
     for (x = 0; x < map->x_size; x++) {
@@ -70,13 +81,17 @@ void extrude_tunnel_row(int *x, int *width, const int x_min, const int x_max,
     }
 }
 
-int generate_map_section(MapSection *map, int *x_positions, int *widths,
+int generate_map_section(struct MapSection *map, int *x_positions, int *widths,
                          bool start_at_bottom) {
     TRACE("Generating map\n");
     if (tiles_initilized() == false) {
         CRITICAL("Generate map called with uninitilized tile data\n");
         exit(1);
     }
+    /*
+     * this ensures that creatures you left behind don't teleport in front of you.
+     */
+    free_creatures_in_section(map);
     int x;
     int y;
     for (x = 0; x < map->x_size; x++) {

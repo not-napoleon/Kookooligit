@@ -16,7 +16,7 @@ void dump_edge_parameters(InfiniteMap *map) {
      * Debugging function
      */
     int i, j;
-    MapSection *sec;
+    struct MapSection *sec;
     for (i = 0; i < MAP_SECTION_BUFFER; i++) {
         sec = map->section_list[i];
         DEBUG("Section %d top:    x1=%d, w1=%d;\tx2=%d, w2=%d;\tx3=%d, w3=%d\n",
@@ -54,7 +54,7 @@ int roto_indx(int indx, int slots) {
 }
 
 Tile *get_tile(const InfiniteMap *map, int x, int y) {
-    MapSection *sec = map->section_list[map->current_section];
+    struct MapSection *sec = map->section_list[map->current_section];
     if (x < 0 || x >= sec->x_size) {
         /*
          * Asked for an out-of-bounds tile, return OffGrid
@@ -111,7 +111,7 @@ int generate_initial_map(InfiniteMap *map) {
     x_positions = (int *)malloc(sizeof(int) * 3);
     widths = (int *)malloc(sizeof(int) * 3);
 
-    MapSection *sec = map->section_list[0];
+    struct MapSection *sec = map->section_list[0];
 
     DEBUG("Generating section 0\n");
     for (i = 0; i < 3; i++) {
@@ -158,7 +158,7 @@ void light_tile(void *vmap, int x, int y, int dx, int dy, void *src) {
      */
     InfiniteMap *map;
     map = (InfiniteMap *)vmap;
-    MapSection *sec = map->section_list[map->current_section];
+    struct MapSection *sec = map->section_list[map->current_section];
     /*DEBUG("Lighting tile at %d, %d\n", x, y);*/
     if (y < 0) {
         /*DEBUG("y < 0 case\n");*/

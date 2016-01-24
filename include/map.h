@@ -10,7 +10,7 @@
 #define MAP_SECTION_BUFFER 5
 
 typedef struct InfiniteMap {
-    MapSection *section_list[MAP_SECTION_BUFFER];
+    struct MapSection *section_list[MAP_SECTION_BUFFER];
     int current_section;
     Point at_location;
     Point cursor_location;

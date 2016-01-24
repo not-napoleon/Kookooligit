@@ -12,6 +12,13 @@ struct Creature {
     int is_alive : 1;
 };
 
+
+struct CreatureList {
+    struct Creature *creature;
+    struct CreatureList *next;
+};
+
+
 struct Creature *spawn(const char *creature_type_id);
 int creature_count();
 void free_creature(struct Creature *target);
