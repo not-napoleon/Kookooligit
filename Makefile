@@ -1,6 +1,6 @@
 CC = clang
 CFLAGS = -Ilib/libfov-1.0.4/fov/ -Ilib/mtwist-1.5/ -I./include/ `sdl2-config --cflags` -g
-PYTHON = /usr/bin/env python
+PYTHON = /usr/bin/env python2
 OBJECTS = \
 					combat.o\
 					creature.o\
